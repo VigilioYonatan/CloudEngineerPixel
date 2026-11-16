@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cloud-engineering-academy/schemas/instructor-review-v1.json",
+  "title": "Cloud Engineering Academy - Revisión docente local sin autenticación",
+  "description": "Formato orientativo. Un archivo valido no acredita identidad ni competencia profesional.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "provider", "caseId", "reviewer", "notes", "scores", "reviewedAt", "grade", "notice"],
+  "properties": {
+    "version": {"const": 1},
+    "provider": {"enum": ["aws", "azure", "gcp"]},
+    "caseId": {"type": "string", "pattern": "^s(0[1-9]|1[0-8])$"},
+    "reviewer": {"type": "string", "maxLength": 80},
+    "notes": {"type": "string", "maxLength": 4000},
+    "scores": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence", "security", "recovery", "validation", "communication"],
+      "properties": {
+        "evidence": {"type": "integer", "minimum": 0, "maximum": 4},
+        "security": {"type": "integer", "minimum": 0, "maximum": 4},
+        "recovery": {"type": "integer", "minimum": 0, "maximum": 4},
+        "validation": {"type": "integer", "minimum": 0, "maximum": 4},
+        "communication": {"type": "integer", "minimum": 0, "maximum": 4}
+      }
+    },
+    "reviewedAt": {"type": "string", "format": "date-time"},
+    "grade": {
+      "type": "object", "additionalProperties": false,
+      "required": ["score", "complete", "criticalRisk", "decision", "official"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "complete": {"const": true},
+        "criticalRisk": {"type": "boolean"},
+        "decision": {"enum": ["aprobado-en-revision-local", "requiere-mejoras"]},
+        "official": {"const": false}
+      }
+    },
+    "notice": {"type": "string", "minLength": 20}
+  }
+}

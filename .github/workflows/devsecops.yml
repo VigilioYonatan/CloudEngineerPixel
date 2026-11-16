@@ -1,0 +1,71 @@
+name: DevSecOps quality and browser verification
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: devsecops-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  code-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout (read-only)
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # No fabricated lockfile: publish the real package-lock.json after an online install.
+      # Until then CI uses npm install; switch both jobs to npm ci once it is committed.
+      - name: Install dependencies
+        run: npm install --no-fund --no-audit
+      - name: Static source and multicloud coverage (no cloud credentials)
+        run: npm run verify:source
+      - name: Strict TypeScript
+        run: npm run typecheck
+      - name: Unit, curriculum, security and integrity tests
+        run: npm test
+      - name: Biome code quality
+        run: npm run lint
+      - name: Production compilation
+        run: npm run build
+      - name: Local secret pattern scan
+        run: npm run security:scan
+      - name: DevSecOps browser source controls
+        run: npm run security:audit
+      - name: Verify preserved files
+        run: npm run integrity
+      - name: Dependency vulnerability audit
+        run: npm audit --audit-level=high
+      - name: Generate CycloneDX SBOM
+        run: npm sbom --sbom-format cyclonedx > sbom.cdx.json
+      - name: Archive SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
+          retention-days: 14
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-fund --no-audit
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end smoke (AWS / Azure / GCP / Senior Mode)
+        run: npm run test:e2e
+      - name: Attach browser traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

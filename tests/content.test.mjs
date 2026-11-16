@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+const read=(p)=>readFileSync(new URL(p,import.meta.url),'utf8');
+const course=read('../src/data/course.ts'), senior=read('../src/data/senior.ts'), knowledge=read('../src/data/knowledge.ts'), app=read('../src/App.tsx'),styles=read('../src/styles.css'),state=read('../src/lib/state.ts');
+const ids=[...course.matchAll(/\{id:'([a-z-]+)',title:'.*?',subtitle:/g)].map(m=>m[1]);
+test('18 unique course modules and 240-hour outline',()=>{assert.equal(ids.length,18);assert.equal(new Set(ids).size,18);const hours=[...course.matchAll(/level:'(?:fundamentos|intermedio|avanzado)',hours:(\d+)/g)].map(m=>+m[1]);assert.deepEqual([hours.slice(0,6).reduce((a,b)=>a+b,0),hours.slice(6,12).reduce((a,b)=>a+b,0),hours.slice(12).reduce((a,b)=>a+b,0)],[60,80,100]);});
+test('every course module has curated explanation and quiz',()=>{for(const id of ids){assert.ok(knowledge.includes(`'${id}':`)||knowledge.includes(` ${id}:`),`knowledge: ${id}`);assert.ok(course.includes(`'${id}':{q:`)||course.includes(` ${id}:{q:`),`quiz: ${id}`)}});
+test('18 senior cases with id and rubric',()=>{const cases=[...senior.matchAll(/\{id:'s\d\d',title:/g)];assert.equal(cases.length,18);assert.equal((senior.match(/proof:\[/g)||[]).length,18)});
+test('3 provider routes and unique service implementations',()=>{for(const p of ['aws','azure','gcp']){assert.ok(course.includes(`${p}:{`));assert.ok(existsSync(new URL(`../labs/${p}/main.tf`,import.meta.url)));assert.ok(styles.includes(`[data-provider=${p}]`)||p==='aws');}});
+test('interactive flows and state persistence exist',()=>{for(const token of ['exportProgress','importProgress','completeTopic','completeSenior','provider.value','setProvider','Quiz','Simulator','Senior','Lab','Progress'])assert.ok(app.includes(token)||state.includes(token),token);});
+test('real-cloud safety statement and cleanup documentation present',()=>{const labs=read('../labs/README.md');assert.ok(labs.includes('terraform destroy'));assert.ok(labs.includes('precios'));assert.ok(app.includes('No se ejecuta infraestructura real'));});

@@ -1,0 +1,40 @@
+{
+  "name": "cloud-engineering-academy",
+  "version": "9.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "lint": "biome check src tests scripts",
+    "format:check": "biome format --formatter-enabled=true src/lib/seniorEvaluation.mjs tests/senior-evaluation-v6.test.mjs",
+    "security:test": "node --test tests/security-v5.test.mjs",
+    "verify": "npm run verify:offline && npm run typecheck && npm run lint && npm run build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "security:scan": "node scripts/check-secrets.mjs",
+    "integrity": "node scripts/verify-integrity.mjs",
+    "test:unit": "node --test tests/*.test.mjs",
+    "verify:source": "node scripts/check-release-source.mjs",
+    "security:audit": "node scripts/security-audit.mjs",
+    "syntax": "node scripts/check-typescript-syntax.mjs",
+    "verify:offline": "npm run verify:source && npm run syntax && npm test && npm run integrity && npm run security:scan && npm run security:audit",
+    "verify:release": "npm run verify && npm audit --audit-level=high && npm run test:e2e",
+    "doctor": "node scripts/project-doctor.mjs"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.2.1",
+    "preact": "^10.27.0",
+    "lucide-preact": "^0.468.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.2",
+    "typescript": "^5.9.0",
+    "vite": "^7.1.0",
+    "@biomejs/biome": "^2.2.4",
+    "@playwright/test": "^1.56.0"
+  }
+}

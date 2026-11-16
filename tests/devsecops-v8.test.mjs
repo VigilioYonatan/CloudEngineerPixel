@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+import {join} from 'node:path';
+import {scanSource,auditRepository,listRules} from '../scripts/security-audit.mjs';
+test('DevSecOps scanner detects an unsafe DOM sink',()=>{const source='element.innerHTML = text';assert.equal(scanSource(source).at(0).id,'no-unsafe-html-sinks')});
+test('DevSecOps scanner detects eval and insecure network fetches',()=>{assert.ok(scanSource('eval(untrusted)').some(x=>x.id==='no-dynamic-evaluation'));assert.ok(scanSource(`fetch('http://insecure.test')`).some(x=>x.id==='no-insecure-http-sources'))});
+test('DevSecOps scanner detects browser-exposed credential variables',()=>{assert.ok(scanSource('import.meta.env.AWS_SECRET').some(x=>x.id==='no-client-cloud-credentials'))});
+test('No banned source pattern in production sources',()=>{assert.deepEqual(auditRepository(),[])});
+test('DevSecOps rules have severity and unique IDs',()=>{const rules=listRules();assert.ok(rules.length>=5);assert.equal(new Set(rules.map(x=>x.id)).size,rules.length)});
+test('DevSecOps workflow has minimum permissions and required gates',()=>{const root=join(import.meta.dirname,'..');const raw=readFileSync(join(root,'.github/workflows/devsecops.yml'),'utf8');for(const step of ['npm run typecheck','npm run lint','npm run build','npm run security:scan','npm run security:audit','npm run test:e2e','npm audit'])assert.ok(raw.includes(step),step);assert.ok(raw.includes('contents: read'));assert.ok(existsSync(join(root,'SECURITY.md')))});
