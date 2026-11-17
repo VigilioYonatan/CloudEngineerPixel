@@ -6,14 +6,19 @@ import {
   Moon,
   Settings,
   ShieldCheck,
+  Sparkles,
   Sun,
 } from 'lucide-preact';
 import { APP_VERSION } from '../../../config/appMeta';
 import { CLOUD_PROVIDER_IDS, getProviderMeta } from '../../../domain/providers';
+import { motionPreference, setMotionPreference } from '../../../lib/preferencesState';
 import { navigate, provider, setProvider, theme } from '../../../lib/state';
 import { ProviderBadge } from '../../../shared/ui/ProviderBadge';
+import { GranularDataManager } from '../components/GranularDataManager';
 
 export function SettingsPage() {
+  const isReducedMotion = motionPreference.value === 'reduced';
+
   return (
     <main class="page-container settings-page">
       <div class="page-kicker">
@@ -24,7 +29,9 @@ export function SettingsPage() {
           <h1>
             Tu academia. <span>Tu ritmo.</span>
           </h1>
-          <p>Personaliza la apariencia y la nube de aprendizaje.</p>
+          <p>
+            Personaliza la apariencia, la accesibilidad motriz y la gestión granular de tus datos.
+          </p>
         </div>
       </section>
 
@@ -76,6 +83,37 @@ export function SettingsPage() {
           </button>
         </div>
       </section>
+
+      <section class="info-card">
+        <div class="card-heading">
+          <Sparkles size={20} />
+          <h3>Accesibilidad y movimiento</h3>
+        </div>
+        <p>
+          Además de respetar automáticamente <code>prefers-reduced-motion</code> de tu sistema
+          operativo, puedes desactivar transiciones y desplazamientos suaves de forma explícita.
+        </p>
+        <div class="action-row">
+          <button
+            type="button"
+            aria-pressed={!isReducedMotion}
+            class={`btn ${!isReducedMotion ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setMotionPreference('system')}
+          >
+            Seguir preferencia del sistema
+          </button>
+          <button
+            type="button"
+            aria-pressed={isReducedMotion}
+            class={`btn ${isReducedMotion ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setMotionPreference('reduced')}
+          >
+            Reducir animaciones
+          </button>
+        </div>
+      </section>
+
+      <GranularDataManager />
 
       <section class="info-card">
         <div class="card-heading">

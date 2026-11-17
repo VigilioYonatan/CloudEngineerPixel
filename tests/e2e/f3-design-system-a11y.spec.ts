@@ -199,7 +199,7 @@ test('F3-04 & F3-05 E2E: CodeBlock shows risk badges + aria-live copy and CloudS
   // Verify destructive and cost badges in Real Account Lab guide
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/?cloud=aws#/labs/networks');
-  await page.getByRole('button', { name: /Práctica en cuenta real/i }).click();
+  await page.getByRole('tab', { name: /Práctica en cuenta real/i }).click();
   await expect(page.getByText('CREA RECURSOS / COSTO').first()).toBeVisible();
   await expect(page.getByText('DESTRUCTIVO / REQUIERE PLAN').first()).toBeVisible();
 });

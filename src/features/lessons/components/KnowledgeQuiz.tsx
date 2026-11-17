@@ -1,5 +1,6 @@
 import { CheckCircle2, CircleHelp } from 'lucide-preact';
 import { useEffect, useState } from 'preact/hooks';
+import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { questions, type Module } from '../../../data/course';
 import { progress, provider, setQuiz } from '../../../lib/state';
 import { Tag } from '../../../shared/ui/Tag';
@@ -44,12 +45,20 @@ export function Quiz({ module: mod }: QuizProps) {
       </div>
       {selected !== null && (
         <div
-          class={`quiz-feedback ${selected === question.correct ? 'feedback-success' : 'feedback-warn'}`}
+          class={`quiz-feedback quiz-feedback-mentor ${selected === question.correct ? 'feedback-success' : 'feedback-warn'}`}
         >
-          <strong>
-            {selected === question.correct ? '¡Respuesta correcta!' : 'Sigue investigando.'}
-          </strong>
-          <p>{question.why}</p>
+          <CloudMentor
+            providerId={active_cloud}
+            variant="pose"
+            pose={selected === question.correct ? 'celebrating' : 'thinking'}
+            size="compact"
+          />
+          <div>
+            <strong>
+              {selected === question.correct ? '¡Respuesta correcta!' : 'Sigue investigando.'}
+            </strong>
+            <p>{question.why}</p>
+          </div>
         </div>
       )}
       {saved_score !== undefined && selected === null && (

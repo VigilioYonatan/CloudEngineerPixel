@@ -1,5 +1,7 @@
 import { ArrowRight, CloudCog, Search, TriangleAlert } from 'lucide-preact';
 import { useState } from 'preact/hooks';
+import { CloudMentor } from '../../../components/mascot/CloudMentor';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import type { Provider } from '../../../data/course';
 import { challenges, type Challenge } from '../../../data/senior';
 import { getProviderMeta } from '../../../domain/providers';
@@ -49,7 +51,13 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
             <span>4 etapas por escenario</span>
           </div>
         </div>
-        <img src={cloud_meta.mascot.default} alt="Mascota del proveedor seleccionado" />
+        <CloudMentor
+          providerId={p}
+          variant="pose"
+          pose="senior"
+          size="banner"
+          alt={`Mascota ${cloud_meta.short} en Senior Mode`}
+        />
       </div>
 
       <div class="sr-filters">
@@ -101,7 +109,18 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
         ))}
       </div>
 
-      {filtered.length === 0 && <p>No encontramos casos con ese filtro.</p>}
+      {filtered.length === 0 && (
+        <EmptyState
+          providerId={p}
+          title="No encontramos casos con ese filtro"
+          description="Prueba buscando por otra competencia (IAM, Terraform, EKS, SLO) o restablece los filtros."
+          actionLabel="Mostrar todos los casos"
+          onAction={() => {
+            setQuery('');
+            setSeverity('todos');
+          }}
+        />
+      )}
 
       {attempts.length > 0 && (
         <section class="sr-history info-card">

@@ -8,6 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-preact';
 import { useState } from 'preact/hooks';
+import { AccessibleTabs } from '../../../components/ui/AccessibleTabs';
 import { currentSimMode, navigate, notify, progress, provider } from '../../../lib/state';
 import { SimulatorControls } from '../components/SimulatorControls';
 import { SimulatorResults } from '../components/SimulatorResults';
@@ -89,21 +90,21 @@ export function SimulatorsPage() {
         </div>
       </section>
 
-      <div class="sim-tabs">
-        {SIMULATOR_TABS.map((tab) => {
+      <AccessibleTabs
+        ariaLabel="Motores de simulación cloud"
+        className="sim-tabs"
+        activeClassName="sim-active"
+        activeId={mode}
+        onSelect={(simId) => navigate('simulator', { simId })}
+        items={SIMULATOR_TABS.map((tab) => {
           const TabIcon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              class={mode === tab.id ? 'sim-active' : ''}
-              onClick={() => navigate('simulator', { simId: tab.id })}
-            >
-              <TabIcon size={20} />
-              {tab.title}
-            </button>
-          );
+          return {
+            id: tab.id,
+            label: tab.title,
+            icon: <TabIcon size={20} />,
+          };
         })}
-      </div>
+      />
 
       <div class="sim-body">
         <SimulatorControls

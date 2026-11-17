@@ -24,6 +24,7 @@ import {
   recordLastVisitedUnit,
   showOnboarding,
 } from './onboardingState';
+import './preferencesState';
 
 export type View = AppView;
 
@@ -103,9 +104,14 @@ if (initialInspection.status === 'corrupted' && initialInspection.raw) {
 
 export const corruptedStorageRaw = signal<string | null>(initialInspection.raw);
 export const corruptedStorageError = signal<string | null>(initialInspection.error);
+export const storageWriteError = signal<string | null>(null);
 export const progress = signal<Progress>(initialInspection.progress);
 export const mobileMenu = signal(false);
 export const toast = signal('');
+
+export function dismissStorageWriteError() {
+  storageWriteError.value = null;
+}
 
 const stampNow = () => new Date().toISOString();
 
@@ -405,12 +411,14 @@ effect(() => {
     if (corruptedStorageRaw.value === null) {
       localStorage.setItem('cea:progress', JSON.stringify(progress.value));
     }
+    storageWriteError.value = null;
   } catch {
+    const msg =
+      'No fue posible guardar el progreso local. Exporta una copia JSON antes de cerrar esta pestaña.';
+    storageWriteError.value = msg;
     if (!warnedStorageFailure) {
       warnedStorageFailure = true;
-      notify(
-        'No fue posible guardar el progreso local. Exporta una copia JSON antes de cerrar esta pestaña.',
-      );
+      notify(msg);
     }
   }
 });

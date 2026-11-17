@@ -1,7 +1,9 @@
 import { AlertTriangle, CheckCircle2, Download, RotateCcw, X } from 'lucide-preact';
 import type { ComponentChildren } from 'preact';
 import { useEffect } from 'preact/hooks';
+import { BannerStorageError } from '../components/ui/BannerStorageError';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { OfflineIndicator } from '../components/ui/OfflineIndicator';
 import { activeConfirmRequest } from '../lib/confirmDialogState';
 import {
   applyParsedRoute,
@@ -42,6 +44,8 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div class="app-shell">
       <AppHeader />
+      <OfflineIndicator />
+      <BannerStorageError />
       {corruptedStorageRaw.value !== null && (
         <div role="alert" class="corrupt-storage-banner">
           <div class="corrupt-storage-copy">

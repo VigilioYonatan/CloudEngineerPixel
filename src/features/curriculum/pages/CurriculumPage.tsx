@@ -1,4 +1,6 @@
 import { ArrowRight, BookOpen, Search } from 'lucide-preact';
+import { AccessibleTabs } from '../../../components/ui/AccessibleTabs';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import { levelInfo, modules, type Level } from '../../../data/course';
 import { completedTopicsCount } from '../../../domain/progressMetrics';
 import { getProviderMeta } from '../../../domain/providers';
@@ -14,11 +16,11 @@ import { ProgressBar } from '../../../shared/ui/ProgressBar';
 import { Tag } from '../../../shared/ui/Tag';
 import { ModuleIcon } from '../components/ModuleIcon';
 
-const LEVEL_TABS: readonly { id: 'todos' | Level; name: string }[] = [
-  { id: 'todos', name: 'Todos los niveles' },
-  { id: 'fundamentos', name: levelInfo.fundamentos.name },
-  { id: 'intermedio', name: levelInfo.intermedio.name },
-  { id: 'avanzado', name: levelInfo.avanzado.name },
+const LEVEL_TABS: readonly { id: 'todos' | Level; label: string }[] = [
+  { id: 'todos', label: 'Todos los niveles' },
+  { id: 'fundamentos', label: levelInfo.fundamentos.name },
+  { id: 'intermedio', label: levelInfo.intermedio.name },
+  { id: 'avanzado', label: levelInfo.avanzado.name },
 ];
 
 export function CurriculumPage() {
@@ -58,19 +60,14 @@ export function CurriculumPage() {
         </div>
       </section>
       <div class="learn-toolbar">
-        <div class="tabs">
-          {LEVEL_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              class={levelFilter.value === tab.id ? 'tab-active' : ''}
-              onClick={() => {
-                levelFilter.value = tab.id;
-              }}
-            >
-              {tab.name}
-            </button>
-          ))}
-        </div>
+        <AccessibleTabs
+          ariaLabel="Filtrar módulos por nivel"
+          items={LEVEL_TABS}
+          activeId={(levelFilter.value as 'todos' | Level) || 'todos'}
+          onSelect={(nextId) => {
+            levelFilter.value = nextId;
+          }}
+        />
         <label class="search-field">
           <Search size={17} />
           <input
@@ -85,17 +82,16 @@ export function CurriculumPage() {
         </label>
       </div>
       {filtered_modules.length === 0 ? (
-        <div class="empty-state">
-          No hay módulos para esta búsqueda.{' '}
-          <button
-            onClick={() => {
-              searchText.value = '';
-              levelFilter.value = 'todos';
-            }}
-          >
-            Restablecer filtros
-          </button>
-        </div>
+        <EmptyState
+          providerId={active_cloud}
+          title="No hay módulos para esta búsqueda."
+          description="Ajusta el término de búsqueda o vuelve a mostrar los tres niveles del currículo."
+          actionLabel="Restablecer filtros"
+          onAction={() => {
+            searchText.value = '';
+            levelFilter.value = 'todos';
+          }}
+        />
       ) : (
         <div class="module-grid">
           {filtered_modules.map((mod) => {

@@ -6,9 +6,11 @@ import {
   CheckCircle2,
   ChevronRight,
   CloudDownload,
+  FileText,
   FlaskConical,
 } from 'lucide-preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { AccessibleTabs } from '../../../components/ui/AccessibleTabs';
 import { moduleService, services } from '../../../data/course';
 import { moduleLabKey, resolveActiveModule } from '../../../domain/progressMetrics';
 import { getProviderMeta } from '../../../domain/providers';
@@ -24,8 +26,11 @@ import {
 } from '../../../lib/state';
 import { Tag } from '../../../shared/ui/Tag';
 import { LabGuidedChecklist } from '../components/LabGuidedChecklist';
+import { LabMarkdownGuidePanel } from '../components/LabMarkdownGuidePanel';
 import { LabRealAccountGuide } from '../components/LabRealAccountGuide';
 import { LAB_VERIFICATION_TASKS } from '../constants/labs.constants';
+
+type LabTabId = 'guided' | 'markdown' | 'real';
 
 export function LabPage() {
   const mod = resolveActiveModule(currentModule.value);
@@ -39,7 +44,7 @@ export function LabPage() {
     () => progress.value.notes[lab_storage_key] || '',
   );
   const [dirty, setDirty] = useState(false);
-  const [mode, setMode] = useState<'guided' | 'real'>('guided');
+  const [mode, setMode] = useState<LabTabId>('guided');
 
   const draft_ref = useRef({
     storageKey: lab_storage_key,
@@ -71,8 +76,8 @@ export function LabPage() {
     });
   }, []);
 
-  const checked_count = checks.filter(Boolean).length;
   const all_checked = checks.every(Boolean);
+  const is_lab_done = progress.value.completed.includes(lab_storage_key);
 
   return (
     <main class="page-container">
@@ -97,18 +102,22 @@ export function LabPage() {
         </div>
       </div>
 
-      <div class="lab-tabs">
-        <button class={mode === 'guided' ? 'tab-active' : ''} onClick={() => setMode('guided')}>
-          <BookOpen size={17} /> Guía y checklist
-        </button>
-        <button class={mode === 'real' ? 'tab-active' : ''} onClick={() => setMode('real')}>
-          <CloudDownload size={17} /> Práctica en cuenta real
-        </button>
-      </div>
+      <AccessibleTabs
+        ariaLabel="Modalidades del laboratorio"
+        className="lab-tabs"
+        activeClassName="tab-active"
+        activeId={mode}
+        onSelect={setMode}
+        items={[
+          { id: 'guided', label: 'Guía y checklist', icon: <BookOpen size={17} /> },
+          { id: 'markdown', label: 'Cuaderno Markdown', icon: <FileText size={17} /> },
+          { id: 'real', label: 'Práctica en cuenta real', icon: <CloudDownload size={17} /> },
+        ]}
+      />
 
       <div class="lab-layout">
         <div class="lab-main">
-          {mode === 'guided' ? (
+          {mode === 'guided' && (
             <LabGuidedChecklist
               module={mod}
               providerShort={cloud_meta.short}
@@ -121,7 +130,11 @@ export function LabPage() {
                 )
               }
             />
-          ) : (
+          )}
+          {mode === 'markdown' && (
+            <LabMarkdownGuidePanel provider={active_cloud} moduleId={mod.id} />
+          )}
+          {mode === 'real' && (
             <LabRealAccountGuide
               serviceLabel={service_entry.label}
               serviceDocUrl={service_entry.doc}
@@ -134,64 +147,62 @@ export function LabPage() {
               <h3>Cuaderno de evidencias</h3>
             </div>
             <p>
-              Anota lo aprendido, un problema encontrado y la forma de verificarlo. Evita guardar
-              secretos.
+              Documenta arquitectura, pruebas realizadas, resultados y cómo limpiaste los recursos.
+              No pegues secretos ni tokens.
             </p>
             <textarea
-              rows={5}
+              rows={6}
               value={evidence}
-              placeholder="Ejemplo: validé el listado de VPC y comprobé la región de mi proyecto..."
               onInput={(event) => {
                 setEvidence((event.currentTarget as HTMLTextAreaElement).value);
                 setDirty(true);
               }}
+              placeholder="Ejemplo: validé el listado de VPC, registré el rango CIDR y revisé las rutas sin exponer puertos públicos."
             />
             <button
               class="btn btn-secondary"
               onClick={() => {
                 setNotes(lab_storage_key, evidence);
                 setDirty(false);
-                notify('Notas guardadas en este navegador');
+                notify('Evidencias guardadas en este navegador');
               }}
             >
-              <Check size={16} /> Guardar evidencias
+              Guardar evidencias
             </button>
           </section>
         </div>
 
         <aside class="lab-aside">
           <div class="info-card lab-sidecard">
-            <h3>Tu evaluación</h3>
+            <Tag kind="accent">ENTREGABLE</Tag>
+            <h3>Criterio de aprobación</h3>
             <p>
-              La finalización de este laboratorio es una declaración local del alumno, no una
-              validación de infraestructura real.
+              Completa el checklist de seguridad, registra tus evidencias y confirma la práctica.
             </p>
             <div class="score-ring">
-              {checked_count}/{LAB_VERIFICATION_TASKS.length}
+              {is_lab_done ? '100%' : `${checks.filter(Boolean).length * 20}%`}
             </div>
             <button
-              class="btn btn-primary full-width"
-              disabled={!all_checked}
+              class={`btn full-width ${is_lab_done ? 'btn-complete' : 'btn-primary'}`}
+              disabled={!all_checked && !is_lab_done}
               onClick={() => completeTopic(`${mod.id}:lab`, active_cloud)}
             >
-              {progress.value.completed.includes(lab_storage_key)
-                ? 'Laboratorio registrado'
-                : 'Registrar práctica'}{' '}
-              <CheckCircle2 size={16} />
+              {is_lab_done ? (
+                <>
+                  <CheckCircle2 size={17} /> Laboratorio registrado
+                </>
+              ) : (
+                <>
+                  <Check size={17} /> Registrar práctica
+                </>
+              )}
             </button>
-            {!all_checked && (
-              <small>Completa los cinco controles para habilitar el registro.</small>
-            )}
-          </div>
-          <div class="info-card">
-            <strong>Competencias</strong>
-            <div class="module-tags">
-              {mod.tags.map((tag) => (
-                <Tag key={tag}>{tag}</Tag>
-              ))}
-            </div>
-            <button class="text-action" onClick={() => navigate('simulator')}>
-              Abrir simuladores <ArrowRight size={17} />
+            <button
+              class="btn btn-ghost full-width"
+              onClick={() => navigate('senior')}
+              style={{ marginTop: '10px' }}
+            >
+              Probar desafíos Senior <ArrowRight size={16} />
             </button>
           </div>
         </aside>

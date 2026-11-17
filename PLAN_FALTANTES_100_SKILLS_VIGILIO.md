@@ -252,27 +252,27 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `ui-design-system`, `ux-mobile-experience` · `vigilio-docs/standards/experience/responsive-adaptive-safe-area.md`.
   - **Resultado 100%:** Cada unidad permite abrir/ver "Comparar las 3 nubes" sin tablas rotas en móvil.
 
-- [ ] **F3-06 — Componente `ArchitectureDiagram` accesible (SVG temático + descripción estructurada)**
+- [x] **F3-06 — Componente `ArchitectureDiagram` accesible (SVG temático + descripción estructurada)**
   - **Tarea:** Crear renderizador declarativo de diagramas topológicos (capas Internet → Edge/LB → App privada → Datos aislados / Observabilidad / IAM) adaptable a tokens Dark/Light y proveedor activo, acompañado siempre de `<figcaption>` y descripción textual accesible para lectores de pantalla.
   - **Skills / Vigilio Docs:** `ux-accessibility`, `ui-art-direction` · `vigilio-docs/standards/experience/accessibility-inclusive-interactions.md`.
   - **Resultado 100%:** Los 18 módulos y casos Senior cuentan con diagrama técnico claro, escalable y accesible sin imágenes pixeladas.
 
-- [ ] **F3-07 — Componente `MarkdownViewer` seguro (Cero XSS / Cero `dangerouslySetInnerHTML` sin filtro)**
+- [x] **F3-07 — Componente `MarkdownViewer` seguro (Cero XSS / Cero `dangerouslySetInnerHTML` sin filtro)**
   - **Tarea:** Implementar parser estructural seguro a nodos Preact (encabezados, listas, tablas responsivas, callouts de advertencia y bloques de código enlazados a `CodeBlock`) para renderizar dentro de la SPA las 54 guías de `labs/{aws,azure,gcp}/*.md` y los 54 cuadernos Senior sin inyectar HTML crudo.
   - **Skills / Vigilio Docs:** `web-mfe-security-delivery`, `web-mfe-build-feature` · `vigilio-docs/stacks/frontend/web-mfe/security/9-seguridad-hardening-privacidad.md`.
   - **Resultado 100%:** Renderizado rico de guías Markdown dentro de la app manteniendo `0` usos de `innerHTML` / `dangerouslySetInnerHTML`.
 
-- [ ] **F3-08 — Componente `CloudMentor` unificado con dimensiones reservadas (Cero CLS) y poses contextuales**
+- [x] **F3-08 — Componente `CloudMentor` unificado con dimensiones reservadas (Cero CLS) y poses contextuales**
   - **Tarea:** Crear `src/components/mascot/CloudMentor.tsx` preservando intactos los 5 archivos originales de `public/assets/`, reservando `width`/`height` y `aspect-ratio` explícitos para evitar saltos de layout al cambiar de proveedor, recortando/mapeando poses de `cloud-mentor-poses.png` o variantes SVG/badge de estado (bienvenida, explicando, celebrando quiz, pensando, alerta incidente, empty state) manteniendo los rasgos canónicos aprobados (nube con lentes rectangulares, headset y equipo táctico).
   - **Skills / Vigilio Docs:** `ui-art-direction`, `web-mfe-quality` · `vigilio-docs/standards/experience/visual-art-direction-and-originality.md`.
   - **Resultado 100%:** `CLS < 0.02` al cambiar `AWS ↔ Azure ↔ GCP`, sin halos blancos defectuosos en Dark/Light mode y `alt` semántico correcto.
 
-- [ ] **F3-09 — Estados transversales de UI (`BannerStorageError`, `OfflineIndicator`, `EmptyState`, `Tabs` ARIA)**
+- [x] **F3-09 — Estados transversales de UI (`BannerStorageError`, `OfflineIndicator`, `EmptyState`, `Tabs` ARIA)**
   - **Tarea:** Añadir barra persistente recuperable cuando `localStorage` falle (con botón directo de exportación JSON), indicador discreto de estado sin red (aclarando que la SPA sigue funcionando local salvo links externos), y corregir `ProgressBar` con `role="progressbar"`, `aria-valuenow`, `aria-valuemin` y `aria-valuemax`.
   - **Skills / Vigilio Docs:** `ux-accessibility`, `ui-design-system` · `vigilio-docs/standards/experience/components-states-and-contracts.md`.
   - **Resultado 100%:** Todos los widgets interactivos anuncian valor, estado y errores a lectores de pantalla.
 
-- [ ] **F3-10 — Preferencias avanzadas en `SettingsPage` (Movimiento reducido, Gestión granular de datos)**
+- [x] **F3-10 — Preferencias avanzadas en `SettingsPage` (Movimiento reducido, Gestión granular de datos)**
   - **Tarea:** Agregar en Ajustes: toggle explícito de **Reducir animaciones** (`data-motion="reduced"` además de respetar `@media (prefers-reduced-motion)`), exportación/borrado granular (poder reiniciar solo una nube o solo un expediente Senior sin perder toda la academia) e resumen de uso de almacenamiento local.
   - **Skills / Vigilio Docs:** `ui-interaction-motion`, `ux-web-experience` · `vigilio-docs/standards/experience/motion-feedback-and-haptics.md`.
   - **Resultado 100%:** Control total del usuario sobre accesibilidad motriz/vestibular y sobre sus datos locales.

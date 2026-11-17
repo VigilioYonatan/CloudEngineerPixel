@@ -1,4 +1,4 @@
-import { getProviderMeta } from '../../../domain/providers';
+import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { provider } from '../../../lib/state';
 
 type CloudMascotProps = {
@@ -7,12 +7,13 @@ type CloudMascotProps = {
 };
 
 export function CloudMascot({ size = 'large', className = '' }: CloudMascotProps) {
-  const meta = getProviderMeta(provider.value);
+  const mappedSize = size === 'large' ? 'hero' : size === 'medium' ? 'banner' : 'card';
   return (
-    <img
-      class={`mascot mascot-${size} ${className}`}
-      src={meta.mascot.default}
-      alt={meta.mascot.alt}
+    <CloudMentor
+      providerId={provider.value}
+      variant="provider"
+      size={mappedSize}
+      className={className}
     />
   );
 }

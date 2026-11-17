@@ -1,11 +1,18 @@
-import { ArrowRight, CheckCircle2, Search, ShieldAlert } from 'lucide-preact';
+import { ArrowRight, CheckCircle2, FileText, Search, ShieldAlert } from 'lucide-preact';
+import { useEffect, useState } from 'preact/hooks';
+import { ArchitectureDiagram } from '../../../components/ui/ArchitectureDiagram';
 import { CodeBlock } from '../../../components/ui/CodeBlock';
+import { MarkdownViewer } from '../../../components/ui/MarkdownViewer';
+import type { Provider } from '../../../data/course';
 import type { investigationFor } from '../../../data/seniorInvestigations';
 import type { SeniorPlaybook } from '../../../data/seniorPlaybooks';
+import { loadSeniorWorkbookMarkdown } from '../../../lib/markdownGuideLoader';
 
 type InvestigationDetails = ReturnType<typeof investigationFor>;
 
 type InvestigationStageProps = {
+  cloudId: Provider;
+  caseId: string;
   details: InvestigationDetails;
   playbook: SeniorPlaybook | null;
   inspected: readonly string[];
@@ -14,12 +21,37 @@ type InvestigationStageProps = {
 };
 
 export function InvestigationStage({
+  cloudId,
+  caseId,
   details,
   playbook,
   inspected,
   onInspectExhibit,
   onAdvanceToDiagnosis,
 }: InvestigationStageProps) {
+  const [showWorkbook, setShowWorkbook] = useState(false);
+  const [workbookMd, setWorkbookMd] = useState<string | null>(null);
+
+  useEffect(() => {
+    setShowWorkbook(false);
+    setWorkbookMd(null);
+  }, [cloudId, caseId]);
+
+  useEffect(() => {
+    if (!showWorkbook) return;
+    let active = true;
+    loadSeniorWorkbookMarkdown(cloudId, caseId)
+      .then((content) => {
+        if (active) setWorkbookMd(content);
+      })
+      .catch(() => {
+        if (active) setWorkbookMd(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [showWorkbook, cloudId, caseId]);
+
   return (
     <>
       <section class="info-card">
@@ -31,7 +63,29 @@ export function InvestigationStage({
         <p class="sr-hint">
           Datos de laboratorio ficticios. No hay conexión con las cuentas cloud del alumno.
         </p>
+        <div class="action-row" style={{ marginTop: '12px' }}>
+          <button
+            type="button"
+            class="btn btn-secondary btn-compact"
+            onClick={() => setShowWorkbook((prev) => !prev)}
+          >
+            <FileText size={15} />{' '}
+            {showWorkbook ? 'Ocultar cuaderno Markdown' : 'Leer cuaderno del caso aquí'}
+          </button>
+        </div>
       </section>
+
+      {showWorkbook && (
+        <section class="info-card" aria-label="Cuaderno práctico integrado">
+          {workbookMd ? (
+            <MarkdownViewer markdown={workbookMd} provider={cloudId} />
+          ) : (
+            <p role="status">Cargando cuaderno Senior de {cloudId.toUpperCase()}...</p>
+          )}
+        </section>
+      )}
+
+      <ArchitectureDiagram provider={cloudId} seniorCaseId={caseId} />
 
       {playbook && (
         <section class="info-card sr-ops-brief" aria-label="Plan de respuesta operativo">

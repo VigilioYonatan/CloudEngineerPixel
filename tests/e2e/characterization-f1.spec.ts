@@ -6,7 +6,7 @@ test('F1-01 characterization: Learn catalog filters by level, searches modules, 
   await page.goto('/?cloud=aws#learn');
   await expect(page.locator('.module-card')).toHaveCount(18);
 
-  await page.getByRole('button', { name: 'Ingeniería', exact: true }).click();
+  await page.getByRole('tab', { name: 'Ingeniería', exact: true }).click();
   await expect(page.locator('.module-card')).toHaveCount(6);
 
   const search = page.getByRole('searchbox', { name: 'Buscar módulos' });
@@ -48,10 +48,10 @@ test('F1-01 characterization: Lab gates completion behind 5 checks, shows real-c
   const registerButton = page.getByRole('button', { name: /Registrar práctica/ });
   await expect(registerButton).toBeDisabled();
 
-  await page.getByRole('button', { name: /Práctica en cuenta real/ }).click();
+  await page.getByRole('tab', { name: /Práctica en cuenta real/ }).click();
   await expect(page.getByText('Los proveedores pueden generar cargos.')).toBeVisible();
 
-  await page.getByRole('button', { name: /Guía y checklist/ }).click();
+  await page.getByRole('tab', { name: /Guía y checklist/ }).click();
   for (const item of await page.locator('.task-list label').all()) {
     await item.click();
   }
@@ -81,18 +81,18 @@ test('F1-01 characterization: All 5 Simulators compute deterministic outputs and
   await expect(page.getByText(/Formato inválido\./)).toBeVisible();
   await cidrInput.fill('10.0.0.0/24');
 
-  await page.getByRole('button', { name: 'Decisiones IAM' }).click();
+  await page.getByRole('tab', { name: 'Decisiones IAM' }).click();
   await expect(page.getByText('Permitido en el modelo')).toBeVisible();
   await page.getByLabel(/Acción requerida/).selectOption('admin');
   await expect(page.getByText('Denegado en el modelo')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Autoescalado' }).click();
+  await page.getByRole('tab', { name: 'Autoescalado' }).click();
   await expect(page.locator('.result-big')).toContainText('8');
 
-  await page.getByRole('button', { name: 'SLO & Fiabilidad' }).click();
+  await page.getByRole('tab', { name: 'SLO & Fiabilidad' }).click();
   await expect(page.locator('.result-big')).toContainText('43 min');
 
-  await page.getByRole('button', { name: 'Architecture Studio' }).click();
+  await page.getByRole('tab', { name: 'Architecture Studio' }).click();
   await page.getByLabel(/Tipo de carga/).selectOption('events');
   await expect(page.locator('.result-big')).toContainText('AWS Lambda');
 

@@ -1,5 +1,6 @@
 import { FlaskConical, Search } from 'lucide-preact';
 import { useState } from 'preact/hooks';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import type { Level, Provider } from '../../../data/course';
 import { navigate, progress, provider, setProvider } from '../../../lib/state';
 import { LabCatalogCard } from '../components/LabCatalogCard';
@@ -155,12 +156,13 @@ export function LabsCatalogPage() {
       </section>
 
       {filtered_labs.length === 0 ? (
-        <div class="empty-state">
-          No hay prácticas que coincidan con los filtros seleccionados.{' '}
-          <button onClick={() => setCriteria(INITIAL_FILTERS)}>
-            Restablecer filtros de laboratorios
-          </button>
-        </div>
+        <EmptyState
+          providerId={provider.value}
+          title="No hay prácticas que coincidan con los filtros seleccionados"
+          description="Limpia la combinación activa de proveedor, nivel, modalidad o perfil de costo."
+          actionLabel="Restablecer filtros de laboratorios"
+          onAction={() => setCriteria(INITIAL_FILTERS)}
+        />
       ) : (
         <div class="labs-catalog-grid">
           {filtered_labs.map((lab_item) => (

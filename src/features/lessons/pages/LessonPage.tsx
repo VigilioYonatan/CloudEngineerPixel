@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Target,
 } from 'lucide-preact';
+import { ArchitectureDiagram } from '../../../components/ui/ArchitectureDiagram';
 import { CloudServiceComparison } from '../../../components/ui/CloudServiceComparison';
 import { CodeBlock } from '../../../components/ui/CodeBlock';
 import { levelInfo, moduleService, services } from '../../../data/course';
@@ -104,6 +105,8 @@ export function LessonPage() {
               <span>Monitoreo, recuperación, rendimiento y costo.</span>
             </div>
           </div>
+
+          <ArchitectureDiagram provider={active_cloud} moduleId={mod.id} />
 
           <h2>02. Taller específico: {topic_title}</h2>
           <div class="study-workshop">

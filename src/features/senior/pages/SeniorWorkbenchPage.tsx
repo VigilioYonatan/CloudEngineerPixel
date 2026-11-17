@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-preact';
+import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { getProviderMeta } from '../../../domain/providers';
 import type { SeniorStage } from '../../../lib/seniorSession.mjs';
 import { notify } from '../../../lib/state';
@@ -41,7 +42,13 @@ export function SeniorWorkbench() {
                 <span>{details.service[p]}</span>
               </div>
             </div>
-            <img src={cloud_meta.mascot.default} alt={`Mentor ${cloud_meta.short}`} />
+            <CloudMentor
+              providerId={p}
+              variant="pose"
+              pose="incident"
+              size="banner"
+              alt={`Mentor ${cloud_meta.short} investigando ${current.id.toUpperCase()}`}
+            />
           </div>
 
           <nav class="sr-stage-tabs" aria-label="Etapas del incidente">
@@ -62,6 +69,8 @@ export function SeniorWorkbench() {
             <div class="sr-main">
               {state.stage === 'investigar' && (
                 <InvestigationStage
+                  cloudId={p}
+                  caseId={current.id}
                   details={details}
                   playbook={playbook}
                   inspected={session.inspected}

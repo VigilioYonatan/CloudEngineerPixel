@@ -4238,3 +4238,399 @@ p {
     transform: rotate(180deg);
   }
 }
+
+/* ==========================================================================
+   F3-06 .. F3-10 · ArchitectureDiagram, MarkdownViewer, CloudMentor,
+                    ARIA States & Granular Preferences
+   ========================================================================== */
+
+/* F3-06 · Declarative SVG ArchitectureDiagram */
+.arch-diagram-figure {
+  margin: 22px 0;
+  display: grid;
+  gap: 14px;
+}
+
+.arch-diagram-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.arch-diagram-provider {
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
+}
+
+.arch-diagram-canvas {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 8px;
+}
+
+.arch-diagram-svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  height: auto;
+}
+
+.arch-diagram-caption {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.arch-diagram-details {
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.arch-diagram-details summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.arch-diagram-details ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+}
+
+/* F3-07 · Safe Structural MarkdownViewer */
+.markdown-viewer {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.markdown-viewer .md-h1 {
+  font-size: 1.35rem;
+  margin: 8px 0 2px;
+  color: var(--text);
+}
+
+.markdown-viewer .md-h2 {
+  font-size: 1.08rem;
+  margin: 14px 0 2px;
+  color: var(--text);
+}
+
+.markdown-viewer .md-h3 {
+  font-size: 0.95rem;
+  margin: 10px 0 0;
+  color: var(--text);
+}
+
+.markdown-viewer p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+.md-inline-code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.md-list {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.md-list li.md-check-item {
+  list-style: none;
+  margin-left: -20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.md-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border-left: 3px solid var(--accent);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.md-callout-warn {
+  border-left-color: var(--gold);
+}
+
+.md-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.md-table th,
+.md-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.md-table th {
+  background: var(--surface2);
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* F3-08 · Unified Zero-CLS CloudMentor Stage & 5x3 Pose Sprite */
+.cloud-mentor-stage {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  border-radius: 26px;
+  background: #ffffff;
+  border: 2px solid rgba(var(--accent-rgb), 0.35);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.24),
+    0 0 0 6px rgba(var(--accent-rgb), 0.08);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.cloud-mentor-compact {
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+}
+
+.cloud-mentor-stage .cloud-mentor-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 6px;
+  mix-blend-mode: normal;
+  mask-image: none;
+  filter: none;
+}
+
+.cloud-mentor-sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: 500% 300%;
+}
+
+.sr-banner .cloud-mentor-stage,
+.sr-top .cloud-mentor-stage {
+  position: relative;
+  z-index: 2;
+}
+
+.quiz-feedback-mentor {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@media (max-width: 720px) {
+  .hero-art .cloud-mentor-hero {
+    width: 260px !important;
+    height: 260px !important;
+  }
+  .feature-band-art .cloud-mentor-banner,
+  .sr-banner .cloud-mentor-banner,
+  .sr-top .cloud-mentor-banner {
+    width: 148px !important;
+    height: 148px !important;
+  }
+  .sr-banner,
+  .sr-top {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+/* F3-09 · OfflineIndicator, BannerStorageError & Rich EmptyState */
+.offline-indicator,
+.storage-error-banner {
+  max-width: 1360px;
+  margin: 12px auto 0;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+}
+
+.offline-indicator {
+  justify-content: flex-start;
+  background: var(--surface2);
+  border: 1px solid var(--border-strong, var(--border));
+  color: var(--text);
+}
+
+.offline-indicator svg {
+  color: var(--gold-text);
+  flex: none;
+}
+
+.storage-error-banner {
+  background: color-mix(in srgb, var(--red) 10%, var(--surface));
+  border: 1px solid var(--red-text);
+}
+
+.storage-error-copy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.storage-error-copy strong {
+  display: block;
+  color: var(--text);
+}
+
+.storage-error-copy span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.storage-error-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.empty-state-rich {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 34px 24px;
+}
+
+.empty-state-copy {
+  display: grid;
+  gap: 4px;
+  max-width: 480px;
+}
+
+.empty-state-copy strong {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.empty-state-copy p {
+  margin: 0;
+}
+
+/* F3-10 · Explicit data-motion="reduced" & Granular Data Controls */
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.granular-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.granular-provider-card {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 12px;
+}
+
+.granular-provider-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.granular-provider-head strong {
+  display: block;
+  font-size: 13px;
+}
+
+.granular-provider-head small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.granular-provider-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.granular-case-reset {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+
+.granular-case-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.granular-case-controls select {
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 12px;
+  min-height: 40px;
+}
+
+@media (max-width: 860px) {
+  .granular-provider-grid {
+    grid-template-columns: 1fr;
+  }
+}

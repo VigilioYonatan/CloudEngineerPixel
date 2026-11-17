@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Terminal,
 } from 'lucide-preact';
+import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { levelInfo, modules, type Level } from '../../../data/course';
 import { CLOUD_PROVIDER_IDS, getProviderMeta } from '../../../domain/providers';
 import { levelFilter, navigate, provider, setProvider } from '../../../lib/state';
@@ -177,7 +178,12 @@ export function HomePage() {
         </div>
         <div class="feature-band-art">
           <div class="senior-halo" />
-          <img src={active_meta.mascot.senior} alt="Cloud Mentor en modo senior" />
+          <CloudMentor
+            providerId={provider.value}
+            variant="senior-artwork"
+            size="banner"
+            alt={`Cloud Mentor en modo senior (${active_meta.short})`}
+          />
         </div>
       </section>
 
