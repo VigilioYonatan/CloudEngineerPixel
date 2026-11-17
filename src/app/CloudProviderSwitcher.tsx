@@ -12,9 +12,13 @@ export function CloudProviderSwitcher() {
         aria-label="Seleccionar proveedor cloud"
         value={active_provider}
         onChange={(event) => {
-          const next_value = (event.currentTarget as HTMLSelectElement).value;
+          const select_el = event.currentTarget as HTMLSelectElement;
+          const next_value = select_el.value;
           if (isCloudProviderId(next_value)) {
-            setProvider(next_value);
+            const switched = setProvider(next_value);
+            if (!switched) {
+              select_el.value = provider.value;
+            }
           }
         }}
       >

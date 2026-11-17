@@ -13,10 +13,10 @@ import {
   Terminal,
 } from 'lucide-preact';
 import { levelInfo, modules, type Level } from '../../../data/course';
-import { totalCompletedCount } from '../../../domain/progressMetrics';
 import { CLOUD_PROVIDER_IDS, getProviderMeta } from '../../../domain/providers';
-import { levelFilter, navigate, progress, provider, setProvider } from '../../../lib/state';
+import { levelFilter, navigate, provider, setProvider } from '../../../lib/state';
 import { ProviderBadge } from '../../../shared/ui/ProviderBadge';
+import { FirstVisitOnboardingCard } from '../components/FirstVisitOnboardingCard';
 import { HomeHero } from '../components/HomeHero';
 import { SectionHeading } from '../components/SectionHeading';
 
@@ -24,11 +24,11 @@ const CURRICULUM_LEVELS: readonly Level[] = ['fundamentos', 'intermedio', 'avanz
 
 export function HomePage() {
   const active_meta = getProviderMeta(provider.value);
-  const done_count = totalCompletedCount(progress.value.completed);
 
   return (
     <main>
-      <HomeHero doneCount={done_count} />
+      <FirstVisitOnboardingCard />
+      <HomeHero />
 
       <section class="stats-strip">
         <div>

@@ -181,7 +181,7 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ---
 
-### BLOQUE 2 — Páginas, Rutas y Navegación Faltantes (8 Tareas · 3/8 Completadas)
+### BLOQUE 2 — Páginas, Rutas y Navegación Faltantes (8 Tareas · 8/8 Completadas — 100%)
 
 - [x] **F2-01 — Router Hash completo con Deep-Linking y Query Params estables (`PASS`)**
   - **Tarea:** Soportar rutas profundas canónicas: `#/` (Home), `#/mapa` (Mapa Curricular), `#/aprender` (Catálogo), `#/aula/:moduleId/:unitIndex` (Lección exacta), `#/labs` (Catálogo Labs), `#/labs/:moduleId` (Lab específico), `#/simuladores/:simId` (Simulador específico), `#/senior` (Catálogo Senior), `#/senior/:caseId` (Expediente Senior), `#/proyectos`, `#/progreso`, `#/ajustes`, `#/acerca`, manteniendo `?cloud=aws|azure|gcp` y compatibilidad hacia atrás con hashes cortos V9 (`#learn`, `#lesson/networks`, `#senior`).
@@ -198,30 +198,30 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `ux-web-experience` · `vigilio-docs/standards/experience/information-architecture-and-user-flows.md`.
   - **Resultado 100%:** Acceso directo desde el menú principal (`Laboratorios`), 4 filtros combinables, búsqueda y recuperación de estado vacío probados en Unit, BDD y Playwright E2E.
 
-- [ ] **F2-04 — Nueva página `/#/proyectos` (3 Proyectos Integradores y Portfolio Defendible)**
-  - **Tarea:** Implementar vista dedicada para el **Proyecto 1 (Sitio Estático Seguro + Costos)**, **Proyecto 2 (API Contenedores/Serverless + IaC + CI/CD OIDC + Observabilidad)** y **Proyecto 3 (Capstone Arquitecto Multicloud con C4, Threat Model, RTO/RPO, SLO y TCO)**, con checklist de entregables, rúbrica ponderada y exportador de plantilla ADR/Portfolio en Markdown.
+- [x] **F2-04 — Nueva página `/#/proyectos` (3 Proyectos Integradores y Portfolio Defendible) (`PASS`)**
+  - **Tarea:** Implementar `ProjectsPage` para **Proyecto 1 (Sitio Estático Seguro + Costos)**, **Proyecto 2 (API Contenedores/Serverless + IaC + CI/CD OIDC + Observabilidad)** y **Proyecto 3 (Capstone Arquitecto Multicloud con C4, Threat Model, RTO/RPO, SLO y TCO)**, con checklist persistente, rúbrica ponderada (`100%`) y exportador `buildPortfolioAdrMarkdown` en Markdown.
   - **Skills / Vigilio Docs:** `aws-platform-foundation`, `platform-observability-sre`, `ux-web-experience` · `vigilio-docs/platform/sre/adr-threat-modeling.md`.
-  - **Resultado 100%:** Los 3 proyectos curriculares exigidos en la sección 21 de `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` existen como experiencia interactiva y descargable.
+  - **Resultado 100%:** Los 3 proyectos curriculares exigidos en la sección 21 de `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` existen como experiencia interactiva y descargable (`.md`), probada en Unit, BDD y Playwright E2E.
 
-- [ ] **F2-05 — Nueva página `/#/acerca` (Metodología, Alcance Honesto, Seguridad Cloud y Licencias)**
-  - **Tarea:** Crear vista informativa con la metodología "1 concepto común → 3 implementaciones cloud → criterio Senior", límites explícitos (sin ejecución cloud desde navegador ni certificación oficial de proveedores), guía de seguridad de cuentas (`CLOUD_SAFETY.md`) y aviso legal de marcas independientes.
+- [x] **F2-05 — Nueva página `/#/acerca` (Metodología, Alcance Honesto, Seguridad Cloud y Licencias) (`PASS`)**
+  - **Tarea:** Crear `AboutPage` con las 4 secciones (`metodologia`, `seguridad-cloud` alineada con `docs/CLOUD_SAFETY.md`, `privacidad` y `no-afiliacion`) y conectar los enlaces institucionales del `AppFooter`.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `repository-readme-architecture` · `vigilio-docs/standards/experience/content-forms-localization-and-trust.md`.
-  - **Resultado 100%:** Enlaces del `Footer` (Privacidad, Seguridad Cloud, Metodología, No afiliación) navegan a secciones reales y verificables.
+  - **Resultado 100%:** Enlaces del `Footer` (`Metodología`, `Seguridad Cloud`, `Privacidad`, `No afiliación`) navegan a secciones reales `#/acerca/:sectionId` verificadas en E2E.
 
-- [ ] **F2-06 — Pantalla de recuperación ante ruta inexistente o recurso inválido (`NotFound / Recovery State`)**
-  - **Tarea:** Cuando la URL contenga un `moduleId`, `unitIndex`, `simId` o `caseId` inexistente, mostrar componente `RouteRecoveryState` explicando qué falló y ofreciendo volver a `Inicio` o al catálogo correspondiente sin perder el progreso ni el proveedor activo.
+- [x] **F2-06 — Pantalla de recuperación ante ruta inexistente o recurso inválido (`NotFound / Recovery State`) (`PASS`)**
+  - **Tarea:** Cuando la URL contenga una vista, `moduleId`, `unitIndex`, `simId`, `caseId` o sección inexistente, mostrar `RouteRecoveryState` explicando qué falló y ofreciendo volver a `Inicio` o al catálogo correspondiente sin perder progreso ni proveedor activo.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `ui-design-system` · `vigilio-docs/standards/experience/components-states-and-contracts.md`.
-  - **Resultado 100%:** Cero redirecciones mudas o pantallas rotas ante hashes malformados (`#/aula/no-existe`, `#/senior/s99`).
+  - **Resultado 100%:** Cero redirecciones mudas o pantallas rotas ante hashes malformados (`#/aula/no-existe`, `#/aula/networks/99`, `#/senior/s99`, `#/ruta-desconocida`), probado en Unit, BDD y E2E.
 
-- [ ] **F2-07 — Onboarding ligero de primera visita y botón real «Continuar donde me quedé»**
-  - **Tarea:** En la primera visita sin `cea:provider` previo, permitir escoger ruta inicial (`AWS`, `Azure` o `Google Cloud`) con breve guía según perfil, y guardar `lastVisited: { view, moduleId, unitIndex }` para que el CTA `"Continuar aprendiendo"` lleve exactamente a la última unidad pendiente (no siempre al catálogo general).
+- [x] **F2-07 — Onboarding ligero de primera visita y botón real «Continuar donde me quedé» (`PASS`)**
+  - **Tarea:** En primera visita sin `cea:provider` previo mostrar `FirstVisitOnboardingCard` no bloqueante con guía según perfil (`AWS`, `Azure`, `GCP`), y persistir `lastVisited` (`onboardingState.ts` + `resolveResumeTarget`) para que el CTA `"Continuar donde me quedé"` reanude exactamente la unidad pendiente.
   - **Skills / Vigilio Docs:** `ux-web-experience`, `ux-information-architecture` · `vigilio-docs/standards/experience/information-architecture-and-user-flows.md`.
-  - **Resultado 100%:** El botón principal del Hero reanuda la lección exacta en curso y el onboarding no bloquea la exploración libre.
+  - **Resultado 100%:** El botón principal del Hero reanuda `#/aula/:moduleId/:unitIndex` exacto (con rollover al siguiente módulo al completar) y el onboarding jamás bloquea la exploración libre.
 
-- [ ] **F2-08 — Protección de cambios sin guardar al cambiar de Proveedor o Ruta**
-  - **Tarea:** Si el usuario tiene texto en edición sin guardar en un informe Senior o una importación en curso y cambia el selector de proveedor en el Header, pedir confirmación accesible o autoguardar atómicamente en el scope previo antes de conmutar el contexto.
+- [x] **F2-08 — Protección de cambios sin guardar al cambiar de Proveedor o Ruta (`PASS`)**
+  - **Tarea:** Crear `contextSwitchGuard.ts` (`createContextSwitchCoordinator`) para autoguardar atómicamente borradores sucios (`LabPage`, `ProjectsPage`, `InstructorReview`) en su scope previo antes de conmutar proveedor o ruta, y exigir confirmación explícita si existe una importación asíncrona en curso.
   - **Skills / Vigilio Docs:** `ux-web-experience`, `web-mfe-build-feature` · `vigilio-docs/standards/experience/components-states-and-contracts.md`.
-  - **Resultado 100%:** Cero pérdida accidental de borradores o contaminación cruzada al conmutar `AWS ↔ Azure ↔ GCP`.
+  - **Resultado 100%:** Cero pérdida accidental de borradores y cero contaminación cruzada al conmutar `AWS ↔ Azure ↔ GCP`, verificado en Unit, BDD y Playwright E2E.
 
 ---
 

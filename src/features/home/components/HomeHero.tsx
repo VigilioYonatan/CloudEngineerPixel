@@ -7,15 +7,19 @@ import {
   Terminal,
 } from 'lucide-preact';
 import { getProviderMeta } from '../../../domain/providers';
-import { navigate, provider } from '../../../lib/state';
+import { resolveResumeTarget } from '../../../domain/resumeLearning';
+import { lastVisited } from '../../../lib/onboardingState';
+import { navigate, progress, provider } from '../../../lib/state';
 import { CloudMascot } from './CloudMascot';
 
-type HomeHeroProps = {
-  doneCount: number;
-};
-
-export function HomeHero({ doneCount }: HomeHeroProps) {
-  const active_meta = getProviderMeta(provider.value);
+export function HomeHero() {
+  const active_cloud = provider.value;
+  const active_meta = getProviderMeta(active_cloud);
+  const resume_target = resolveResumeTarget(
+    lastVisited.value,
+    progress.value.completed,
+    active_cloud,
+  );
 
   return (
     <section class="hero">
@@ -35,8 +39,25 @@ export function HomeHero({ doneCount }: HomeHeroProps) {
           ingeniería real.
         </p>
         <div class="hero-actions">
-          <button class="btn btn-primary btn-lg" onClick={() => navigate('learn')}>
-            {doneCount ? 'Continuar aprendiendo' : 'Empezar a aprender'}
+          <button
+            class="btn btn-primary btn-lg"
+            title={
+              resume_target
+                ? `Reanudar: ${resume_target.moduleTitle} · ${resume_target.unitTitle}`
+                : undefined
+            }
+            onClick={() => {
+              if (resume_target) {
+                navigate('lesson', {
+                  resourceId: resume_target.moduleId,
+                  unitIndex: resume_target.unitIndex,
+                });
+              } else {
+                navigate('learn');
+              }
+            }}
+          >
+            {resume_target ? 'Continuar donde me quedé' : 'Empezar a aprender'}
             <ArrowRight size={19} />
           </button>
           <button class="btn btn-ghost btn-lg" onClick={() => navigate('senior')}>

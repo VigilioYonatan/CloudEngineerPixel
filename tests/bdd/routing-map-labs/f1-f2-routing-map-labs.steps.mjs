@@ -118,7 +118,7 @@ export function buildRoutingMapLabsBddSteps() {
       learnCanonical: world.router.parseHashRoute('#/aprender'),
       lessonDeep: world.router.parseHashRoute('#/aula/networks/2'),
       labsCatalog: world.router.parseHashRoute('#/labs'),
-      labSpecific: world.router.parseHashRoute('#/labs/kubernetes'),
+      labSpecific: world.router.parseHashRoute('#/labs/containers'),
       simDeep: world.router.parseHashRoute('#/simuladores/slo'),
       seniorCatalog: world.router.parseHashRoute('#/senior'),
       seniorDeep: world.router.parseHashRoute('#/senior/s07'),
@@ -144,7 +144,7 @@ export function buildRoutingMapLabsBddSteps() {
       assert.equal(r.lessonDeep?.unitIndex, 2);
       assert.equal(r.labsCatalog?.view, 'labs');
       assert.equal(r.labSpecific?.view, 'lab');
-      assert.equal(r.labSpecific?.resourceId, 'kubernetes');
+      assert.equal(r.labSpecific?.resourceId, 'containers');
       assert.equal(r.simDeep?.view, 'simulator');
       assert.equal(r.simDeep?.simId, 'slo');
       assert.equal(r.seniorCatalog?.view, 'senior');

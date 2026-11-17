@@ -1,8 +1,9 @@
 import { Suspense, lazy } from 'preact/compat';
 import { AppShell } from './app/AppShell';
 import { HomePage } from './features/home/pages/HomePage';
-import { view } from './lib/state';
+import { routeRecovery, view } from './lib/state';
 import { RouteLoadingState } from './shared/ui/RouteLoadingState';
+import { RouteRecoveryState } from './shared/ui/RouteRecoveryState';
 
 const CurriculumMapPage = lazy(() =>
   import('./features/curriculum/pages/CurriculumMapPage').then((m) => ({
@@ -29,6 +30,11 @@ const LabPage = lazy(() =>
     default: m.LabPage,
   })),
 );
+const ProjectsPage = lazy(() =>
+  import('./features/projects/pages/ProjectsPage').then((m) => ({
+    default: m.ProjectsPage,
+  })),
+);
 const SimulatorsPage = lazy(() =>
   import('./features/simulators/pages/SimulatorsPage').then((m) => ({
     default: m.SimulatorsPage,
@@ -49,13 +55,21 @@ const SettingsPage = lazy(() =>
     default: m.SettingsPage,
   })),
 );
+const AboutPage = lazy(() =>
+  import('./features/about/pages/AboutPage').then((m) => ({
+    default: m.AboutPage,
+  })),
+);
 
 export function App() {
   const active_view = view.value;
+  const active_recovery = routeRecovery.value;
 
   return (
     <AppShell>
-      {active_view === 'home' ? (
+      {active_recovery ? (
+        <RouteRecoveryState diagnostic={active_recovery} />
+      ) : active_view === 'home' ? (
         <HomePage />
       ) : (
         <Suspense fallback={<RouteLoadingState />}>
@@ -65,8 +79,10 @@ export function App() {
             <CurriculumPage />
           ) : active_view === 'lesson' ? (
             <LessonPage />
-          ) : active_view === 'labs' || active_view === 'projects' ? (
+          ) : active_view === 'labs' ? (
             <LabsCatalogPage />
+          ) : active_view === 'projects' ? (
+            <ProjectsPage />
           ) : active_view === 'lab' ? (
             <LabPage />
           ) : active_view === 'simulator' ? (
@@ -75,6 +91,8 @@ export function App() {
             <SeniorWorkbench />
           ) : active_view === 'progress' ? (
             <ProgressPage />
+          ) : active_view === 'about' ? (
+            <AboutPage />
           ) : (
             <SettingsPage />
           )}

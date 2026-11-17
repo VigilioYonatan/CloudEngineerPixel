@@ -51,11 +51,11 @@ test('F1-04 unit: router parses and formats canonical and legacy V9 hash routes 
     view: 'lesson',
     resourceId: 'networks',
   });
-  assert.deepEqual(router.parseHashRoute('#/lab/kubernetes'), {
+  assert.deepEqual(router.parseHashRoute('#/lab/containers'), {
     view: 'lab',
-    resourceId: 'kubernetes',
+    resourceId: 'containers',
   });
-  assert.equal(router.parseHashRoute('#invalid-route/xyz'), null);
+  assert.equal(router.parseHashRoute('#invalid-route/xyz').routeRecovery.kind, 'route');
 
   assert.equal(router.formatHashRoute('home'), '#/');
   assert.equal(router.formatHashRoute('lesson', 'networks'), '#/aula/networks');

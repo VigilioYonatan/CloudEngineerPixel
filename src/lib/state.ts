@@ -2,18 +2,27 @@ import { effect, signal } from '@preact/signals';
 import {
   formatHashRoute,
   parseHashRoute,
+  type AboutSectionId,
   type AppView,
   type RouteFormatOptions,
+  type RouteRecoveryDiagnostic,
   type SimulatorRouteId,
 } from '../app/router';
 import { APP_VERSION, PROGRESS_EXPORT_VERSION, PROGRESS_SCHEMA_VERSION } from '../config/appMeta';
 import type { Provider } from '../data/course';
+import { appContextGuard } from './contextSwitchGuard';
 import {
   createEmptyValidatedProgress,
   inspectStoredProgressRaw,
   migrateProgressSnapshot,
   type ValidatedProgress,
 } from './importValidation.mjs';
+import {
+  clearLastVisitedUnit,
+  markOnboardingCompleted,
+  recordLastVisitedUnit,
+  showOnboarding,
+} from './onboardingState';
 
 export type View = AppView;
 
@@ -77,6 +86,8 @@ export const currentModule = signal('cloud-fundamentals');
 export const currentTopic = signal(0);
 export const currentSimMode = signal<SimulatorRouteId>('cidr');
 export const currentSeniorCaseId = signal<string | null>(null);
+export const currentAboutSection = signal<AboutSectionId>('metodologia');
+export const routeRecovery = signal<RouteRecoveryDiagnostic | null>(null);
 export const levelFilter = signal('todos');
 export const searchText = signal('');
 
@@ -101,42 +112,65 @@ export function notify(message: string) {
   toast.value = message;
 }
 
-export function setProvider(p: Provider) {
-  if (!['aws', 'azure', 'gcp'].includes(p)) return;
+export function setProvider(p: Provider): boolean {
+  if (!['aws', 'azure', 'gcp'].includes(p)) return false;
+  if (p !== provider.value) {
+    const prep = appContextGuard.prepareContextSwitch();
+    if (!prep.allowed) return false;
+  }
+  markOnboardingCompleted();
   provider.value = p;
   history.replaceState({}, '', `${location.pathname}?cloud=${p}${location.hash}`);
   notify(`Ruta ${p.toUpperCase()} activada`);
+  return true;
 }
 
 export function applyParsedRoute(raw_hash: string): void {
   const parsed = parseHashRoute(raw_hash);
-  if (!parsed) return;
+  routeRecovery.value = parsed.routeRecovery || null;
   view.value = parsed.view;
+  if (parsed.routeRecovery) return;
+
   if (parsed.view === 'lesson') {
     if (parsed.resourceId) currentModule.value = parsed.resourceId;
+    const next_unit = parsed.unitIndex !== undefined ? parsed.unitIndex : currentTopic.value;
     if (parsed.unitIndex !== undefined) currentTopic.value = parsed.unitIndex;
+    if (parsed.resourceId) recordLastVisitedUnit(parsed.resourceId, next_unit);
   } else if (parsed.view === 'lab' && parsed.resourceId) {
     currentModule.value = parsed.resourceId;
   } else if (parsed.view === 'simulator') {
     currentSimMode.value = parsed.simId || 'cidr';
   } else if (parsed.view === 'senior') {
     currentSeniorCaseId.value = parsed.caseId || null;
+  } else if (parsed.view === 'about' && parsed.aboutSection) {
+    currentAboutSection.value = parsed.aboutSection;
   }
 }
 
 export function navigate(target_view: View, options?: RouteFormatOptions) {
+  const prep = appContextGuard.prepareContextSwitch();
+  if (!prep.allowed) return;
+
   const normalized = typeof options === 'string' ? { resourceId: options } : options || {};
+  routeRecovery.value = null;
+
   if (normalized.resourceId && (target_view === 'lesson' || target_view === 'lab')) {
     currentModule.value = normalized.resourceId;
   }
-  if (target_view === 'lesson' && normalized.unitIndex !== undefined) {
-    currentTopic.value = normalized.unitIndex;
+  if (target_view === 'lesson') {
+    const next_unit =
+      normalized.unitIndex !== undefined ? normalized.unitIndex : currentTopic.value;
+    if (normalized.unitIndex !== undefined) currentTopic.value = normalized.unitIndex;
+    recordLastVisitedUnit(normalized.resourceId || currentModule.value, next_unit);
   }
   if (target_view === 'simulator') {
     currentSimMode.value = normalized.simId || 'cidr';
   }
   if (target_view === 'senior') {
     currentSeniorCaseId.value = normalized.caseId || null;
+  }
+  if (target_view === 'about' && normalized.aboutSection) {
+    currentAboutSection.value = normalized.aboutSection;
   }
   view.value = target_view;
   mobileMenu.value = false;
@@ -199,6 +233,7 @@ export function clearProgress() {
   if (confirm('¿Eliminar todo tu progreso local? Esta acción no se puede deshacer.')) {
     corruptedStorageRaw.value = null;
     corruptedStorageError.value = null;
+    clearLastVisitedUnit();
     progress.value = empty();
     notify('Progreso reiniciado');
   }
@@ -276,23 +311,30 @@ export function exportProgress() {
 }
 
 export async function importProgress(file: File) {
-  if (file.size > 8 * 1024 * 1024) throw Error('El archivo supera 8 MB');
-  let raw: unknown;
+  const finish_import = appContextGuard.beginAsyncImport();
   try {
-    raw = JSON.parse(await file.text());
-  } catch {
-    throw Error('El archivo no es JSON válido');
+    if (file.size > 8 * 1024 * 1024) throw Error('El archivo supera 8 MB');
+    let raw: unknown;
+    try {
+      raw = JSON.parse(await file.text());
+    } catch {
+      throw Error('El archivo no es JSON válido');
+    }
+    const migrated = migrateProgressSnapshot(raw, stampNow());
+    corruptedStorageRaw.value = null;
+    corruptedStorageError.value = null;
+    progress.value = migrated;
+    notify('Progreso importado y validado correctamente');
+  } finally {
+    finish_import();
   }
-  const migrated = migrateProgressSnapshot(raw, stampNow());
-  corruptedStorageRaw.value = null;
-  corruptedStorageError.value = null;
-  progress.value = migrated;
-  notify('Progreso importado y validado correctamente');
 }
 
 effect(() => {
   try {
-    localStorage.setItem('cea:provider', JSON.stringify(provider.value));
+    if (!showOnboarding.value) {
+      localStorage.setItem('cea:provider', JSON.stringify(provider.value));
+    }
     localStorage.setItem('cea:theme', JSON.stringify(theme.value));
     document.documentElement.dataset.theme = theme.value;
     document.documentElement.dataset.provider = provider.value;

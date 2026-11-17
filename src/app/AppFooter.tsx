@@ -1,4 +1,13 @@
 import { CloudCog } from 'lucide-preact';
+import type { AboutSectionId } from './router';
+import { navigate } from '../lib/state';
+
+const FOOTER_LINKS: readonly { id: AboutSectionId; label: string }[] = [
+  { id: 'metodologia', label: 'Metodología' },
+  { id: 'seguridad-cloud', label: 'Seguridad Cloud' },
+  { id: 'privacidad', label: 'Privacidad' },
+  { id: 'no-afiliacion', label: 'No afiliación' },
+];
 
 export function AppFooter() {
   return (
@@ -8,7 +17,17 @@ export function AppFooter() {
           <CloudCog size={22} />
           <span>Cloud Engineering Academy</span>
         </div>
-        <span>Aprende el concepto. Domina la nube. Piensa como ingeniero.</span>
+        <nav class="footer-links" aria-label="Información institucional y seguridad">
+          {FOOTER_LINKS.map((link) => (
+            <button
+              key={link.id}
+              class="footer-link-btn"
+              onClick={() => navigate('about', { aboutSection: link.id })}
+            >
+              {link.label}
+            </button>
+          ))}
+        </nav>
         <span>
           Educación independiente · AWS, Azure y Google Cloud no patrocinan esta academia.
         </span>

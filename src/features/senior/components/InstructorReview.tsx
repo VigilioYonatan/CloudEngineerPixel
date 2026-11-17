@@ -1,7 +1,8 @@
 import { ClipboardCheck, Download, Info, Save } from 'lucide-preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Provider } from '../../../data/course';
 import { seniorRubric } from '../../../data/seniorRubric';
+import { appContextGuard } from '../../../lib/contextSwitchGuard';
 import {
   exportInstructorReview,
   gradeInstructorReview,
@@ -23,12 +24,31 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
   const [form, setForm] = useState<ReviewModel>(() =>
     parseInstructorReview(progress.value.notes[storage_key], cloud, caseId),
   );
+  const [dirty, setDirty] = useState(false);
   const grade = gradeInstructorReview(form);
+  const draft_ref = useRef({ storageKey: storage_key, cloud, form, dirty });
+  draft_ref.current = { storageKey: storage_key, cloud, form, dirty };
 
-  const update = (patch: Partial<ReviewModel>) => setForm((current) => ({ ...current, ...patch }));
+  useEffect(() => {
+    return appContextGuard.registerFlusher({
+      id: `instructor-review-${cloud}-${caseId}`,
+      scopeLabel: draft_ref.current.cloud.toUpperCase(),
+      isDirty: () => draft_ref.current.dirty,
+      flush: () => {
+        setNotes(draft_ref.current.storageKey, JSON.stringify(draft_ref.current.form));
+        setDirty(false);
+      },
+    });
+  }, [cloud, caseId]);
+
+  const update = (patch: Partial<ReviewModel>) => {
+    setDirty(true);
+    setForm((current) => ({ ...current, ...patch }));
+  };
 
   const save = () => {
     setNotes(storage_key, JSON.stringify(form));
+    setDirty(false);
     notify('Borrador de revisión local guardado');
   };
 

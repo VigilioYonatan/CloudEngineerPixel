@@ -3659,3 +3659,145 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+/* F2-04 .. F2-08 · Projects, About, Footer links, RouteRecoveryState & First-visit Onboarding */
+.top-nav button {
+  padding: 9px 10px;
+  gap: 6px;
+}
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.footer-link-btn {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 0.5rem;
+  border-radius: 7px;
+}
+.footer-link-btn:hover {
+  color: var(--accent);
+  background: var(--soft);
+}
+.route-recovery {
+  min-height: 62vh;
+  display: grid;
+  place-items: center;
+}
+.route-recovery-card {
+  max-width: 640px;
+  display: grid;
+  gap: 0.9rem;
+}
+.route-recovery-code code {
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: var(--surface2);
+  font-family: "JetBrains Mono", monospace;
+}
+.onboarding-banner {
+  max-width: 1360px;
+  margin: 1.5rem auto 0;
+  padding: 1.35rem 1.5rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  display: grid;
+  gap: 1.15rem;
+}
+.onboarding-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.onboarding-title {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.onboarding-title strong {
+  display: block;
+}
+.onboarding-title span {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.onboarding-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.onboarding-choice {
+  text-align: left;
+  padding: 1.05rem;
+  border-radius: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: grid;
+  gap: 0.6rem;
+}
+.onboarding-choice:hover {
+  border-color: var(--accent);
+}
+.onboarding-choice-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.onboarding-choice p {
+  margin-bottom: 0;
+  font-size: 0.86rem;
+}
+.onboarding-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.project-head-tags {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+.project-stack-callout {
+  padding: 0.85rem 1rem;
+  border-radius: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.9rem 0;
+  font-size: 0.9rem;
+}
+.about-sections-stack {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.about-section-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+.about-section-active {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+@media (max-width: 900px) {
+  .onboarding-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -8,10 +8,11 @@ import {
   CloudDownload,
   FlaskConical,
 } from 'lucide-preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { moduleService, services } from '../../../data/course';
 import { moduleLabKey, resolveActiveModule } from '../../../domain/progressMetrics';
 import { getProviderMeta } from '../../../domain/providers';
+import { appContextGuard } from '../../../lib/contextSwitchGuard';
 import {
   completeTopic,
   currentModule,
@@ -34,8 +35,41 @@ export function LabPage() {
   const lab_storage_key = moduleLabKey(mod, active_cloud);
 
   const [checks, setChecks] = useState<boolean[]>(() => LAB_VERIFICATION_TASKS.map(() => false));
-  const [evidence, setEvidence] = useState('');
+  const [evidence, setEvidence] = useState<string>(
+    () => progress.value.notes[lab_storage_key] || '',
+  );
+  const [dirty, setDirty] = useState(false);
   const [mode, setMode] = useState<'guided' | 'real'>('guided');
+
+  const draft_ref = useRef({
+    storageKey: lab_storage_key,
+    cloudShort: cloud_meta.short,
+    evidence,
+    dirty,
+  });
+  draft_ref.current = {
+    storageKey: lab_storage_key,
+    cloudShort: cloud_meta.short,
+    evidence,
+    dirty,
+  };
+
+  useEffect(() => {
+    setEvidence(progress.value.notes[lab_storage_key] || '');
+    setDirty(false);
+  }, [lab_storage_key]);
+
+  useEffect(() => {
+    return appContextGuard.registerFlusher({
+      id: 'lab-evidence-notebook',
+      scopeLabel: draft_ref.current.cloudShort,
+      isDirty: () => draft_ref.current.dirty,
+      flush: () => {
+        setNotes(draft_ref.current.storageKey, draft_ref.current.evidence);
+        setDirty(false);
+      },
+    });
+  }, []);
 
   const checked_count = checks.filter(Boolean).length;
   const all_checked = checks.every(Boolean);
@@ -105,14 +139,18 @@ export function LabPage() {
             </p>
             <textarea
               rows={5}
-              value={evidence || progress.value.notes[lab_storage_key] || ''}
+              value={evidence}
               placeholder="Ejemplo: validé el listado de VPC y comprobé la región de mi proyecto..."
-              onInput={(event) => setEvidence((event.currentTarget as HTMLTextAreaElement).value)}
+              onInput={(event) => {
+                setEvidence((event.currentTarget as HTMLTextAreaElement).value);
+                setDirty(true);
+              }}
             />
             <button
               class="btn btn-secondary"
               onClick={() => {
-                setNotes(lab_storage_key, evidence || progress.value.notes[lab_storage_key] || '');
+                setNotes(lab_storage_key, evidence);
+                setDirty(false);
                 notify('Notas guardadas en este navegador');
               }}
             >

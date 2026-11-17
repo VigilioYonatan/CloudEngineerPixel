@@ -11,6 +11,7 @@ import {
   Settings,
   Sun,
   Terminal,
+  Trophy,
   X,
 } from 'lucide-preact';
 import { mobileMenu, navigate, theme, view } from '../lib/state';
@@ -59,6 +60,13 @@ export function AppHeader() {
           >
             <Terminal size={16} />
             Laboratorios
+          </button>
+          <button
+            class={view.value === 'projects' ? 'nav-current' : ''}
+            onClick={() => navigate('projects')}
+          >
+            <Trophy size={16} />
+            Proyectos
           </button>
           <button
             class={view.value === 'simulator' ? 'nav-current' : ''}

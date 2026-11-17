@@ -4,6 +4,7 @@ import { challenges, type Challenge } from '../../../data/senior';
 import { seniorDiagnostics } from '../../../data/seniorDiagnostics';
 import { investigationFor } from '../../../data/seniorInvestigations';
 import { seniorPlaybooks } from '../../../data/seniorPlaybooks';
+import { appContextGuard } from '../../../lib/contextSwitchGuard';
 import { createSeniorCheckpoint, parseSeniorCheckpoint } from '../../../lib/seniorCheckpoint.mjs';
 import { evaluateSeniorEvidence } from '../../../lib/seniorEvaluation.mjs';
 import {
@@ -133,6 +134,7 @@ export function useSeniorCaseSession() {
     if (!file || !current) return;
     const requestedProvider = p;
     const requestedCase = current.id;
+    const finish_import = appContextGuard.beginAsyncImport();
     try {
       if (file.size > MAX_CHECKPOINT_BYTES) throw new Error('El expediente supera 48 KB');
       const imported = parseSeniorCheckpoint(await file.text(), requestedProvider, requestedCase);
@@ -161,6 +163,8 @@ export function useSeniorCaseSession() {
       notify('Borrador Senior restaurado para este proveedor y caso');
     } catch (error) {
       setCheckpointError(error instanceof Error ? error.message : 'Expediente inválido');
+    } finally {
+      finish_import();
     }
   };
 
