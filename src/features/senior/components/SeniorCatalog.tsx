@@ -71,7 +71,9 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
             <CloudProviderLogo providerId={p} size={18} />
             CENTRO DE OPERACIONES / {cloud_meta.short}
           </span>
-          <h1>Senior Mode: simulaciones de ingeniería</h1>
+          <h1>
+            Senior Mode: <span>simulaciones de ingeniería</span>
+          </h1>
           <p>
             Casos de estudio con logs, arquitectura y comandos ficticios de solo lectura para
             practicar investigación técnica, hipótesis y contención. No ejecuta acciones reales ni

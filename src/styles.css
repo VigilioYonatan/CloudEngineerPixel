@@ -5177,6 +5177,62 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 28px;
+  padding: 28px 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at 86% 42%, rgba(var(--accent-rgb), 0.14), transparent 52%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 60%), var(--surface);
+  margin-bottom: 20px;
+}
+
+.page-head-with-mascot h1 span,
+.page-intro h1 span {
+  color: var(--accent-text);
+}
+
+.page-intro {
+  padding: 26px 30px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at 88% 25%, rgba(var(--accent-rgb), 0.13), transparent 55%),
+    var(--surface);
+}
+
+.sr-mascot-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(var(--accent-rgb), 0.32);
+  pointer-events: none;
+  animation: ringSpin 28s linear infinite;
+}
+
+.sim-model-card,
+.progress-6d-card,
+.unit-spec-card,
+.unit-spec-adapter {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.progress-6d-card:hover,
+.unit-spec-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(var(--accent-rgb), 0.45);
+}
+
+[data-motion="reduced"] .sr-mascot-ring {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sr-mascot-ring {
+    animation: none !important;
+  }
 }
 
 @media (max-width: 760px) {

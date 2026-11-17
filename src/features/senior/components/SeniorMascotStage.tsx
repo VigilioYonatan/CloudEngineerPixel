@@ -16,6 +16,7 @@ export function SeniorMascotStage({
 }: SeniorMascotStageProps) {
   return (
     <div class="sr-mascot-stage">
+      <span class="sr-mascot-ring" aria-hidden="true" />
       <span class="sr-mascot-aura" aria-hidden="true" />
       <span class="sr-mascot-pill sr-mascot-pill-top" aria-hidden="true">
         {topPill}
