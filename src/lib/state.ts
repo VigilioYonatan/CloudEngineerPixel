@@ -237,11 +237,47 @@ export function completeTopic(id: string, p: Provider) {
   notify('Lección completada. ¡Buen trabajo!');
 }
 
+export type QuizAttemptStats = {
+  bestScore: number;
+  lastScore: number;
+  attempts: number;
+};
+
+export function getQuizStats(id: string, p: Provider): QuizAttemptStats | null {
+  const key = `${p}:${id}`;
+  const raw = progress.value.notes[`quiz-stats:${key}`];
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as Partial<QuizAttemptStats>;
+      if (typeof parsed.bestScore === 'number') {
+        return {
+          bestScore: parsed.bestScore,
+          lastScore: typeof parsed.lastScore === 'number' ? parsed.lastScore : parsed.bestScore,
+          attempts: typeof parsed.attempts === 'number' ? parsed.attempts : 1,
+        };
+      }
+    } catch {
+      // Fallback to quiz map below
+    }
+  }
+  const legacy = progress.value.quiz[key];
+  return typeof legacy === 'number' ? { bestScore: legacy, lastScore: legacy, attempts: 1 } : null;
+}
+
 export function setQuiz(id: string, p: Provider, score: number) {
+  const key = `${p}:${id}`;
+  const prev = getQuizStats(id, p);
+  const bestScore = Math.max(prev?.bestScore ?? 0, score);
+  const nextStats: QuizAttemptStats = {
+    bestScore,
+    lastScore: score,
+    attempts: (prev?.attempts ?? 0) + 1,
+  };
   progress.value = {
     ...progress.value,
     updatedAt: stampNow(),
-    quiz: { ...progress.value.quiz, [`${p}:${id}`]: score },
+    quiz: { ...progress.value.quiz, [key]: bestScore },
+    notes: { ...progress.value.notes, [`quiz-stats:${key}`]: JSON.stringify(nextStats) },
   };
 }
 

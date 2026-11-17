@@ -1,8 +1,9 @@
-import { CheckCircle2, CircleHelp } from 'lucide-preact';
+import { BookOpen, CheckCircle2, CircleHelp } from 'lucide-preact';
 import { useEffect, useState } from 'preact/hooks';
 import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { questions, type Module } from '../../../data/course';
-import { progress, provider, setQuiz } from '../../../lib/state';
+import { quizBank } from '../../../data/quizBank';
+import { getQuizStats, navigate, progress, provider, setQuiz } from '../../../lib/state';
 import { Tag } from '../../../shared/ui/Tag';
 
 type QuizProps = {
@@ -11,12 +12,19 @@ type QuizProps = {
 
 export function Quiz({ module: mod }: QuizProps) {
   const [selected, setSelected] = useState<number | null>(null);
+  const [bankIdx, setBankIdx] = useState(0);
+  const [bankChoice, setBankChoice] = useState<number | null>(null);
   const active_cloud = provider.value;
   const question = questions[mod.id];
   const saved_score = progress.value.quiz[`${active_cloud}:${mod.id}`];
+  const stats = getQuizStats(mod.id, active_cloud);
+  const moduleQuestions = quizBank[mod.id] || [];
+  const activeBankQ = moduleQuestions[bankIdx];
 
   useEffect(() => {
     setSelected(null);
+    setBankIdx(0);
+    setBankChoice(null);
   }, [mod.id, active_cloud]);
 
   return (
@@ -63,8 +71,58 @@ export function Quiz({ module: mod }: QuizProps) {
       )}
       {saved_score !== undefined && selected === null && (
         <small class="prior-attempt">
-          Última puntuación guardada: {saved_score}% · Puedes volver a intentarlo.
+          Mejor puntuación: {stats?.bestScore ?? saved_score}% · Último intento:{' '}
+          {stats?.lastScore ?? saved_score}% ({stats?.attempts ?? 1} intento(s)).
         </small>
+      )}
+      {activeBankQ && (
+        <details class="sr-adr-extras">
+          <summary>
+            Banco por unidad ({bankIdx + 1}/{moduleQuestions.length} · {activeBankQ.kind})
+          </summary>
+          <p>{activeBankQ.prompt}</p>
+          <div class="quiz-options">
+            {activeBankQ.choices.map((c, idx) => (
+              <button
+                type="button"
+                key={c}
+                class={bankChoice === idx ? 'decision-selected' : ''}
+                onClick={() => setBankChoice(idx)}
+              >
+                <span>{String.fromCharCode(65 + idx)}</span> {c}
+              </button>
+            ))}
+          </div>
+          {bankChoice !== null && (
+            <div class="sr-attempt-detail">
+              <p>{activeBankQ.optionReasons[bankChoice]}</p>
+              <button
+                type="button"
+                class="btn btn-secondary btn-compact"
+                onClick={() =>
+                  navigate('lesson', { resourceId: mod.id, unitIndex: activeBankQ.unitIndex })
+                }
+              >
+                <BookOpen size={14} /> Repasar unidad {activeBankQ.unitIndex + 1}
+              </button>
+            </div>
+          )}
+          <div class="sr-report-actions" style={{ marginTop: '8px' }}>
+            {moduleQuestions.map((item, idx) => (
+              <button
+                type="button"
+                key={item.id}
+                class={`btn btn-compact ${idx === bankIdx ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => {
+                  setBankIdx(idx);
+                  setBankChoice(null);
+                }}
+              >
+                P{idx + 1}
+              </button>
+            ))}
+          </div>
+        </details>
       )}
     </div>
   );

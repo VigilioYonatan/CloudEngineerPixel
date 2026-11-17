@@ -414,27 +414,27 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `complete-work-no-shortcuts`, `terraform-iac-delivery`, `kubernetes-eks-delivery`, `platform-cicd-factory`, `platform-observability-sre` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Anexo A.07–A.12).
   - **Resultado 100%:** 30 unidades intermedias con fragmentos reales de Bash, Dockerfile, Kubernetes YAML, HCL y GitHub Actions diferenciados por proveedor.
 
-- [ ] **F6-04 — Desarrollar contenido específico y único para las 30 unidades del Nivel 3: Arquitectura (Módulos 13–18)**
+- [x] **F6-04 — Desarrollar contenido específico y único para las 30 unidades del Nivel 3: Arquitectura (Módulos 13–18)**
   - **Tarea:** Producir el contenido completo de `software-architecture`, `governance`, `resilience`, `data-architecture`, `sre-finops` y `capstone` (unidades `13.01` a `18.05`): monolito modular vs microservicios, ADR, Landing Zones, Zero Trust, KMS, RTO/RPO, GameDays, Outbox/consistencia, SLIs/SLOs, Platform Engineering y TCO multicloud.
   - **Skills / Vigilio Docs:** `complete-work-no-shortcuts`, `vigilio-architecture-guide`, `platform-resilience-disaster-recovery`, `platform-finops`, `platform-data-reliability` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Anexo A.13–A.18).
   - **Resultado 100%:** Las 90 unidades del plan de 240h poseen contenido técnico profundo, único y auditable por tests de no-duplicación.
 
-- [ ] **F6-05 — Ampliar el banco de evaluaciones de 18 preguntas únicas a banco completo por competencia/unidad**
+- [x] **F6-05 — Ampliar el banco de evaluaciones de 18 preguntas únicas a banco completo por competencia/unidad**
   - **Tarea:** Crear al menos 3–5 preguntas razonadas por módulo (cubriendo las 90 unidades, mínimo 90–108 reactivos curados) con selección única, selección múltiple, lectura de snippets/planes y análisis de fallos, incluyendo explicación detallada de por qué acierta o falla cada opción y enlace a la unidad de refuerzo.
   - **Skills / Vigilio Docs:** `complete-work-no-shortcuts`, `web-mfe-build-feature` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Sección 12).
   - **Resultado 100%:** Ningún módulo se aprueba memorizando una única pregunta trivial de 3 opciones.
 
-- [ ] **F6-06 — Implementar dinámicas interactivas estilo GoPixel (`Bug Hunter`, `Ordenar Despliegue`, `Architecture Match`)**
+- [x] **F6-06 — Implementar dinámicas interactivas estilo GoPixel (`Bug Hunter`, `Ordenar Despliegue`, `Architecture Match`)**
   - **Tarea:** Añadir en el Aula micro-retos deterministas: encontrar el bug de seguridad/costo en un snippet HCL/YAML/IAM (`Bug Hunter`), ordenar los pasos seguros de aprovisionamiento y cleanup (`Order Steps`) y emparejar requisitos no funcionales con servicios del proveedor activo (`Architecture Match`).
   - **Skills / Vigilio Docs:** `ux-web-experience`, `ui-interaction-motion` · `docs/MASTER_SPEC.md` (Sección 9).
   - **Resultado 100%:** Aprendizaje activo tipo GoPixel sin inflar XP por recargar la página.
 
-- [ ] **F6-07 — Preservar historial de intentos y mejor puntuación en Quizzes sin sobrescribir logros**
+- [x] **F6-07 — Preservar historial de intentos y mejor puntuación en Quizzes sin sobrescribir logros**
   - **Tarea:** Corregir `setQuiz` en `state.ts` (que hoy sobrescribe `100` con `0` si el alumno vuelve a probar una opción incorrecta por curiosidad) guardando `{ bestScore, lastScore, attempts }` por proveedor y módulo/unidad.
   - **Skills / Vigilio Docs:** `web-mfe-build-feature` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Sección 12.2).
   - **Resultado 100%:** Reintentar con fines de estudio conserva `bestScore` e incrementa `attempts` de forma idempotente.
 
-- [ ] **F6-08 — Separar las 6 dimensiones del progreso académico en `Progress` y `Learn`**
+- [x] **F6-08 — Separar las 6 dimensiones del progreso académico en `Progress` y `Learn`**
   - **Tarea:** Desglosar en `Mi progreso` y en las tarjetas de módulo métricas independientes y transparentes: **(1) Teoría/Unidades trabajadas**, **(2) Evaluaciones aprobadas**, **(3) Simuladores practicados**, **(4) Laboratorios autodeclarados con evidencia**, **(5) Proyectos integradores**, **(6) Expedientes Senior registrados**, distinguiendo progreso conceptual transversal de práctica por nube.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `ux-web-experience` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Sección 10.2).
   - **Resultado 100%:** Cero porcentajes ambiguos; el alumno sabe exactamente qué practicó en AWS, en Azure y en GCP.

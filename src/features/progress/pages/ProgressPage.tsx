@@ -23,6 +23,7 @@ import {
 } from '../../../lib/state';
 import { ProgressBar } from '../../../shared/ui/ProgressBar';
 import { ProviderBadge } from '../../../shared/ui/ProviderBadge';
+import { computeSixDimensions } from '../libs/progressDimensions';
 
 const PROGRESS_LEVELS: readonly Level[] = ['fundamentos', 'intermedio', 'avanzado'];
 
@@ -36,6 +37,7 @@ export function ProgressPage() {
   const perfect_quizzes = Object.values(progress.value.quiz).filter(
     (score) => score === 100,
   ).length;
+  const sixDimensions = computeSixDimensions(progress.value, active_cloud);
 
   return (
     <main class="page-container">
@@ -81,6 +83,25 @@ export function ProgressPage() {
           <span>Simulaciones ejecutadas</span>
         </div>
       </div>
+
+      <section class="info-card progress-panel" aria-label="6 dimensiones del progreso">
+        <div class="card-heading">
+          <Layers size={20} />
+          <h3>Desglose en 6 dimensiones · {active_meta.short}</h3>
+        </div>
+        <div class="progress-6d-grid">
+          {sixDimensions.map((dim) => (
+            <div key={dim.id} class="progress-6d-card">
+              <small>{dim.label}</small>
+              <strong>
+                {dim.value}
+                {dim.total !== null && <span>/{dim.total}</span>}
+              </strong>
+              <span>{dim.detail}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section class="info-card progress-panel">
         <div class="card-heading">

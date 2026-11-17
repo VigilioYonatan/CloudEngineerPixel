@@ -18,6 +18,7 @@ import { levelInfo, moduleService, services } from '../../../data/course';
 import { knowledge } from '../../../data/knowledge';
 import { level1UnitSpecs } from '../../../data/curriculum/level1';
 import { level2UnitSpecs } from '../../../data/curriculum/level2';
+import { level3UnitSpecs } from '../../../data/curriculum/level3';
 import { studyUnits } from '../../../data/study';
 import { UnitSpecPanel } from '../components/UnitSpecPanel';
 import { resolveActiveModule } from '../../../domain/progressMetrics';
@@ -31,6 +32,7 @@ import {
   provider,
 } from '../../../lib/state';
 import { Tag } from '../../../shared/ui/Tag';
+import { GoPixelMicroGames } from '../components/GoPixelMicroGames';
 import { Quiz } from '../components/KnowledgeQuiz';
 import { LessonSidebar } from '../components/LessonSidebar';
 import { ProviderCheck } from '../components/ProviderServiceCheck';
@@ -49,7 +51,9 @@ export function LessonPage() {
   const is_complete = progress.value.completed.includes(completion_key);
   const study_unit = studyUnits[`${mod.id}:${topic_idx}`];
   const unit_spec =
-    level1UnitSpecs[`${mod.id}:${topic_idx}`] || level2UnitSpecs[`${mod.id}:${topic_idx}`];
+    level1UnitSpecs[`${mod.id}:${topic_idx}`] ||
+    level2UnitSpecs[`${mod.id}:${topic_idx}`] ||
+    level3UnitSpecs[`${mod.id}:${topic_idx}`];
 
   return (
     <main class="page-container lesson-page">
@@ -194,6 +198,7 @@ export function LessonPage() {
           </div>
 
           <h2>05. Comprueba tu comprensión</h2>
+          <GoPixelMicroGames cloudId={active_cloud} />
           <Quiz module={mod} />
           <ProviderCheck module={mod} />
 

@@ -5576,3 +5576,93 @@ p {
   border: 1px solid var(--border);
   font-size: 12px;
 }
+
+/* F6-06 GoPixel Micro-Games & F6-08 6D Progress */
+.gopixel-games {
+  margin-bottom: 16px;
+}
+
+.gopixel-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.gopixel-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.gopixel-tabs button.active {
+  border-color: rgba(var(--accent-rgb), 0.65);
+  color: var(--accent-text);
+}
+
+.gopixel-code {
+  display: grid;
+  gap: 4px;
+}
+
+.gopixel-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font:
+    500 12px "JetBrains Mono",
+    monospace;
+  cursor: pointer;
+}
+
+.gopixel-line.line-ok {
+  border-color: var(--ok);
+}
+
+.gopixel-line.line-bad {
+  border-color: var(--danger);
+}
+
+.gopixel-order-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.progress-6d-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 10px;
+}
+
+.progress-6d-card {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+}
+
+.progress-6d-card strong {
+  font-size: 20px;
+}
+
+.progress-6d-card strong span {
+  font-size: 13px;
+  color: var(--muted);
+}
