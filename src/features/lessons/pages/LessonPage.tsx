@@ -16,7 +16,10 @@ import { CloudServiceComparison } from '../../../components/ui/CloudServiceCompa
 import { CodeBlock } from '../../../components/ui/CodeBlock';
 import { levelInfo, moduleService, services } from '../../../data/course';
 import { knowledge } from '../../../data/knowledge';
+import { level1UnitSpecs } from '../../../data/curriculum/level1';
+import { level2UnitSpecs } from '../../../data/curriculum/level2';
 import { studyUnits } from '../../../data/study';
+import { UnitSpecPanel } from '../components/UnitSpecPanel';
 import { resolveActiveModule } from '../../../domain/progressMetrics';
 import { getProviderMeta } from '../../../domain/providers';
 import {
@@ -45,6 +48,8 @@ export function LessonPage() {
   const completion_key = `${active_cloud}:${mod.id}:${topic_idx}`;
   const is_complete = progress.value.completed.includes(completion_key);
   const study_unit = studyUnits[`${mod.id}:${topic_idx}`];
+  const unit_spec =
+    level1UnitSpecs[`${mod.id}:${topic_idx}`] || level2UnitSpecs[`${mod.id}:${topic_idx}`];
 
   return (
     <main class="page-container lesson-page">
@@ -78,6 +83,7 @@ export function LessonPage() {
           <div class="content-divider" />
 
           <h2>01. Entiende el concepto</h2>
+          {unit_spec && <UnitSpecPanel spec={unit_spec} cloudId={active_cloud} />}
           <p>{knowledge[mod.id].principle}</p>
           <p>
             <strong>Trade-off técnico:</strong> {knowledge[mod.id].tradeoff}

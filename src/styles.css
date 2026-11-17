@@ -5498,3 +5498,81 @@ p {
   overflow-x: auto;
   margin: 10px 0;
 }
+
+/* F5-11 Simulator Model Card & F6-01..F6-03 UnitSpecPanel */
+.sim-model-card {
+  margin-bottom: 14px;
+  padding: 12px 16px;
+}
+
+.sim-model-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.sim-model-head strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-text);
+}
+
+.unit-spec-panel {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+
+.unit-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.unit-spec-card,
+.unit-spec-adapter,
+.unit-spec-activity {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+}
+
+.unit-spec-warn {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.unit-spec-card strong,
+.unit-spec-glossary strong,
+.unit-spec-activity strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.unit-spec-adapter-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.unit-glossary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.unit-glossary-chip {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}

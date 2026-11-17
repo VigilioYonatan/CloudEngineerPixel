@@ -11,6 +11,7 @@ import {
   Layers,
   MailCheck,
   Network,
+  Radar,
   RotateCcw,
   Route,
   Scale,
@@ -20,9 +21,12 @@ import {
 import { AccessibleTabs } from '../../../components/ui/AccessibleTabs';
 import { navigate, notify, progress } from '../../../lib/state';
 import { ExtendedSimulatorLabs } from '../components/ExtendedSimulatorLabs';
+import { ObservabilityLabView } from '../components/ObservabilityLabView';
 import { RoutingLabView, TerraformPlanLabView } from '../components/RoutingAndTerraformView';
 import { SimulatorControls } from '../components/SimulatorControls';
+import { SimulatorModelCard } from '../components/SimulatorModelCard';
 import { SimulatorResults } from '../components/SimulatorResults';
+import { SIMULATOR_CATALOG_META } from '../constants/simulatorCatalogMeta';
 import { useSimulatorsState } from '../hooks/useSimulatorsState';
 import type { SimulatorMode } from '../types/simulator.types';
 
@@ -39,6 +43,7 @@ const SIMULATOR_TABS: readonly { id: SimulatorMode; title: string; icon: LucideI
   { id: 'finops', title: 'FinOps Cost', icon: DollarSign },
   { id: 'dr', title: 'DR Studio', icon: HardDriveDownload },
   { id: 'messaging', title: 'Messaging & DLQ', icon: MailCheck },
+  { id: 'observability', title: 'Observability & Burn-Rate', icon: Radar },
 ];
 
 export function SimulatorsPage() {
@@ -83,7 +88,7 @@ export function SimulatorsPage() {
         </div>
         <div class="intro-stat">
           <span>LABORATORIOS</span>
-          <strong>12</strong>
+          <strong>13</strong>
           <small>motores interactivos</small>
         </div>
       </section>
@@ -116,6 +121,8 @@ export function SimulatorsPage() {
         </button>
       </div>
 
+      <SimulatorModelCard meta={SIMULATOR_CATALOG_META[s.mode]} />
+
       {s.mode === 'routing' ? (
         <RoutingLabView
           input={s.routingInput}
@@ -129,6 +136,8 @@ export function SimulatorsPage() {
           analysis={s.tfRes}
           onChangeScenario={s.setTfScenario}
         />
+      ) : s.mode === 'observability' ? (
+        <ObservabilityLabView />
       ) : ['k8s', 'load-balancing', 'finops', 'dr', 'messaging'].includes(s.mode) ? (
         <ExtendedSimulatorLabs mode={s.mode} />
       ) : (

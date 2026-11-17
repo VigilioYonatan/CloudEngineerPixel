@@ -28,6 +28,7 @@ export const VALID_SIMULATOR_ROUTE_IDS = [
   'finops',
   'dr',
   'messaging',
+  'observability',
 ] as const;
 
 export type SimulatorRouteId = (typeof VALID_SIMULATOR_ROUTE_IDS)[number];

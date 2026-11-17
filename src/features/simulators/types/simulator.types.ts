@@ -10,7 +10,8 @@ export type SimulatorMode =
   | 'load-balancing'
   | 'finops'
   | 'dr'
-  | 'messaging';
+  | 'messaging'
+  | 'observability';
 
 export type IamAction = 'read' | 'write' | 'admin';
 

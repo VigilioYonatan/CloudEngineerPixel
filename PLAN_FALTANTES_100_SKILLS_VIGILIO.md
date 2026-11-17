@@ -385,12 +385,12 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `aws-platform-foundation`, `platform-data-reliability` · `vigilio-docs/standards/messaging/outbox-idempotency.md`.
   - **Resultado 100%:** Demuestra visualmente por qué ocurren cobros duplicados y cómo la idempotencia + DLQ los eliminan.
 
-- [ ] **F5-10 — Nuevo Simulador 13: `Observability & Burn-Rate Alert Lab` (`observabilityEngine.ts`)**
+- [x] **F5-10 — Nuevo Simulador 13: `Observability & Burn-Rate Alert Lab` (`observabilityEngine.ts`)**
   - **Tarea:** Ampliar cálculo de SLO con tasas de consumo de presupuesto de error (*burn rate* ventana corta 1h / larga 6h), diferencia entre alertar por síntoma de usuario vs CPU aislada y correlación `traceparent`.
   - **Skills / Vigilio Docs:** `platform-observability-sre` · `vigilio-docs/standards/observability/slo-runbooks.md`.
   - **Resultado 100%:** El alumno comprende alertas multi-window multi-burn-rate estilo SRE moderno.
 
-- [ ] **F5-11 — Catálogo de Simuladores con fichas de modelo, supuestos y límites documentados**
+- [x] **F5-11 — Catálogo de Simuladores con fichas de modelo, supuestos y límites documentados**
   - **Tarea:** En `/#/simuladores`, organizar los 13 motores por categoría (`Redes`, `Seguridad`, `Cómputo/K8s`, `IaC`, `Datos/Eventos`, `SRE/FinOps`, `Arquitectura`), mostrando en cada uno versión del motor, fórmula/reglas aplicadas y qué simplificaciones hace respecto a la nube real.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `complete-work-no-shortcuts` · `vigilio-docs/standards/experience/content-forms-localization-and-trust.md`.
   - **Resultado 100%:** Cero "cajas negras" en las simulaciones; cada resultado explica el *por qué* técnico.
@@ -399,17 +399,17 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ### BLOQUE 6 — Currículo Profundo de 240h: 90 Unidades Reales, Quizzes y Progreso 6D (9 Tareas)
 
-- [ ] **F6-01 — Diseñar contrato tipado de Unidad (`UnitContentSpec`) con núcleo común + adaptadores AWS/Azure/GCP**
+- [x] **F6-01 — Diseñar contrato tipado de Unidad (`UnitContentSpec`) con núcleo común + adaptadores AWS/Azure/GCP**
   - **Tarea:** Crear esquema tipado en `src/domain/curriculum.ts` para que cada una de las 90 unidades (`01.01` a `18.05`) posea: objetivo observable, tiempo estimado, prerrequisitos, modelo mental específico, antipatrón real, glosario, adaptador específico por nube (`servicio`, `snippet CLI/IaC`, `diferencia crítica`, `doc oficial` con `verifiedAt`) y actividad verificable.
   - **Skills / Vigilio Docs:** `symbol-ownership-architecture`, `complete-work-no-shortcuts` · `vigilio-docs/standards/engineering/file-and-symbol-ownership.md`.
   - **Resultado 100%:** Contrato de datos capaz de alimentar las 90 lecciones sin repetir bloques clónicos.
 
-- [ ] **F6-02 — Desarrollar contenido específico y único para las 30 unidades del Nivel 1: Fundamentos (Módulos 01–06)**
+- [x] **F6-02 — Desarrollar contenido específico y único para las 30 unidades del Nivel 1: Fundamentos (Módulos 01–06)**
   - **Tarea:** Reemplazar el texto genérico repetido de `studyUnits` en `cloud-fundamentals`, `networks`, `compute`, `storage`, `identity` y `costs` (unidades `01.01` a `06.05`) con teoría propia por unidad, ejemplos concretos AWS/Azure/GCP, snippets seguros y glosario para principiantes.
   - **Skills / Vigilio Docs:** `complete-work-no-shortcuts`, `aws-platform-foundation`, `platform-finops` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Anexo A.01–A.06).
   - **Resultado 100%:** 30 unidades básicas con explicación original, antipatrón propio y cero párrafos copiados/pegados entre temas.
 
-- [ ] **F6-03 — Desarrollar contenido específico y único para las 30 unidades del Nivel 2: Ingeniería (Módulos 07–12)**
+- [x] **F6-03 — Desarrollar contenido específico y único para las 30 unidades del Nivel 2: Ingeniería (Módulos 07–12)**
   - **Tarea:** Producir el contenido completo de `cloud-cli`, `advanced-network`, `serverless`, `containers`, `iac` y `observability` (unidades `07.01` a `12.05`) alineado a buenas prácticas Vigilio: scripts Bash con `set -euo pipefail`, endpoints privados, idempotencia/DLQ, Docker non-root/Distroless, K8s probes/resources, Terraform remote state locking y GitHub Actions con OIDC.
   - **Skills / Vigilio Docs:** `complete-work-no-shortcuts`, `terraform-iac-delivery`, `kubernetes-eks-delivery`, `platform-cicd-factory`, `platform-observability-sre` · `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` (Anexo A.07–A.12).
   - **Resultado 100%:** 30 unidades intermedias con fragmentos reales de Bash, Dockerfile, Kubernetes YAML, HCL y GitHub Actions diferenciados por proveedor.
