@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
+import {readConcatenatedSources} from './support/readSourceTree.mjs';
 const read=(p)=>readFileSync(new URL(p,import.meta.url),'utf8');
-const course=read('../src/data/course.ts'), senior=read('../src/data/senior.ts'), knowledge=read('../src/data/knowledge.ts'), app=read('../src/App.tsx'),styles=read('../src/styles.css'),state=read('../src/lib/state.ts');
+const course=read('../src/data/course.ts'), senior=read('../src/data/senior.ts'), knowledge=read('../src/data/knowledge.ts'), app=readConcatenatedSources(['src/App.tsx','src/app','src/features']),styles=read('../src/styles.css'),state=read('../src/lib/state.ts');
 const ids=[...course.matchAll(/\{\s*id:\s*['"]([a-z-]+)['"],\s*title:/g)].map(m=>m[1]);
 test('18 unique course modules and 240-hour outline',()=>{assert.equal(ids.length,18);assert.equal(new Set(ids).size,18);const hours=[...course.matchAll(/level:\s*['"](?:fundamentos|intermedio|avanzado)['"],\s*hours:\s*(\d+)/g)].map(m=>+m[1]);assert.deepEqual([hours.slice(0,6).reduce((a,b)=>a+b,0),hours.slice(6,12).reduce((a,b)=>a+b,0),hours.slice(12).reduce((a,b)=>a+b,0)],[60,80,100]);});
 test('every course module has curated explanation and quiz',()=>{for(const id of ids){const keyRe=new RegExp(`(?:['"]${id}['"]|\\b${id})\\s*:`);const quizRe=new RegExp(`(?:['"]${id}['"]|\\b${id})\\s*:\\s*\\{\\s*q:`);assert.match(knowledge,keyRe,`knowledge: ${id}`);assert.match(course,quizRe,`quiz: ${id}`)}});

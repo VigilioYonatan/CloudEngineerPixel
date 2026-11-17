@@ -1,0 +1,127 @@
+import { ClipboardCheck, Download, Info, Save } from 'lucide-preact';
+import { useState } from 'preact/hooks';
+import type { Provider } from '../../../data/course';
+import { seniorRubric } from '../../../data/seniorRubric';
+import {
+  exportInstructorReview,
+  gradeInstructorReview,
+  parseInstructorReview,
+  reviewKey,
+  type InstructorReview as ReviewModel,
+} from '../../../lib/instructorReview.mjs';
+import { notify, progress, setNotes } from '../../../lib/state';
+import { downloadReport } from '../libs/downloadJsonFile';
+
+type InstructorReviewProps = {
+  cloud: Provider;
+  caseId: string;
+};
+
+/** Offline, unauthenticated teaching rubric. Preserves senior-review:<provider>:<caseId> V8 contract. */
+export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
+  const storage_key = reviewKey(cloud, caseId);
+  const [form, setForm] = useState<ReviewModel>(() =>
+    parseInstructorReview(progress.value.notes[storage_key], cloud, caseId),
+  );
+  const grade = gradeInstructorReview(form);
+
+  const update = (patch: Partial<ReviewModel>) => setForm((current) => ({ ...current, ...patch }));
+
+  const save = () => {
+    setNotes(storage_key, JSON.stringify(form));
+    notify('Borrador de revisión local guardado');
+  };
+
+  const handle_export = () => {
+    try {
+      const data = exportInstructorReview(form, cloud, caseId);
+      setNotes(storage_key, JSON.stringify(data));
+      downloadReport(data, `revision-local-${cloud}-${caseId}.json`);
+      notify('Revisión docente local exportada (sin certificación)');
+    } catch (error) {
+      notify(error instanceof Error ? error.message : 'Revisión incompleta');
+    }
+  };
+
+  return (
+    <details class="sr-review info-card" aria-label="Rúbrica docente opcional">
+      <summary>
+        <ClipboardCheck size={19} /> Revisión docente local (opcional){' '}
+        <span>5 criterios / 100 puntos</span>
+      </summary>
+      <p class="sr-hint">
+        <Info size={15} /> Este formulario se completa manualmente y no verifica la identidad de
+        quien puntúa. No acredita una certificación ni sustituye una evaluación externa.
+      </p>
+      <label class="sr-field">
+        <strong>Alias del revisor (sin información sensible)</strong>
+        <input
+          maxLength={80}
+          autoComplete="off"
+          value={form.reviewer}
+          placeholder="Ej. Instructor 01"
+          onInput={(event) => update({ reviewer: (event.currentTarget as HTMLInputElement).value })}
+        />
+      </label>
+      <div class="sr-review-grid">
+        {seniorRubric.map((criterion) => (
+          <label class="sr-review-row" key={criterion.id}>
+            <span>
+              <strong>{criterion.label}</strong>
+              <small>{criterion.guidance}</small>
+            </span>
+            <select
+              aria-label={`Nota de ${criterion.label}`}
+              value={form.scores[criterion.id] === null ? '' : String(form.scores[criterion.id])}
+              onChange={(event) => {
+                const raw_val = (event.currentTarget as HTMLSelectElement).value;
+                update({
+                  scores: {
+                    ...form.scores,
+                    [criterion.id]: raw_val === '' ? null : Number(raw_val),
+                  },
+                });
+              }}
+            >
+              <option value="">Sin revisar</option>
+              {[0, 1, 2, 3, 4].map((score_val) => (
+                <option key={score_val} value={score_val}>
+                  {score_val} / 4
+                </option>
+              ))}
+            </select>
+            <small>Peso: {criterion.weight}%</small>
+          </label>
+        ))}
+      </div>
+      <label class="sr-field">
+        <strong>Justificación del revisor (mínimo 40 caracteres)</strong>
+        <textarea
+          rows={4}
+          maxLength={4000}
+          value={form.notes}
+          placeholder="Describe qué está respaldado por evidencias, los riesgos no resueltos y los cambios propuestos."
+          onInput={(event) => update({ notes: (event.currentTarget as HTMLTextAreaElement).value })}
+        />
+      </label>
+      <div role="status" class="sr-review-result">
+        <strong>{grade.score === null ? 'Sin puntuación' : `${grade.score}/100`}</strong>
+        <span>
+          {grade.decision === 'aprobado-en-revision-local'
+            ? 'Aprobación formativa local'
+            : grade.decision === 'requiere-mejoras'
+              ? 'Requiere mejoras'
+              : 'Completa todos los criterios, el alias y la justificación'}
+        </span>
+      </div>
+      <div class="sr-report-actions">
+        <button class="btn btn-secondary" onClick={save}>
+          <Save size={16} /> Guardar borrador
+        </button>
+        <button class="btn btn-primary" disabled={!grade.complete} onClick={handle_export}>
+          <Download size={16} /> Exportar revisión JSON
+        </button>
+      </div>
+    </details>
+  );
+}

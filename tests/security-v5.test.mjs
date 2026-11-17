@@ -4,6 +4,7 @@ import {readFileSync,existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {validateProgressImport} from '../src/lib/importValidation.mjs';
+import {readConcatenatedSources} from './support/readSourceTree.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=p=>readFileSync(path.join(root,p),'utf8');
 const valid=()=>({progress:{completed:['aws:cloud-fundamentals'],senior:[],quiz:{'aws:test':100},notes:{'senior:aws:s01':'diagnosis'},simRuns:2,seniorAttempts:[]}});
@@ -21,7 +22,7 @@ test('filters poisoned scores, inflated counts and unrecognized case ids',()=>{
 test('shipping quality setup includes Biome, secure workflow, dependabot and rubric',()=>{
  for(const f of ['biome.json','.github/workflows/devsecops.yml','.github/dependabot.yml','SECURITY.md','src/data/seniorRubric.ts','scripts/check-secrets.mjs'])assert.ok(existsSync(path.join(root,f)),f);
  const w=read('.github/workflows/devsecops.yml');for(const gate of ['npm run lint','npm run typecheck','npm test','npm run build','npm audit'])assert.ok(w.includes(gate),gate);
- const ui=read('src/SeniorWorkbench.tsx');assert.match(ui,/Rúbrica de revisión humana/);assert.match(ui,/Plantilla de revisión/);
+ const ui=readConcatenatedSources(['src/SeniorWorkbench.tsx','src/features/senior']);assert.match(ui,/Rúbrica de revisión humana/);assert.match(ui,/Plantilla de revisión/);
 });
 test('immutable baseline V4 paths remain present',()=>{
  const old=JSON.parse(read('docs/FILE_MANIFEST_V5.json'));

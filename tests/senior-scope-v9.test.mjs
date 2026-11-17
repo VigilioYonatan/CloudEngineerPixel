@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createSeniorCheckpoint,parseSeniorCheckpoint} from '../src/lib/seniorCheckpoint.mjs';
 import {emptySeniorSession} from '../src/lib/seniorSession.mjs';
+import {readConcatenatedSources} from './support/readSourceTree.mjs';
 const providers=['aws','azure','gcp'];
 const cases=Array.from({length:18},(_,i)=>`s${String(i+1).padStart(2,'0')}`);
 const when='2026-11-11T12:20:00.000Z';
@@ -24,7 +25,7 @@ test('V9: UTF-8 size is checked by bytes rather than JavaScript string length',(
 });
 
 test('V9: Senior case importer tracks the active provider and case across async file reads',()=>{
- const source=readFileSync(new URL('../src/SeniorWorkbench.tsx',import.meta.url),'utf8');
+ const source=readConcatenatedSources(['src/SeniorWorkbench.tsx','src/features/senior']);
  assert.match(source,/liveScope\.current\.provider\s*!==\s*requestedProvider/);
  assert.match(source,/liveScope\.current\.caseId\s*!==\s*requestedCase/);
  assert.match(source,/¿Restaurar este expediente/);

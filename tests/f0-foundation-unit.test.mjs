@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -13,6 +13,7 @@ import {
   writeManifestV10,
 } from '../scripts/update-manifest.mjs';
 import { verifyRepositoryIntegrity } from '../scripts/verify-integrity.mjs';
+import { readConcatenatedSources } from './support/readSourceTree.mjs';
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -130,7 +131,7 @@ test('F0-03 unit: official V9 manifest hash is cryptographically pinned and veri
 });
 
 test('F0-05 regression: SeniorWorkbench binds session.acknowledged accurately without dangling session.ack', () => {
-  const workbench_src = readFileSync(path.join(ROOT_DIR, 'src/SeniorWorkbench.tsx'), 'utf8');
+  const workbench_src = readConcatenatedSources(['src/SeniorWorkbench.tsx', 'src/features/senior']);
   assert.match(workbench_src, /acknowledged:\s*ack/);
   assert.doesNotMatch(workbench_src, /answers,\s*ack,\s*stage\s*\}\s*=\s*session/);
 });

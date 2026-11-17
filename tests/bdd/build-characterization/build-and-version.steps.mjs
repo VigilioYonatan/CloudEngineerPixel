@@ -5,6 +5,7 @@ import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createStepRegistry } from '../support/gherkinRunner.mjs';
+import { readConcatenatedSources } from '../../support/readSourceTree.mjs';
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
@@ -117,7 +118,7 @@ export function buildCharacterizationBddSteps() {
   steps.Cuando(
     'se inspeccionan la vista de Ajustes, el exportador de progreso y el README principal',
     (world) => {
-      world.appSrc = readFileSync(path.join(ROOT_DIR, 'src/App.tsx'), 'utf8');
+      world.appSrc = readConcatenatedSources(['src/App.tsx', 'src/features/settings']);
       world.stateSrc = readFileSync(path.join(ROOT_DIR, 'src/lib/state.ts'), 'utf8');
       world.readmeSrc = readFileSync(path.join(ROOT_DIR, 'README.md'), 'utf8');
     },

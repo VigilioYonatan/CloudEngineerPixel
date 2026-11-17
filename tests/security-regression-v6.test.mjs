@@ -4,6 +4,7 @@ import {readFileSync,existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {validateProgressImport} from '../src/lib/importValidation.mjs';
+import {readConcatenatedSources} from './support/readSourceTree.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=rel=>readFileSync(path.join(root,rel),'utf8');
 const sample=()=>({progress:{completed:['aws:compute:0'],senior:['aws:s01'],quiz:{'aws:compute':88},notes:{'senior:aws:s01':'ok'},simRuns:1,seniorAttempts:[{
@@ -24,7 +25,7 @@ test('provider selector guards corrupted saved values',()=>{
   assert.match(code,/if\s*\(\s*!\s*\[\s*['"]aws['"],\s*['"]azure['"],\s*['"]gcp['"]\s*\]\.includes\(p\)\s*\)\s*return/);
 });
 test('never include cloud secrets, credentials or write operations in web labs',()=>{
-  const ui=read('src/SeniorWorkbench.tsx');
+  const ui=readConcatenatedSources(['src/SeniorWorkbench.tsx','src/features/senior']);
   assert.doesNotMatch(ui,/terraform (apply|destroy)|aws sts assume-role.*secret|process\.env\.AWS_SECRET_ACCESS_KEY/);
   assert.match(ui,/READ ONLY \/ SYNTHETIC EVIDENCE/);
 });

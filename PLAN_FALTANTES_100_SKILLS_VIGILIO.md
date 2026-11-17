@@ -132,7 +132,7 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ---
 
-### BLOQUE 1 — Arquitectura Modular, Ownership de Símbolos y Desacople de `App.tsx` (9 Tareas · 2/9 Completadas)
+### BLOQUE 1 — Arquitectura Modular, Ownership de Símbolos y Desacople de `App.tsx` (9 Tareas · 7/9 Completadas)
 
 - [x] **F1-01 — Tests de caracterización antes de dividir `src/App.tsx` (`PASS`)**
   - **Tarea:** Crear pruebas de integración/E2E (`tests/e2e/characterization-f1.spec.ts` + BDD `build-and-version.feature`) que congelen el comportamiento actual de las 8 vistas: navegación, filtros/búsqueda en catálogo, lecciones, quiz, `ProviderCheck`, checklist y notas de laboratorio, los 5 simuladores, resolución completa `100/100` en Senior Mode, exportación de progreso y cambio de tema/versión en Ajustes antes de extraer archivos.
@@ -144,30 +144,30 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `web-mfe-quality`, `refactor-existing-code` · `vigilio-docs/technology/libraries/biome.md`.
   - **Resultado 100%:** `0` líneas minificadas gigantes en `src/`, `npm run format:check` y `npm run lint` pasan con `0` warnings/errores en `59` archivos.
 
-- [ ] **F1-03 — Retirar código muerto legado (`function Senior()` en `src/App.tsx`) preservando trazabilidad**
-  - **Tarea:** Extraer o archivar limpiamente la función `Senior()` de V1/V2 en `src/App.tsx` (actualmente inalcanzable porque la vista `senior` renderiza `SeniorWorkbench`), verificando que ningún test dependa del texto muerto (ajustando solo si algún test estático grepea `App.tsx`).
+- [x] **F1-03 — Retirar código muerto legado (`function Senior()` en `src/App.tsx`) preservando trazabilidad (`PASS`)**
+  - **Tarea:** Retirar limpiamente `function Senior()` y `seniorService` de V1/V2 en `src/App.tsx`, registrando su trazabilidad en `docs/ADR_F1_MODULAR_ARCHITECTURE.md` y actualizando las aserciones estáticas legadas hacia los módulos activos (`SeniorWorkbench` y `seniorInvestigations.ts`).
   - **Skills / Vigilio Docs:** `refactor-existing-code`, `improve-codebase-architecture` · `vigilio-docs/foundations/engineering/code-quality.md`.
-  - **Resultado 100%:** Reducción de ~7 KB de código muerto en el bundle principal sin romper tests de regresión.
+  - **Resultado 100%:** `0` ocurrencias de `function Senior()` o `seniorService` en `src/`, `App.tsx` reducido a raíz de composición de 36 líneas y tests de regresión en verde.
 
-- [ ] **F1-04 — Extraer capa `src/app/` (Shell, Header, Footer, ProviderSwitcher, Router)**
+- [x] **F1-04 — Extraer capa `src/app/` (Shell, Header, Footer, ProviderSwitcher, Router) (`PASS`)**
   - **Tarea:** Separar `AppShell.tsx`, `AppHeader.tsx`, `AppFooter.tsx`, `CloudProviderSwitcher.tsx` y `router.ts` desde `src/App.tsx` manteniendo `src/App.tsx` como punto de composición limpio.
   - **Skills / Vigilio Docs:** `web-mfe-build-feature`, `symbol-ownership-architecture` · `vigilio-docs/stacks/frontend/web-mfe/architecture/3-arquitectura-estructura-estado.md`.
-  - **Resultado 100%:** `src/app/` contiene únicamente layout, shell, navegación y proveedores globales sin lógica de negocio de lecciones ni simuladores.
+  - **Resultado 100%:** `src/app/` contiene únicamente layout, shell, navegación y proveedores globales con `0` imports desde `src/features/` y `0` reglas de negocio de lecciones o simuladores.
 
-- [ ] **F1-05 — Extraer features por dominio (`src/features/{home,curriculum,lessons,labs,simulators,senior,progress,settings}/`)**
+- [x] **F1-05 — Extraer features por dominio (`src/features/{home,curriculum,lessons,labs,simulators,senior,progress,settings}/`) (`PASS`)**
   - **Tarea:** Mover cada vista y sus subcomponentes privados a su feature propietaria (`features/home/`, `features/curriculum/`, `features/lessons/`, `features/labs/`, `features/simulators/`, `features/senior/`, `features/progress/`, `features/settings/`), colocando constantes de negocio en `constants/*.constants.ts` y tipos propios en `types/*.types.ts` solo donde exista semántica real (cero carpetas vacías).
   - **Skills / Vigilio Docs:** `symbol-ownership-architecture`, `web-mfe-build-feature` · `vigilio-docs/stacks/frontend/web-mfe/ui/component-symbol-ownership.md`, `vigilio-docs/standards/engineering/file-and-symbol-ownership.md`.
-  - **Resultado 100%:** Dependencias unidireccionales (`app → features → domain/lib`), cero imports circulares y cada archivo `< 250` líneas legibles.
+  - **Resultado 100%:** Dependencias estrictamente unidireccionales (`App.tsx → app/ & features/ → shared/ui/ → domain/lib`), `0` imports circulares, `0` imports cruzados entre features, `0` carpetas vacías, `0` usos de `any` y todos los archivos modulares `< 250` líneas.
 
-- [ ] **F1-06 — Centralizar `ProviderRegistry` tipado sin condicionales `if (provider === ...)` dispersos**
-  - **Tarea:** Crear registro tipado único (`src/domain/providers.ts`) para nombres, colores accesibles Dark/Light, mascota + poses, CLI, consola, reservas CIDR por nube y enlaces oficiales; reemplazar ternarios `id==='aws'?'aws':id==='azure'?'A':'G'` dispersos en UI.
+- [x] **F1-06 — Centralizar `ProviderRegistry` tipado sin condicionales `if (provider === ...)` dispersos (`PASS`)**
+  - **Tarea:** Crear registro tipado único (`src/domain/providers.ts`) para nombres, colores accesibles Dark/Light, mascota + poses, CLI, consola, reservas CIDR por nube (AWS `5`, Azure `5`, GCP `4`) y enlaces oficiales; reemplazar ternarios `id==='aws'?'aws':id==='azure'?'A':'G'` dispersos en UI mediante `ProviderBadge` y `PROVIDER_REGISTRY`.
   - **Skills / Vigilio Docs:** `symbol-ownership-architecture` · `vigilio-docs/standards/engineering/naming-and-boundaries.md`.
-  - **Resultado 100%:** Un único punto de verdad para metadatos AWS/Azure/GCP validado por tipos estrictos.
+  - **Resultado 100%:** Único punto de verdad para metadatos AWS/Azure/GCP validado por tipos estrictos y pruebas unitarias/BDD con `0` ternarios de insignia repetidos en la interfaz.
 
-- [ ] **F1-07 — Modularizar `SeniorWorkbench.tsx` por etapas sin romper contratos de sesión V7–V9**
-  - **Tarea:** Dividir `SeniorWorkbench.tsx` en `SeniorCatalog.tsx`, `InvestigationStage.tsx`, `DiagnosisStage.tsx`, `DecisionStage.tsx`, `ReportStage.tsx`, `SeniorSidebar.tsx` e `InstructorReview.tsx` dentro de `src/features/senior/`, manteniendo intactas las claves `senior-session:<provider>:<caseId>` y `senior-review:<provider>:<caseId>`.
+- [x] **F1-07 — Modularizar `SeniorWorkbench.tsx` por etapas sin romper contratos de sesión V7–V9 (`PASS`)**
+  - **Tarea:** Dividir `SeniorWorkbench.tsx` en `SeniorCatalog.tsx`, `InvestigationStage.tsx`, `DiagnosisStage.tsx`, `DecisionStage.tsx`, `ReportStage.tsx`, `SeniorSidebar.tsx`, `InstructorReview.tsx`, `use-senior-case-session.ts` y `SeniorWorkbenchPage.tsx` dentro de `src/features/senior/`, manteniendo intactas las fachadas V9 y las claves `senior-session:<provider>:<caseId>` y `senior-review:<provider>:<caseId>`.
   - **Skills / Vigilio Docs:** `refactor-existing-code`, `web-mfe-build-feature` · `vigilio-docs/technology/libraries/preact-signals.md`.
-  - **Resultado 100%:** Sesiones guardadas en V7, V8 y V9 se hidratan sin pérdida de datos y todos los tests `senior-*.test.mjs` pasan.
+  - **Resultado 100%:** Sesiones guardadas en V7, V8 y V9 (y migración de notas V3–V6) se hidratan sin pérdida de datos y todos los tests `senior-*.test.mjs` + E2E pasan al 100%.
 
 - [ ] **F1-08 — Implementar Code-Splitting / Lazy Loading por ruta pesada**
   - **Tarea:** Cargar bajo demanda (`lazy` / dynamic `import()`) las vistas pesadas (`SeniorWorkbench`, `Simulators`, banco completo de las 90 unidades y guías de `Labs`) con estado `loading` accesible sin salto de layout.

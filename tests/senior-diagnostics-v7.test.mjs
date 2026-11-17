@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {readConcatenatedSources} from './support/readSourceTree.mjs';
 const senior=readFileSync(new URL('../src/data/senior.ts',import.meta.url),'utf8');
 const diagnostic=readFileSync(new URL('../src/data/seniorDiagnostics.ts',import.meta.url),'utf8');
-const ui=readFileSync(new URL('../src/SeniorWorkbench.tsx',import.meta.url),'utf8');
+const ui=readConcatenatedSources(['src/SeniorWorkbench.tsx','src/features/senior']);
 const state=readFileSync(new URL('../src/lib/state.ts',import.meta.url),'utf8');
 test('every one of the 18 Senior cases includes a unique diagnostic',()=>{
   const cases=[...senior.matchAll(/id:\s*['"](s\d\d)['"]/g)].map(m=>m[1]);
