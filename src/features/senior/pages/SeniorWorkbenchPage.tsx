@@ -29,7 +29,12 @@ export function SeniorWorkbench() {
       {current && details ? (
         <>
           <div class="breadcrumb">
-            <button onClick={() => state.openCase(null)}>
+            <button
+              onClick={() => {
+                state.openCase(null);
+                window.scrollTo(0, 0);
+              }}
+            >
               <ArrowLeft size={16} /> Volver a escenarios
             </button>
             <span> / {current.id.toUpperCase()}</span>
@@ -213,7 +218,13 @@ export function SeniorWorkbench() {
           </div>
         </>
       ) : (
-        <SeniorCatalog cloudId={p} onOpenCase={(challenge) => state.openCase(challenge)} />
+        <SeniorCatalog
+          cloudId={p}
+          onOpenCase={(challenge) => {
+            state.openCase(challenge);
+            window.scrollTo(0, 0);
+          }}
+        />
       )}
     </main>
   );

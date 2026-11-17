@@ -1,7 +1,6 @@
-import { ArrowRight, BookOpen, CheckCircle2, Eye, Search } from 'lucide-preact';
+import { BookOpen, Eye, Search } from 'lucide-preact';
 import { useMemo, useState } from 'preact/hooks';
 import type { Provider } from '../../../data/course';
-import { SeniorMascotStage } from './SeniorMascotStage';
 import { challenges, type Challenge } from '../../../data/senior';
 import { seniorCurriculumLinks } from '../../../data/seniorCurriculumLinks';
 import { getProviderMeta } from '../../../domain/providers';
@@ -16,6 +15,8 @@ import {
   type SeniorDomainFilter,
   type SeniorStatusFilter,
 } from '../libs/filterSeniorCatalog';
+import { SeniorIncidentCard } from './SeniorIncidentCard';
+import { SeniorMascotStage } from './SeniorMascotStage';
 
 type SeniorCatalogProps = {
   cloudId: Provider;
@@ -65,8 +66,8 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
 
   return (
     <>
-      <header class="page-head page-head-with-mascot">
-        <div>
+      <header class="page-head page-head-with-mascot sr-catalog-hero">
+        <div class="sr-catalog-hero-copy">
           <span class="kicker kicker-with-logo">
             <CloudProviderLogo providerId={p} size={18} />
             CENTRO DE OPERACIONES / {cloud_meta.short}
@@ -79,6 +80,17 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
             practicar investigación técnica, hipótesis y contención. No ejecuta acciones reales ni
             acredita experiencia en producción.
           </p>
+          <div class="sr-hero-metrics" aria-label="Resumen de incidentes">
+            <span>
+              <strong>{challenges.length}</strong> escenarios reales
+            </span>
+            <span>
+              <strong>{completedIds.size}</strong> resueltos en {cloud_meta.short}
+            </span>
+            <span>
+              <strong>{inProgressIds.size}</strong> en investigación
+            </span>
+          </div>
         </div>
         <SeniorMascotStage
           providerId={p}
@@ -142,40 +154,15 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
       </p>
 
       <div class="senior-grid">
-        {filtered.map((item) => {
-          const itemStatus = getChallengeStatus(item.id, completedIds, inProgressIds);
-          const itemDomain = getChallengeDomain(item);
-          return (
-            <button key={item.id} class="senior-card" onClick={() => onOpenCase(item)}>
-              <div class="senior-card-top">
-                <span class="badge-sev">{item.severity}</span>
-                <span>
-                  {item.category} · {itemDomain}
-                </span>
-              </div>
-              <h3>
-                {item.id.toUpperCase()} · {item.title}
-              </h3>
-              <p>{item.brief}</p>
-              <div class="senior-card-foot">
-                <span>
-                  {itemStatus === 'Registrado' ? (
-                    <>
-                      <CheckCircle2 size={15} /> Registrado
-                    </>
-                  ) : itemStatus === 'En curso' ? (
-                    'En curso'
-                  ) : (
-                    'Sin iniciar'
-                  )}
-                </span>
-                <span class="open-case">
-                  Abrir incidente <ArrowRight size={15} />
-                </span>
-              </div>
-            </button>
-          );
-        })}
+        {filtered.map((item) => (
+          <SeniorIncidentCard
+            key={item.id}
+            item={item}
+            itemDomain={getChallengeDomain(item)}
+            itemStatus={getChallengeStatus(item.id, completedIds, inProgressIds)}
+            onOpenCase={onOpenCase}
+          />
+        ))}
       </div>
 
       {attempts.length > 0 && (
