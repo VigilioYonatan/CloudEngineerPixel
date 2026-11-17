@@ -32,7 +32,7 @@ export function CloudMentor({
     const label = alt || `${poseMeta.label} (${providerMeta.short})`;
     return (
       <div
-        class={`cloud-mentor-stage cloud-mentor-${size} cloud-mentor-pose-frame ${className}`}
+        class={`cloud-mentor-stage cloud-mentor-animated cloud-mentor-${size} cloud-mentor-pose-frame ${className}`}
         style={{
           width: `${dimensions.width}px`,
           height: `${dimensions.height}px`,

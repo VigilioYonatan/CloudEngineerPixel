@@ -1,7 +1,7 @@
 import { ArrowRight, BookOpen, CheckCircle2, Eye, Search } from 'lucide-preact';
 import { useMemo, useState } from 'preact/hooks';
-import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import type { Provider } from '../../../data/course';
+import { SeniorMascotStage } from './SeniorMascotStage';
 import { challenges, type Challenge } from '../../../data/senior';
 import { seniorCurriculumLinks } from '../../../data/seniorCurriculumLinks';
 import { getProviderMeta } from '../../../domain/providers';
@@ -78,12 +78,11 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
             acredita experiencia en producción.
           </p>
         </div>
-        <CloudMentor
+        <SeniorMascotStage
           providerId={p}
-          variant="pose"
-          pose="incident"
-          size="banner"
           alt={`Mentor ${cloud_meta.short} listo para incidentes`}
+          topPill="RPO · RTO"
+          bottomPill="ADR · SRE"
         />
       </header>
 

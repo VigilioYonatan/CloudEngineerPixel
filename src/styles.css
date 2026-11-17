@@ -5309,3 +5309,99 @@ p {
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface) 85%, var(--bg));
 }
+
+/* Senior Mode animated mascot stage & crisp sprite framing */
+.cloud-mentor-pose-frame {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.cloud-mentor-pose-frame .cloud-mentor-sprite {
+  transform: scale(1.06);
+}
+
+.sr-mascot-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  padding: 8px;
+}
+
+.sr-mascot-aura {
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(var(--accent-rgb), 0.34) 0%,
+    rgba(var(--accent-rgb), 0.1) 52%,
+    transparent 74%
+  );
+  filter: blur(8px);
+  pointer-events: none;
+  animation: seniorHaloPulse 4.4s ease-in-out infinite;
+}
+
+.sr-mascot-stage .cloud-mentor-stage {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sr-mascot-stage:hover .cloud-mentor-stage {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.sr-mascot-pill {
+  position: absolute;
+  z-index: 4;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 26, 43, 0.9);
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  color: var(--on-dark-gold);
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
+  letter-spacing: 0.05em;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.sr-mascot-pill-top {
+  top: 4px;
+  right: -4px;
+  animation: orbitBobA 4.6s ease-in-out infinite;
+}
+
+.sr-mascot-pill-bottom {
+  bottom: 6px;
+  left: -6px;
+  animation: orbitBobB 5.2s ease-in-out infinite;
+}
+
+.senior-card {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.senior-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(var(--accent-rgb), 0.55);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
+}
+
+[data-motion="reduced"] .sr-mascot-aura,
+[data-motion="reduced"] .sr-mascot-pill,
+[data-motion="reduced"] .cloud-mentor-animated {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sr-mascot-aura,
+  .sr-mascot-pill,
+  .cloud-mentor-animated {
+    animation: none !important;
+  }
+}

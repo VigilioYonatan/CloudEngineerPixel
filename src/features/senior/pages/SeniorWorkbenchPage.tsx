@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-preact';
-import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { getProviderMeta } from '../../../domain/providers';
+import { SeniorMascotStage } from '../components/SeniorMascotStage';
 import type { SeniorPostmortemExtras, SeniorStage } from '../../../lib/seniorSession.mjs';
 import { navigate, notify } from '../../../lib/state';
 import { CloudProviderLogo } from '../../../shared/ui/CloudProviderLogo';
@@ -48,12 +48,10 @@ export function SeniorWorkbench() {
                 <span>{details.service[p]}</span>
               </div>
             </div>
-            <CloudMentor
+            <SeniorMascotStage
               providerId={p}
-              variant="pose"
-              pose="incident"
-              size="banner"
               alt={`Mentor ${cloud_meta.short} investigando ${current.id.toUpperCase()}`}
+              topPill={current.severity}
             />
           </div>
 
