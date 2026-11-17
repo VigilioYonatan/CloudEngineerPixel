@@ -23,6 +23,11 @@ export const VALID_SIMULATOR_ROUTE_IDS = [
   'architecture',
   'routing',
   'terraform-plan',
+  'k8s',
+  'load-balancing',
+  'finops',
+  'dr',
+  'messaging',
 ] as const;
 
 export type SimulatorRouteId = (typeof VALID_SIMULATOR_ROUTE_IDS)[number];

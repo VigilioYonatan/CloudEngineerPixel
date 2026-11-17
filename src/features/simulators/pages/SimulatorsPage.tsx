@@ -1,19 +1,25 @@
 import {
   Activity,
+  Boxes,
   Copy,
+  DollarSign,
   Download,
   FileCode2,
   FlaskConical,
   Gauge,
+  HardDriveDownload,
   Layers,
+  MailCheck,
   Network,
   RotateCcw,
   Route,
+  Scale,
   ShieldCheck,
   type LucideIcon,
 } from 'lucide-preact';
 import { AccessibleTabs } from '../../../components/ui/AccessibleTabs';
 import { navigate, notify, progress } from '../../../lib/state';
+import { ExtendedSimulatorLabs } from '../components/ExtendedSimulatorLabs';
 import { RoutingLabView, TerraformPlanLabView } from '../components/RoutingAndTerraformView';
 import { SimulatorControls } from '../components/SimulatorControls';
 import { SimulatorResults } from '../components/SimulatorResults';
@@ -28,6 +34,11 @@ const SIMULATOR_TABS: readonly { id: SimulatorMode; title: string; icon: LucideI
   { id: 'architecture', title: 'Architecture Studio', icon: Layers },
   { id: 'routing', title: 'Routing & Firewall', icon: Route },
   { id: 'terraform-plan', title: 'Terraform Plan & Drift', icon: FileCode2 },
+  { id: 'k8s', title: 'K8s Scheduler', icon: Boxes },
+  { id: 'load-balancing', title: 'Load Balancing', icon: Scale },
+  { id: 'finops', title: 'FinOps Cost', icon: DollarSign },
+  { id: 'dr', title: 'DR Studio', icon: HardDriveDownload },
+  { id: 'messaging', title: 'Messaging & DLQ', icon: MailCheck },
 ];
 
 export function SimulatorsPage() {
@@ -72,7 +83,7 @@ export function SimulatorsPage() {
         </div>
         <div class="intro-stat">
           <span>LABORATORIOS</span>
-          <strong>07</strong>
+          <strong>12</strong>
           <small>motores interactivos</small>
         </div>
       </section>
@@ -118,6 +129,8 @@ export function SimulatorsPage() {
           analysis={s.tfRes}
           onChangeScenario={s.setTfScenario}
         />
+      ) : ['k8s', 'load-balancing', 'finops', 'dr', 'messaging'].includes(s.mode) ? (
+        <ExtendedSimulatorLabs mode={s.mode} />
       ) : (
         <div class="sim-body">
           <SimulatorControls

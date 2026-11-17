@@ -360,27 +360,27 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `terraform-iac-delivery` · `vigilio-docs/platform/iac/state-and-drift.md`.
   - **Resultado 100%:** Entrena lectura crítica de planes IaC sin ejecutar binarios ni pedir credenciales.
 
-- [ ] **F5-05 — Nuevo Simulador 08: `Kubernetes Scheduler & Failure Lab` (`k8sLabEngine.ts`)**
+- [x] **F5-05 — Nuevo Simulador 08: `Kubernetes Scheduler & Failure Lab` (`k8sLabEngine.ts`)**
   - **Tarea:** Simular asignación de Pods en nodos según `requests/limits` de CPU/RAM, `PodDisruptionBudget`, `readinessProbe`/`livenessProbe`, `HPA` y causas de `Pending`, `OOMKilled` y `CrashLoopBackOff`.
   - **Skills / Vigilio Docs:** `kubernetes-eks-delivery`, `platform-scalability-capacity` · `vigilio-docs/platform/kubernetes/scalability-capacity.md`.
   - **Resultado 100%:** Demuestra determinísticamente por qué un rollout falla o satura nodos antes de tocar un clúster.
 
-- [ ] **F5-06 — Nuevo Simulador 09: `Load Balancing & Dependency Backpressure Lab` (`loadBalancingEngine.ts`)**
+- [x] **F5-06 — Nuevo Simulador 09: `Load Balancing & Dependency Backpressure Lab` (`loadBalancingEngine.ts`)**
   - **Tarea:** Modelar tráfico entrante, instancias sanas/degradadas, health checks, latencia y límite de conexiones de una base de datos aguas abajo (demostrando cómo autoescalar réplicas sin pool/backpressure tumba la DB).
   - **Skills / Vigilio Docs:** `platform-scalability-capacity`, `platform-observability-sre` · `vigilio-docs/platform/architecture/reference-topologies.md`.
   - **Resultado 100%:** Conecta los conceptos de Redes Avanzadas, SRE y el caso Senior `S16`.
 
-- [ ] **F5-07 — Nuevo Simulador 10: `FinOps & Cloud Cost Scenario Lab` (`finopsEngine.ts`)**
+- [x] **F5-07 — Nuevo Simulador 10: `FinOps & Cloud Cost Scenario Lab` (`finopsEngine.ts`)**
   - **Tarea:** Modelar escenarios de costo unitario (cómputo on-demand vs reservas/ARM64, cargos por GB en NAT Gateway vs VPC Endpoints, egress inter-región, tiers de object storage y cardinalidad de métricas), etiquetado claramente como **modelo hipotético educativo** con supuestos transparentes.
   - **Skills / Vigilio Docs:** `platform-finops` · `vigilio-docs/platform/finops/cloud-cost-intelligence.md`.
   - **Resultado 100%:** Calcula impacto porcentual de decisiones de arquitectura sobre la factura sin fingir tarifas oficiales en vivo.
 
-- [ ] **F5-08 — Nuevo Simulador 11: `Disaster Recovery RTO / RPO Studio` (`drEngine.ts`)**
+- [x] **F5-08 — Nuevo Simulador 11: `Disaster Recovery RTO / RPO Studio` (`drEngine.ts`)**
   - **Tarea:** Evaluar estrategias (`Backup & Restore`, `Pilot Light`, `Warm Standby`, `Multi-Site Active/Active`) frente a objetivos `RTO` y `RPO`, lag de replicación y costo operativo relativo, detectando incumplimientos de pérdida de datos aceptable.
   - **Skills / Vigilio Docs:** `platform-resilience-disaster-recovery` · `vigilio-docs/platform/sre/backup-disaster-recovery.md`.
   - **Resultado 100%:** Valida numéricamente si una topología cumple el `RTO/RPO` exigido por negocio.
 
-- [ ] **F5-09 — Nuevo Simulador 12: `Messaging, Retries & Idempotency Lab` (`messagingEngine.ts`)**
+- [x] **F5-09 — Nuevo Simulador 12: `Messaging, Retries & Idempotency Lab` (`messagingEngine.ts`)**
   - **Tarea:** Simular productor → cola (`SQS / Service Bus / PubSub`) → consumidor con entrega *at-least-once*, fallos transitorios, mensajes venenosos → `DLQ` y efecto con/sin `idempotency_key` + `Outbox`.
   - **Skills / Vigilio Docs:** `aws-platform-foundation`, `platform-data-reliability` · `vigilio-docs/standards/messaging/outbox-idempotency.md`.
   - **Resultado 100%:** Demuestra visualmente por qué ocurren cobros duplicados y cómo la idempotencia + DLQ los eliminan.

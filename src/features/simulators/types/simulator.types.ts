@@ -5,7 +5,12 @@ export type SimulatorMode =
   | 'slo'
   | 'architecture'
   | 'routing'
-  | 'terraform-plan';
+  | 'terraform-plan'
+  | 'k8s'
+  | 'load-balancing'
+  | 'finops'
+  | 'dr'
+  | 'messaging';
 
 export type IamAction = 'read' | 'write' | 'admin';
 
