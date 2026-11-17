@@ -1,4 +1,5 @@
 import { Download, ExternalLink, Upload } from 'lucide-preact';
+import { CodeBlock } from '../../../components/ui/CodeBlock';
 import type { Provider } from '../../../data/course';
 import type { Challenge } from '../../../data/senior';
 import type { investigationFor } from '../../../data/seniorInvestigations';
@@ -181,11 +182,7 @@ export function SeniorSidebar({
           Equivalencias: AWS · {details.service.aws}; Azure · {details.service.azure}; GCP ·{' '}
           {details.service.gcp}.
         </p>
-        <div class="terminal-block">
-          <pre>
-            <code>$ {details.command[p]}</code>
-          </pre>
-        </div>
+        <CodeBlock code={details.command[p]} provider={p} risk="read-only" prefixDollar />
         <p class="sr-hint">
           Ejemplo de comando de solo lectura, no ejecutado. Verifica contexto y permisos antes de
           usarlo en una cuenta real.
@@ -215,11 +212,7 @@ export function SeniorSidebar({
             Solo lectura. Requieren una cuenta autorizada y nunca se ejecutan en esta web.
           </p>
           {practice.commands[p].map((cmd) => (
-            <div class="terminal-block" key={cmd}>
-              <pre>
-                <code>$ {cmd}</code>
-              </pre>
-            </div>
+            <CodeBlock key={cmd} code={cmd} provider={p} risk="read-only" prefixDollar />
           ))}
           <p class="sr-hint">
             <strong>Riesgo frecuente:</strong> {practice.pitfall}

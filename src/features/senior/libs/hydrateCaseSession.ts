@@ -1,6 +1,7 @@
 import {
   normalizeSeniorSession,
   parseSeniorSession,
+  type SeniorReport,
   type SeniorSession,
 } from '../../../lib/seniorSession.mjs';
 
@@ -24,4 +25,30 @@ export function hydrateCaseSession(
     }
   }
   return restored;
+}
+
+export function withInspectedExhibit(prev: SeniorSession, id: string): SeniorSession {
+  return normalizeSeniorSession({
+    ...prev,
+    inspected: prev.inspected.includes(id) ? prev.inspected : [...prev.inspected, id],
+  });
+}
+
+export function withUpdatedReportSection(
+  prev: SeniorSession,
+  key: keyof SeniorReport,
+  val: string,
+): SeniorSession {
+  return normalizeSeniorSession({ ...prev, answers: { ...prev.answers, [key]: val } });
+}
+
+export function withToggledCitation(
+  prev: SeniorSession,
+  id: string,
+  checked: boolean,
+): SeniorSession {
+  return normalizeSeniorSession({
+    ...prev,
+    cited: checked ? [...new Set([...prev.cited, id])] : prev.cited.filter((x) => x !== id),
+  });
 }

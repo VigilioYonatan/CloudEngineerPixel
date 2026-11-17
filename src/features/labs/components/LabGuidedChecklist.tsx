@@ -1,6 +1,6 @@
-import { Check, ClipboardCheck, Copy, Target, Terminal } from 'lucide-preact';
+import { Check, ClipboardCheck, Target, Terminal } from 'lucide-preact';
+import { CodeBlock } from '../../../components/ui/CodeBlock';
 import type { Module } from '../../../data/course';
-import { notify } from '../../../lib/state';
 import { ProgressBar } from '../../../shared/ui/ProgressBar';
 import { Tag } from '../../../shared/ui/Tag';
 import { LAB_VERIFICATION_TASKS } from '../constants/labs.constants';
@@ -50,29 +50,14 @@ export function LabGuidedChecklist({
           Consulta los recursos disponibles. Antes de iniciar sesión, verifica que el contexto
           corresponda a una cuenta de laboratorio.
         </p>
-        <div class="terminal-block">
-          <div class="terminal-bar">
-            <span class="terminal-lights">
-              <i />
-              <i />
-              <i />
-            </span>
-            <span>terminal</span>
-            <button
-              onClick={() =>
-                navigator.clipboard
-                  .writeText(serviceCli)
-                  .then(() => notify('Comando copiado'))
-                  .catch(() => notify('Copia manualmente el comando'))
-              }
-            >
-              <Copy size={14} /> Copiar
-            </button>
-          </div>
-          <pre>
-            <code>$ {serviceCli}</code>
-          </pre>
-        </div>
+        <CodeBlock
+          code={serviceCli}
+          language="bash"
+          provider={providerShort}
+          risk="read-only"
+          contextLabel="terminal"
+          prefixDollar
+        />
         <p class="helper-text">
           Si no cuentas con credenciales, estudia la salida esperada en la documentación oficial y
           completa la modalidad conceptual.

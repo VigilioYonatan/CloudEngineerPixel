@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Cloud Engineering Academy · Design System Tokens (WCAG 2.2 AA Verified)
+   Architecture: Primitive -> Semantic -> Component Custom Properties
+   Coverage: (AWS, Azure, GCP) x (Dark, Light) + 44px Touch Targets
+   ========================================================================== */
+
+:root {
+  /* 1. Primitive Palette */
+  --primitive-slate-950: #090f1c;
+  --primitive-slate-900: #101a2b;
+  --primitive-slate-850: #152136;
+  --primitive-slate-800: #1d2d46;
+  --primitive-slate-700: #2b3e57;
+  --primitive-slate-500: #687f9c;
+  --primitive-slate-300: #a6b7ce;
+  --primitive-slate-50: #f0f5ff;
+
+  --primitive-paper-100: #f2f6fc;
+  --primitive-paper-0: #ffffff;
+  --primitive-paper-200: #eaf0f8;
+  --primitive-paper-300: #dce8f5;
+  --primitive-ink-950: #0f1d30;
+  --primitive-ink-700: #435368;
+  --primitive-ink-500: #5f728b;
+  --primitive-ink-200: #b8c7da;
+
+  --primitive-aws-dark: #ff9900;
+  --primitive-aws-dark-text: #ffb340;
+  --primitive-aws-light: #9a3412;
+
+  --primitive-azure-dark: #38bdf8;
+  --primitive-azure-dark-text: #5ccbfa;
+  --primitive-azure-light: #075985;
+
+  --primitive-gcp-dark: #55d99a;
+  --primitive-gcp-dark-text: #65e0a6;
+  --primitive-gcp-light: #166534;
+
+  /* 2. Spacing, Sizing & Accessibility Primitives */
+  --tap-target-min: 44px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --focus-outline-width: 3px;
+  --focus-outline-offset: 3px;
+
+  /* 3. Semantic Tokens — Default Mode: Dark + AWS */
+  --bg: var(--primitive-slate-950);
+  --surface: var(--primitive-slate-900);
+  --surface2: var(--primitive-slate-850);
+  --surface3: var(--primitive-slate-800);
+  --text: var(--primitive-slate-50);
+  --muted: var(--primitive-slate-300);
+  --border: var(--primitive-slate-700);
+  --border-strong: var(--primitive-slate-500);
+
+  --accent: var(--primitive-aws-dark);
+  --accent-surface: rgba(255, 153, 0, 0.12);
+  --accent-border: rgba(255, 153, 0, 0.34);
+  --accent-text: var(--primitive-aws-dark-text);
+  --on-accent: #091421;
+  --on-dark-accent: var(--primitive-aws-dark-text);
+  --accent-rgb: 255, 153, 0;
+  --soft: rgba(255, 153, 0, 0.11);
+  --focus-ring: var(--primitive-aws-dark-text);
+
+  --gold: #f4c45b;
+  --gold-text: #f7cf73;
+  --on-gold: #18181b;
+  --on-dark-gold: #f7cf73;
+
+  --green: #4dd8a1;
+  --green-text: #63e2af;
+  --red: #fc6f85;
+  --red-text: #ff94a5;
+  --blue: #5caeff;
+  --blue-text: #7ec0ff;
+
+  --provider-aws-mark: #ffb340;
+  --provider-azure-mark: #5ccbfa;
+  --provider-gcp-mark: #65e0a6;
+
+  --level-fundamentos-text: #5eead4;
+  --level-intermedio-text: #7ec0ff;
+  --level-avanzado-text: #d0b2ff;
+
+  /* 4. Component Tokens */
+  --dialog-backdrop: rgba(5, 10, 20, 0.76);
+  --code-bg: #080e18;
+  --code-border: #243448;
+  --code-header-text: #afc2d8;
+  --code-body-text: #c6f3d4;
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-provider="aws"] {
+  --accent: var(--primitive-aws-dark);
+  --accent-surface: rgba(255, 153, 0, 0.12);
+  --accent-border: rgba(255, 153, 0, 0.34);
+  --accent-text: var(--primitive-aws-dark-text);
+  --on-accent: #091421;
+  --on-dark-accent: var(--primitive-aws-dark-text);
+  --accent-rgb: 255, 153, 0;
+  --soft: rgba(255, 153, 0, 0.11);
+  --focus-ring: var(--primitive-aws-dark-text);
+}
+
+:root[data-provider="azure"] {
+  --accent: var(--primitive-azure-dark);
+  --accent-surface: rgba(56, 189, 248, 0.12);
+  --accent-border: rgba(56, 189, 248, 0.34);
+  --accent-text: var(--primitive-azure-dark-text);
+  --on-accent: #061523;
+  --on-dark-accent: var(--primitive-azure-dark-text);
+  --accent-rgb: 56, 189, 248;
+  --soft: rgba(56, 189, 248, 0.12);
+  --focus-ring: var(--primitive-azure-dark-text);
+}
+
+:root[data-provider="gcp"] {
+  --accent: var(--primitive-gcp-dark);
+  --accent-surface: rgba(85, 217, 154, 0.12);
+  --accent-border: rgba(85, 217, 154, 0.34);
+  --accent-text: var(--primitive-gcp-dark-text);
+  --on-accent: #061810;
+  --on-dark-accent: var(--primitive-gcp-dark-text);
+  --accent-rgb: 85, 217, 154;
+  --soft: rgba(85, 217, 154, 0.12);
+  --focus-ring: var(--primitive-gcp-dark-text);
+}
+
+:root[data-theme="light"] {
+  --bg: var(--primitive-paper-100);
+  --surface: var(--primitive-paper-0);
+  --surface2: var(--primitive-paper-200);
+  --surface3: var(--primitive-paper-300);
+  --text: var(--primitive-ink-950);
+  --muted: var(--primitive-ink-700);
+  --border: var(--primitive-ink-200);
+  --border-strong: var(--primitive-ink-500);
+
+  --accent: var(--primitive-aws-light);
+  --accent-surface: rgba(154, 52, 18, 0.08);
+  --accent-border: rgba(154, 52, 18, 0.3);
+  --accent-text: var(--primitive-aws-light);
+  --on-accent: #ffffff;
+  --accent-rgb: 154, 52, 18;
+  --soft: rgba(154, 52, 18, 0.08);
+  --focus-ring: var(--primitive-aws-light);
+
+  --gold: #92400e;
+  --gold-text: #92400e;
+  --on-gold: #ffffff;
+  --green: #166534;
+  --green-text: #166534;
+  --red: #9f1239;
+  --red-text: #9f1239;
+  --blue: #1e40af;
+  --blue-text: #1e40af;
+
+  --provider-aws-mark: #9a3412;
+  --provider-azure-mark: #075985;
+  --provider-gcp-mark: #166534;
+
+  --level-fundamentos-text: #0f766e;
+  --level-intermedio-text: #1d4ed8;
+  --level-avanzado-text: #6d28d9;
+
+  --dialog-backdrop: rgba(15, 29, 48, 0.58);
+  --shadow: 0 18px 55px rgba(28, 50, 84, 0.09);
+}
+
+:root[data-theme="light"][data-provider="aws"] {
+  --accent: var(--primitive-aws-light);
+  --accent-surface: rgba(154, 52, 18, 0.08);
+  --accent-border: rgba(154, 52, 18, 0.3);
+  --accent-text: var(--primitive-aws-light);
+  --on-accent: #ffffff;
+  --accent-rgb: 154, 52, 18;
+  --soft: rgba(154, 52, 18, 0.08);
+  --focus-ring: var(--primitive-aws-light);
+}
+
+:root[data-theme="light"][data-provider="azure"] {
+  --accent: var(--primitive-azure-light);
+  --accent-surface: rgba(7, 89, 133, 0.08);
+  --accent-border: rgba(7, 89, 133, 0.3);
+  --accent-text: var(--primitive-azure-light);
+  --on-accent: #ffffff;
+  --accent-rgb: 7, 89, 133;
+  --soft: rgba(7, 89, 133, 0.08);
+  --focus-ring: var(--primitive-azure-light);
+}
+
+:root[data-theme="light"][data-provider="gcp"] {
+  --accent: var(--primitive-gcp-light);
+  --accent-surface: rgba(22, 101, 52, 0.08);
+  --accent-border: rgba(22, 101, 52, 0.3);
+  --accent-text: var(--primitive-gcp-light);
+  --on-accent: #ffffff;
+  --accent-rgb: 22, 101, 52;
+  --soft: rgba(22, 101, 52, 0.08);
+  --focus-ring: var(--primitive-gcp-light);
+}

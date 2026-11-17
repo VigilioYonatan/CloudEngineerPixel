@@ -22,8 +22,10 @@ test('F1-09 E2E: corrupted localStorage is quarantined without silent wipe and o
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('cloud-academy-respaldo-crudo-corrupto.json');
 
-  page.once('dialog', (dialog) => dialog.accept());
   await alertBanner.getByRole('button', { name: /Reiniciar estado limpio/i }).click();
+  const confirmDialog = page.getByRole('alertdialog');
+  await expect(confirmDialog).toBeVisible();
+  await confirmDialog.getByRole('button', { name: /Reiniciar estado limpio/i }).click();
   await expect(alertBanner).toHaveCount(0);
 });
 

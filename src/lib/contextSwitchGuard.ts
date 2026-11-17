@@ -15,6 +15,20 @@ export function createContextSwitchCoordinator() {
   const flushers = new Map<string, ScopedDraftFlusher>();
   let active_imports = 0;
 
+  const flushDirtyScopes = (): { flushedCount: number; flushedLabels: string[] } => {
+    const flushed_labels: string[] = [];
+    for (const flusher of flushers.values()) {
+      if (flusher.isDirty()) {
+        flusher.flush();
+        flushed_labels.push(flusher.scopeLabel);
+      }
+    }
+    return {
+      flushedCount: flushed_labels.length,
+      flushedLabels: flushed_labels,
+    };
+  };
+
   return {
     registerFlusher(flusher: ScopedDraftFlusher): () => void {
       flushers.set(flusher.id, flusher);
@@ -40,9 +54,10 @@ export function createContextSwitchCoordinator() {
       return active_imports > 0;
     },
 
+    flushDirtyScopes,
+
     prepareContextSwitch(
-      confirm_fn: (message: string) => boolean = (msg) =>
-        typeof window !== 'undefined' ? window.confirm(msg) : true,
+      confirm_fn: (message: string) => boolean = () => false,
     ): ContextSwitchPreparation {
       if (active_imports > 0) {
         const confirmed = confirm_fn(
@@ -53,18 +68,11 @@ export function createContextSwitchCoordinator() {
         }
       }
 
-      const flushed_labels: string[] = [];
-      for (const flusher of flushers.values()) {
-        if (flusher.isDirty()) {
-          flusher.flush();
-          flushed_labels.push(flusher.scopeLabel);
-        }
-      }
-
+      const flushed = flushDirtyScopes();
       return {
         allowed: true,
-        flushedCount: flushed_labels.length,
-        flushedLabels: flushed_labels,
+        flushedCount: flushed.flushedCount,
+        flushedLabels: flushed.flushedLabels,
       };
     },
   };

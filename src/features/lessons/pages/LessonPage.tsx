@@ -6,12 +6,13 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock3,
-  Copy,
   ExternalLink,
   Network,
   ShieldCheck,
   Target,
 } from 'lucide-preact';
+import { CloudServiceComparison } from '../../../components/ui/CloudServiceComparison';
+import { CodeBlock } from '../../../components/ui/CodeBlock';
 import { levelInfo, moduleService, services } from '../../../data/course';
 import { knowledge } from '../../../data/knowledge';
 import { studyUnits } from '../../../data/study';
@@ -22,7 +23,6 @@ import {
   currentModule,
   currentTopic,
   navigate,
-  notify,
   progress,
   provider,
 } from '../../../lib/state';
@@ -143,31 +143,14 @@ export function LessonPage() {
               <Tag kind="accent">{cloud_meta.short}</Tag>
             </div>
             <p>{service_entry.note}</p>
-            <div class="terminal-block">
-              <div class="terminal-bar">
-                <span class="terminal-lights">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <span>{cloud_meta.consoleName.toLowerCase()}</span>
-                <button
-                  title="Copiar comando"
-                  aria-label="Copiar comando"
-                  onClick={() =>
-                    navigator.clipboard
-                      .writeText(service_entry.cli)
-                      .then(() => notify('Comando copiado'))
-                      .catch(() => notify('No se pudo copiar'))
-                  }
-                >
-                  <Copy size={15} /> Copiar
-                </button>
-              </div>
-              <pre>
-                <code>$ {service_entry.cli}</code>
-              </pre>
-            </div>
+            <CodeBlock
+              code={service_entry.cli}
+              language="bash"
+              provider={active_cloud}
+              risk="read-only"
+              contextLabel={cloud_meta.consoleName.toLowerCase()}
+              prefixDollar
+            />
             <a
               class="official-link"
               href={service_entry.doc}
@@ -177,6 +160,8 @@ export function LessonPage() {
               Documentación oficial del proveedor <ExternalLink size={15} />
             </a>
           </div>
+
+          <CloudServiceComparison moduleId={mod.id} activeProvider={active_cloud} />
 
           <h2>04. Procedimiento de ingeniería</h2>
           <ol class="steps-list">

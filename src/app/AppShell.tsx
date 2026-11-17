@@ -1,6 +1,8 @@
 import { AlertTriangle, CheckCircle2, Download, RotateCcw, X } from 'lucide-preact';
 import type { ComponentChildren } from 'preact';
 import { useEffect } from 'preact/hooks';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { activeConfirmRequest } from '../lib/confirmDialogState';
 import {
   applyParsedRoute,
   corruptedStorageRaw,
@@ -19,8 +21,10 @@ type AppShellProps = {
 export function AppShell({ children }: AppShellProps) {
   useEffect(() => {
     const handle_key_down = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && activeConfirmRequest.value === null && mobileMenu.value) {
         mobileMenu.value = false;
+        const toggle = document.querySelector<HTMLButtonElement>('.mobile-toggle');
+        toggle?.focus();
       }
     };
     const handle_hash_change = () => {
@@ -54,7 +58,7 @@ export function AppShell({ children }: AppShellProps) {
             <button class="btn btn-secondary" onClick={downloadCorruptedBackup}>
               <Download size={16} /> Descargar respaldo crudo
             </button>
-            <button class="btn btn-danger" onClick={dismissCorruptedBackupAndReset}>
+            <button class="btn btn-danger" onClick={() => void dismissCorruptedBackupAndReset()}>
               <RotateCcw size={16} /> Reiniciar estado limpio
             </button>
           </div>
@@ -76,6 +80,7 @@ export function AppShell({ children }: AppShellProps) {
           </button>
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

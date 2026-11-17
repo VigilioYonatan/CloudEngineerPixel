@@ -1,4 +1,5 @@
 import { ArrowRight, CheckCircle2, Search, ShieldAlert } from 'lucide-preact';
+import { CodeBlock } from '../../../components/ui/CodeBlock';
 import type { investigationFor } from '../../../data/seniorInvestigations';
 import type { SeniorPlaybook } from '../../../data/seniorPlaybooks';
 
@@ -71,19 +72,11 @@ export function InvestigationStage({
                   {is_inspected ? 'Examinado' : 'Examinar'}
                 </button>
               </div>
-              <div class="terminal-block">
-                <div class="terminal-bar">
-                  <span class="terminal-lights">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  <span>READ ONLY / SYNTHETIC EVIDENCE</span>
-                </div>
-                <pre>
-                  <code>{exhibit.body}</code>
-                </pre>
-              </div>
+              <CodeBlock
+                code={exhibit.body}
+                risk="read-only"
+                contextLabel="READ ONLY / SYNTHETIC EVIDENCE"
+              />
               {is_inspected && <p class="sr-analysis">{exhibit.analysis}</p>}
             </section>
           );

@@ -169,7 +169,7 @@ export function ProgressPage() {
               }}
             />
           </label>
-          <button class="btn btn-danger" onClick={clearProgress}>
+          <button class="btn btn-danger" onClick={() => void clearProgress()}>
             <Trash2 size={16} /> Reiniciar progreso
           </button>
         </div>

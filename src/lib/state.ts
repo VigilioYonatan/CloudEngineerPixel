@@ -10,6 +10,7 @@ import {
 } from '../app/router';
 import { APP_VERSION, PROGRESS_EXPORT_VERSION, PROGRESS_SCHEMA_VERSION } from '../config/appMeta';
 import type { Provider } from '../data/course';
+import { requestConfirm } from './confirmDialogState';
 import { appContextGuard } from './contextSwitchGuard';
 import {
   createEmptyValidatedProgress,
@@ -112,23 +113,42 @@ export function notify(message: string) {
   toast.value = message;
 }
 
-export function setProvider(p: Provider): boolean {
-  if (!['aws', 'azure', 'gcp'].includes(p)) return false;
-  if (p !== provider.value) {
-    const prep = appContextGuard.prepareContextSwitch();
-    if (!prep.allowed) return false;
-  }
+function commitProviderChange(p: Provider) {
   markOnboardingCompleted();
   provider.value = p;
   history.replaceState({}, '', `${location.pathname}?cloud=${p}${location.hash}`);
   notify(`Ruta ${p.toUpperCase()} activada`);
+}
+
+export function setProvider(p: Provider): boolean {
+  if (!['aws', 'azure', 'gcp'].includes(p)) return false;
+  if (p !== provider.value) {
+    if (appContextGuard.hasAsyncImportInFlight()) {
+      void requestConfirm({
+        title: 'Importación en curso',
+        description:
+          'Hay una importación de expediente en curso. ¿Deseas descartar la espera pendiente y cambiar de nube?',
+        confirmLabel: 'Cambiar de nube',
+        cancelLabel: 'Esperar importación',
+        tone: 'warning',
+      }).then((confirmed) => {
+        if (confirmed) {
+          appContextGuard.flushDirtyScopes();
+          commitProviderChange(p);
+        }
+      });
+      return false;
+    }
+    appContextGuard.flushDirtyScopes();
+  }
+  commitProviderChange(p);
   return true;
 }
 
 export function applyParsedRoute(raw_hash: string): void {
   const parsed = parseHashRoute(raw_hash);
   routeRecovery.value = parsed.routeRecovery || null;
-  view.value = parsed.view;
+  view.value = parsed.routeRecovery ? parsed.view : parsed.view;
   if (parsed.routeRecovery) return;
 
   if (parsed.view === 'lesson') {
@@ -147,10 +167,7 @@ export function applyParsedRoute(raw_hash: string): void {
   }
 }
 
-export function navigate(target_view: View, options?: RouteFormatOptions) {
-  const prep = appContextGuard.prepareContextSwitch();
-  if (!prep.allowed) return;
-
+function commitNavigation(target_view: View, options?: RouteFormatOptions) {
   const normalized = typeof options === 'string' ? { resourceId: options } : options || {};
   routeRecovery.value = null;
 
@@ -179,6 +196,27 @@ export function navigate(target_view: View, options?: RouteFormatOptions) {
   if (location.hash !== next_hash) {
     location.hash = next_hash;
   }
+}
+
+export function navigate(target_view: View, options?: RouteFormatOptions) {
+  if (appContextGuard.hasAsyncImportInFlight()) {
+    void requestConfirm({
+      title: 'Importación activa',
+      description:
+        'Hay una importación de expediente en curso. ¿Deseas abandonar esta vista antes de que finalice?',
+      confirmLabel: 'Cambiar de vista',
+      cancelLabel: 'Permanecer aquí',
+      tone: 'warning',
+    }).then((confirmed) => {
+      if (confirmed) {
+        appContextGuard.flushDirtyScopes();
+        commitNavigation(target_view, options);
+      }
+    });
+    return;
+  }
+  appContextGuard.flushDirtyScopes();
+  commitNavigation(target_view, options);
 }
 
 export function completeTopic(id: string, p: Provider) {
@@ -229,8 +267,17 @@ export function setNotes(key: string, value: string) {
   };
 }
 
-export function clearProgress() {
-  if (confirm('¿Eliminar todo tu progreso local? Esta acción no se puede deshacer.')) {
+export async function clearProgress() {
+  const current = progress.value;
+  const confirmed = await requestConfirm({
+    title: 'Reiniciar progreso local',
+    description: '¿Eliminar todo tu progreso local? Esta acción no se puede deshacer.',
+    impactSummary: `Se borrarán ${current.completed.length} actividades completadas, ${current.senior.length} desafíos Senior y ${Object.keys(current.notes).length} notas o borradores guardados en este navegador.`,
+    confirmLabel: 'Reiniciar progreso',
+    cancelLabel: 'Conservar datos',
+    tone: 'danger',
+  });
+  if (confirmed) {
     corruptedStorageRaw.value = null;
     corruptedStorageError.value = null;
     clearLastVisitedUnit();
@@ -267,12 +314,18 @@ export function downloadCorruptedBackup() {
   notify('Respaldo crudo descargado');
 }
 
-export function dismissCorruptedBackupAndReset() {
-  if (
-    confirm(
+export async function dismissCorruptedBackupAndReset() {
+  const confirmed = await requestConfirm({
+    title: 'Reiniciar almacenamiento dañado',
+    description:
       '¿Reiniciar el almacenamiento local con un esquema limpio v2? Descarga antes el respaldo crudo si deseas conservar tus notas.',
-    )
-  ) {
+    impactSummary:
+      'El estado corrupto en cuarentena será reemplazado por un esquema limpio schemaVersion 2.',
+    confirmLabel: 'Reiniciar estado limpio',
+    cancelLabel: 'Cancelar',
+    tone: 'danger',
+  });
+  if (confirmed) {
     corruptedStorageRaw.value = null;
     corruptedStorageError.value = null;
     progress.value = empty();
@@ -321,6 +374,17 @@ export async function importProgress(file: File) {
       throw Error('El archivo no es JSON válido');
     }
     const migrated = migrateProgressSnapshot(raw, stampNow());
+    const confirmed = await requestConfirm({
+      title: 'Sobrescribir progreso global',
+      description:
+        '¿Deseas reemplazar tu progreso actual en este navegador con el respaldo validado?',
+      impactSummary: `Actual: ${progress.value.completed.length} actividades · Respaldo entrante: ${migrated.completed.length} actividades y ${migrated.senior.length} casos Senior.`,
+      confirmLabel: 'Sobrescribir progreso',
+      cancelLabel: 'Cancelar importación',
+      tone: 'warning',
+    });
+    if (!confirmed) return;
+
     corruptedStorageRaw.value = null;
     corruptedStorageError.value = null;
     progress.value = migrated;

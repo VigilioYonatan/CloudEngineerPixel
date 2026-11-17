@@ -155,6 +155,7 @@ test('F1-05 quality gate: zero explicit any in modularized app, domain, shared a
     'src/SeniorWorkbench.tsx',
     'src/InstructorReview.tsx',
     ...listSourceFiles('src/app'),
+    ...listSourceFiles('src/components'),
     ...listSourceFiles('src/domain'),
     ...listSourceFiles('src/shared'),
     ...listSourceFiles('src/features'),

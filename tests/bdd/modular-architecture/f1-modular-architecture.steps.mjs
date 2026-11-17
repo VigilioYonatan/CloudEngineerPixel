@@ -155,6 +155,7 @@ export function buildModularArchitectureBddSteps() {
       'src/SeniorWorkbench.tsx',
       'src/InstructorReview.tsx',
       ...listSourceFiles('src/app'),
+      ...listSourceFiles('src/components'),
       ...listSourceFiles('src/domain'),
       ...listSourceFiles('src/shared'),
       ...listSourceFiles('src/features'),
@@ -181,6 +182,9 @@ export function buildModularArchitectureBddSteps() {
         }
         if (rel.startsWith('src/shared/') && target?.startsWith('src/features/')) {
           world.crossFeatureViolations.push(`Violación shared -> features: ${rel} -> ${target}`);
+        }
+        if (rel.startsWith('src/components/') && target?.startsWith('src/features/')) {
+          world.crossFeatureViolations.push(`Violación components -> features: ${rel} -> ${target}`);
         }
       }
       graph.set(rel, deps);

@@ -227,27 +227,27 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ### BLOQUE 3 — Design System, Tokens WCAG AA, Responsive Móvil, Mascota y Componentes UI (11 Tareas)
 
-- [ ] **F3-01 — Corregir sistema de tokens CSS para contraste WCAG 2.2 AA en Dark y Light Mode**
+- [x] **F3-01 — Corregir sistema de tokens CSS para contraste WCAG 2.2 AA en Dark y Light Mode**
   - **Tarea:** Separar en `src/design-system/tokens.css` el acento decorativo (`--accent-surface`, `--accent-border`) del acento de texto/enlaces (`--accent-text`) y texto sobre botón primario (`--on-accent`). Ajustar en `data-theme="light"` tonos accesibles (ej. AWS `#b45309`, Azure `#0369a1`, GCP `#15803d` para texto sobre blanco) garantizando ratio `>= 4.5:1` en texto normal y `>= 3:1` en controles UI.
   - **Skills / Vigilio Docs:** `ui-design-system`, `ux-accessibility` · `vigilio-docs/standards/experience/design-tokens-modes-and-theming.md`, `vigilio-docs/standards/experience/accessibility-inclusive-interactions.md`.
   - **Resultado 100%:** Auditoría automática `axe-core` pasa con `0` violaciones de `color-contrast` en las 6 combinaciones `(AWS, Azure, GCP) × (Dark, Light)`.
 
-- [ ] **F3-02 — Arreglar menú móvil (`<= 720px`) para exponer Tema, Configuración y rutas completas**
+- [x] **F3-02 — Arreglar menú móvil (`<= 720px`) para exponer Tema, Configuración y rutas completas**
   - **Tarea:** Incorporar dentro del drawer/menú móvil los controles de **Tema (Oscuro/Claro)**, **Configuración**, **Laboratorios** y **Mapa Curricular** (que hoy desaparecen por `.hide-mobile`), asegurando cierre con `Escape`, cierre al navegar, bloqueo de scroll de fondo controlado y tap targets `>= 44x44 px`.
   - **Skills / Vigilio Docs:** `ux-mobile-experience`, `ux-accessibility` · `vigilio-docs/standards/experience/responsive-adaptive-safe-area.md`.
   - **Resultado 100%:** En `320px` y `390px` todas las funciones de la app son 100% operables con dedo y teclado sin horizontal overflow.
 
-- [ ] **F3-03 — Componente `ConfirmDialog` accesible (reemplazo de `window.confirm`)**
+- [x] **F3-03 — Componente `ConfirmDialog` accesible (reemplazo de `window.confirm`)**
   - **Tarea:** Construir `src/components/ui/ConfirmDialog.tsx` usando `<dialog>` semántico / ARIA `role="alertdialog"`, *focus trap*, cierre con `Escape`, restauración del foco al botón invocador y resumen claro del impacto para: *Reiniciar progreso*, *Sobrescribir progreso global* y *Restaurar checkpoint Senior*.
   - **Skills / Vigilio Docs:** `ui-design-system`, `ux-accessibility` · `vigilio-docs/standards/experience/components-states-and-contracts.md`.
   - **Resultado 100%:** Cero llamadas a `window.confirm` nativo; diálogos probados con teclado (`Tab`, `Shift+Tab`, `Escape`, `Enter`).
 
-- [ ] **F3-04 — Componente `CodeBlock` de ingeniería con clasificación de riesgo y copiado accesible**
+- [x] **F3-04 — Componente `CodeBlock` de ingeniería con clasificación de riesgo y copiado accesible**
   - **Tarea:** Crear `src/components/ui/CodeBlock.tsx` que muestre lenguaje (`bash`, `hcl`, `yaml`, `json`), proveedor, badge obligatorio de efecto (`SOLO LECTURA` verde | `CREA RECURSOS / COSTO` ámbar | `DESTRUCTIVO / REQUIERE PLAN` rojo), scroll horizontal limpio en `320px` y botón copiar con anuncio `aria-live`.
   - **Skills / Vigilio Docs:** `ui-design-system`, `ux-web-experience` · `vigilio-docs/standards/experience/components-states-and-contracts.md`.
   - **Resultado 100%:** Todo comando o snippet en Aula, Labs y Senior declara explícitamente su nivel de riesgo operativo y financiero.
 
-- [ ] **F3-05 — Componente `CloudServiceComparison` (Comparador Multicloud 3 columnas / acordeón móvil)**
+- [x] **F3-05 — Componente `CloudServiceComparison` (Comparador Multicloud 3 columnas / acordeón móvil)**
   - **Tarea:** Crear componente reutilizable en Aula que compare para la unidad activa **AWS vs Azure vs GCP**: servicio principal, jerarquía/alcance (ej. VPC regional vs global), modelo de permisos, facturación clave y **qué NO es equivalente** entre los tres.
   - **Skills / Vigilio Docs:** `ui-design-system`, `ux-mobile-experience` · `vigilio-docs/standards/experience/responsive-adaptive-safe-area.md`.
   - **Resultado 100%:** Cada unidad permite abrir/ver "Comparar las 3 nubes" sin tablas rotas en móvil.

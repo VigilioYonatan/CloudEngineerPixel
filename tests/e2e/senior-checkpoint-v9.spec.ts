@@ -17,8 +17,10 @@ test('Senior V9 imports a backup only into its original cloud and case',async({p
  await expect(page.getByRole('alert')).toContainText('otro caso o proveedor');
  const chooser=page.getByRole('combobox',{name:'Seleccionar proveedor cloud'});
  await chooser.selectOption('azure');
- page.once('dialog',dialog=>dialog.accept());
  await input.setInputFiles(fixture('azure','s01'));
+ const confirmDialog=page.getByRole('alertdialog');
+ await expect(confirmDialog).toBeVisible();
+ await confirmDialog.getByRole('button',{name:/Restaurar expediente/i}).click();
  await expect(page.getByText(/Borrador Senior restaurado/)).toBeVisible();
  await page.waitForFunction(()=>{
   const entry=JSON.parse(localStorage.getItem('cea:progress')||'{}').notes?.['senior-session:azure:s01'];

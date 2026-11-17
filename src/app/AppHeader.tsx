@@ -5,6 +5,7 @@ import {
   CloudCog,
   Compass,
   FlaskConical,
+  Info,
   LayoutDashboard,
   Menu,
   Moon,
@@ -14,10 +15,40 @@ import {
   Trophy,
   X,
 } from 'lucide-preact';
+import { useEffect, useRef } from 'preact/hooks';
 import { mobileMenu, navigate, theme, view } from '../lib/state';
 import { CloudProviderSwitcher } from './CloudProviderSwitcher';
 
 export function AppHeader() {
+  const isMenuOpen = mobileMenu.value;
+  const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
+  const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      wasOpenRef.current = true;
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const handleResize = () => {
+        if (window.innerWidth > 970) {
+          mobileMenu.value = false;
+        }
+      };
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        document.body.style.overflow = previousOverflow;
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+    }
+    return undefined;
+  }, [isMenuOpen]);
+
   return (
     <header class="header">
       <div class="header-inner">
@@ -32,8 +63,10 @@ export function AppHeader() {
             </small>
           </span>
         </button>
+
         <nav
-          class={`top-nav ${mobileMenu.value ? 'nav-open' : ''}`}
+          id="primary-navigation"
+          class={`top-nav ${isMenuOpen ? 'nav-open' : ''}`}
           aria-label="Navegación principal"
         >
           <button
@@ -89,7 +122,36 @@ export function AppHeader() {
             <ChartNoAxesCombined size={16} />
             Mi progreso
           </button>
+
+          <div class="mobile-drawer-utilities">
+            <button
+              type="button"
+              onClick={() => {
+                theme.value = theme.value === 'dark' ? 'light' : 'dark';
+              }}
+            >
+              {theme.value === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              {theme.value === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+            </button>
+            <button
+              type="button"
+              class={view.value === 'settings' ? 'nav-current' : ''}
+              onClick={() => navigate('settings')}
+            >
+              <Settings size={16} />
+              Configuración
+            </button>
+            <button
+              type="button"
+              class={view.value === 'about' ? 'nav-current' : ''}
+              onClick={() => navigate('about')}
+            >
+              <Info size={16} />
+              Acerca de
+            </button>
+          </div>
         </nav>
+
         <div class="header-actions">
           <CloudProviderSwitcher />
           <button
@@ -110,13 +172,16 @@ export function AppHeader() {
             <Settings size={18} />
           </button>
           <button
+            ref={toggleBtnRef}
             class="icon-button mobile-toggle"
-            aria-label={mobileMenu.value ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={isMenuOpen}
+            aria-controls="primary-navigation"
+            aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             onClick={() => {
               mobileMenu.value = !mobileMenu.value;
             }}
           >
-            {mobileMenu.value ? <X size={21} /> : <Menu size={21} />}
+            {isMenuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
       </div>

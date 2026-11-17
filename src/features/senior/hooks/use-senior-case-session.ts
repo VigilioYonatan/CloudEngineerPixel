@@ -4,6 +4,7 @@ import { challenges, type Challenge } from '../../../data/senior';
 import { seniorDiagnostics } from '../../../data/seniorDiagnostics';
 import { investigationFor } from '../../../data/seniorInvestigations';
 import { seniorPlaybooks } from '../../../data/seniorPlaybooks';
+import { requestConfirm } from '../../../lib/confirmDialogState';
 import { appContextGuard } from '../../../lib/contextSwitchGuard';
 import { createSeniorCheckpoint, parseSeniorCheckpoint } from '../../../lib/seniorCheckpoint.mjs';
 import { evaluateSeniorEvidence } from '../../../lib/seniorEvaluation.mjs';
@@ -27,7 +28,12 @@ import {
 } from '../../../lib/state';
 import { MAX_CHECKPOINT_BYTES } from '../constants/senior.constants';
 import { downloadReport } from '../libs/downloadJsonFile';
-import { hydrateCaseSession } from '../libs/hydrateCaseSession';
+import {
+  hydrateCaseSession,
+  withInspectedExhibit,
+  withToggledCitation,
+  withUpdatedReportSection,
+} from '../libs/hydrateCaseSession';
 
 const getLegacyKey = (cloud_id: Provider, challenge: Challenge) =>
   `senior:${cloud_id}:${challenge.id}`;
@@ -144,13 +150,16 @@ export function useSeniorCaseSession() {
       ) {
         throw new Error('El contexto cloud cambió durante la importación');
       }
-      if (
-        !window.confirm(
+      const confirmed = await requestConfirm({
+        title: 'Restaurar expediente Senior',
+        description:
           '¿Restaurar este expediente y reemplazar solo el borrador actual de este caso?',
-        )
-      ) {
-        return;
-      }
+        impactSummary: `Ámbito aislado: ${requestedProvider.toUpperCase()} · Caso ${requestedCase.toUpperCase()}.`,
+        confirmLabel: 'Restaurar expediente',
+        cancelLabel: 'Cancelar',
+        tone: 'warning',
+      });
+      if (!confirmed) return;
       if (
         liveScope.current.provider !== requestedProvider ||
         liveScope.current.caseId !== requestedCase
@@ -226,23 +235,10 @@ export function useSeniorCaseSession() {
     importCheckpoint,
     confirmDecision,
     finalize,
-    inspectExhibit: (id: string) =>
-      setSession((prev) =>
-        normalizeSeniorSession({
-          ...prev,
-          inspected: prev.inspected.includes(id) ? prev.inspected : [...prev.inspected, id],
-        }),
-      ),
+    inspectExhibit: (id: string) => setSession((prev) => withInspectedExhibit(prev, id)),
     updateReportSection: (key: keyof SeniorReport, val: string) =>
-      setSession((prev) =>
-        normalizeSeniorSession({ ...prev, answers: { ...prev.answers, [key]: val } }),
-      ),
+      setSession((prev) => withUpdatedReportSection(prev, key, val)),
     toggleCitation: (id: string, checked: boolean) =>
-      setSession((prev) =>
-        normalizeSeniorSession({
-          ...prev,
-          cited: checked ? [...new Set([...prev.cited, id])] : prev.cited.filter((x) => x !== id),
-        }),
-      ),
+      setSession((prev) => withToggledCitation(prev, id, checked)),
   };
 }

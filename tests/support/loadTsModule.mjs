@@ -52,9 +52,8 @@ export async function importTsModule(rel_entry_path) {
       return;
     }
 
-    const rewritten = raw.replace(
-      /(from\s+['"])(\.[^'"]+)(['"])/g,
-      (_full, prefix, spec, suffix) => {
+    const rewritten = raw
+      .replace(/(from\s+['"])(\.[^'"]+)(['"])/g, (_full, prefix, spec, suffix) => {
         const target = resolveLocalImport(normalized, spec);
         emitFile(target);
         let rel_target = path.relative(path.dirname(normalized), target).replace(/\\/g, '/');
@@ -64,8 +63,11 @@ export async function importTsModule(rel_entry_path) {
         }
         const mjs_spec = rel_target.replace(/\.(?:tsx|ts|mts)$/, '.mjs');
         return `${prefix}${mjs_spec}${suffix}`;
-      },
-    );
+      })
+      .replace(/(from\s+['"])([^./][^'"]*)(['"])/g, (_full, prefix, spec, suffix) => {
+        if (spec.startsWith('node:')) return `${prefix}${spec}${suffix}`;
+        return `${prefix}${import.meta.resolve(spec)}${suffix}`;
+      });
 
     const transpiled = ts.transpileModule(rewritten, {
       fileName: normalized,
