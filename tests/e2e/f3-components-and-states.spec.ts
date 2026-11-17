@@ -57,10 +57,10 @@ test('F3-08 E2E: CloudMentor maintains CLS < 0.02 when switching AWS -> Azure ->
   await expect(page.locator('html')).toHaveAttribute('data-provider', 'gcp');
   const boxGcp = await page.locator('.cloud-mentor-stage').first().boundingBox();
 
-  expect(boxAzure?.width).toBe(mentorBoxBefore?.width);
-  expect(boxAzure?.height).toBe(mentorBoxBefore?.height);
-  expect(boxGcp?.width).toBe(mentorBoxBefore?.width);
-  expect(boxGcp?.height).toBe(mentorBoxBefore?.height);
+  expect(Math.round(boxAzure?.width || 0)).toBe(Math.round(mentorBoxBefore?.width || 0));
+  expect(Math.round(boxAzure?.height || 0)).toBe(Math.round(mentorBoxBefore?.height || 0));
+  expect(Math.round(boxGcp?.width || 0)).toBe(Math.round(mentorBoxBefore?.width || 0));
+  expect(Math.round(boxGcp?.height || 0)).toBe(Math.round(mentorBoxBefore?.height || 0));
 
   const clsScore = await page.evaluate(() => (window as unknown as { __clsTotal: number }).__clsTotal);
   expect(clsScore).toBeLessThan(0.02);

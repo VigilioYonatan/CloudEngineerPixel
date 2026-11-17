@@ -6,7 +6,7 @@ export const SENIOR_SESSION_VERSION = 1;
 export const REPORT_MAX_CHARS = 1800;
 export const SESSION_MAX_LENGTH = 16000;
 const stageSet = new Set(['investigar', 'diagnosticar', 'decidir', 'informe']);
-const artifactSet = new Set(['primary', 'secondary', 'procedure']);
+const artifactSet = new Set(['primary', 'secondary', 'distractor', 'procedure']);
 const answerFields = /** @type {const} */ (['cause', 'mitigation', 'rollback', 'validation']);
 const asText = (value) => (typeof value === 'string' ? value.slice(0, REPORT_MAX_CHARS) : '');
 const uniqueArtifacts = (value) =>

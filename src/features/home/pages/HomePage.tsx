@@ -13,18 +13,21 @@ import {
   Terminal,
 } from 'lucide-preact';
 import { CloudMentor } from '../../../components/mascot/CloudMentor';
+import { SENIOR_MODE_PILLARS } from '../../../data/cloudServicesCatalog';
 import { levelInfo, modules, type Level } from '../../../data/course';
 import { CLOUD_PROVIDER_IDS, getProviderMeta } from '../../../domain/providers';
 import { levelFilter, navigate, provider, setProvider } from '../../../lib/state';
 import { ProviderBadge } from '../../../shared/ui/ProviderBadge';
 import { FirstVisitOnboardingCard } from '../components/FirstVisitOnboardingCard';
 import { HomeHero } from '../components/HomeHero';
+import { HomeServicesStrip } from '../components/HomeServicesStrip';
 import { SectionHeading } from '../components/SectionHeading';
 
 const CURRICULUM_LEVELS: readonly Level[] = ['fundamentos', 'intermedio', 'avanzado'];
 
 export function HomePage() {
-  const active_meta = getProviderMeta(provider.value);
+  const active_cloud = provider.value;
+  const active_meta = getProviderMeta(active_cloud);
 
   return (
     <main>
@@ -114,7 +117,7 @@ export function HomePage() {
         <SectionHeading
           eyebrow="APRENDE CON TU NUBE"
           title="Una academia. Tres ecosistemas."
-          description="Cambia de proveedor sin repetir teoría. Los ejemplos, comandos y prácticas sí cambian."
+          description="Cambia de proveedor sin repetir teoría. Los ejemplos, comandos y servicios clave sí cambian."
         />
         <div class="provider-cards">
           {CLOUD_PROVIDER_IDS.map((provider_id) => {
@@ -144,6 +147,8 @@ export function HomePage() {
             );
           })}
         </div>
+
+        <HomeServicesStrip providerId={active_cloud} providerName={active_meta.name} />
       </section>
 
       <section class="feature-band">
@@ -178,6 +183,8 @@ export function HomePage() {
         </div>
         <div class="feature-band-art">
           <div class="senior-halo" />
+          <span class="senior-orbit-tag senior-orbit-top">{SENIOR_MODE_PILLARS[0]}</span>
+          <span class="senior-orbit-tag senior-orbit-bottom">{SENIOR_MODE_PILLARS[1]}</span>
           <CloudMentor
             providerId={provider.value}
             variant="senior-artwork"

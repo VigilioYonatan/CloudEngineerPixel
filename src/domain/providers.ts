@@ -14,6 +14,9 @@ export type CloudProviderMascot = {
   default: string;
   senior: string;
   poses: string;
+  transparentDefault: string;
+  transparentSenior: string;
+  transparentPoses: string;
   alt: string;
   seniorAlt: string;
 };
@@ -65,6 +68,9 @@ export const PROVIDER_REGISTRY: Readonly<Record<CloudProviderId, CloudProviderMe
       default: providers.aws.mascot,
       senior: '/assets/cloud-mentor-senior.png',
       poses: '/assets/cloud-mentor-poses.png',
+      transparentDefault: '/assets/transparent/cloud-mentor-aws.png',
+      transparentSenior: '/assets/transparent/cloud-mentor-senior.png',
+      transparentPoses: '/assets/transparent/cloud-mentor-poses.png',
       alt: `Mentor Cloud en modo ${providers.aws.name}`,
       seniorAlt: `Mentor cloud ${providers.aws.short} experto`,
     },
@@ -97,6 +103,9 @@ export const PROVIDER_REGISTRY: Readonly<Record<CloudProviderId, CloudProviderMe
       default: providers.azure.mascot,
       senior: '/assets/cloud-mentor-senior.png',
       poses: '/assets/cloud-mentor-poses.png',
+      transparentDefault: '/assets/transparent/cloud-mentor-azure.png',
+      transparentSenior: '/assets/transparent/cloud-mentor-senior.png',
+      transparentPoses: '/assets/transparent/cloud-mentor-poses.png',
       alt: `Mentor Cloud en modo ${providers.azure.name}`,
       seniorAlt: `Mentor cloud ${providers.azure.short} experto`,
     },
@@ -129,6 +138,9 @@ export const PROVIDER_REGISTRY: Readonly<Record<CloudProviderId, CloudProviderMe
       default: providers.gcp.mascot,
       senior: '/assets/cloud-mentor-senior.png',
       poses: '/assets/cloud-mentor-poses.png',
+      transparentDefault: '/assets/transparent/cloud-mentor-gcp.png',
+      transparentSenior: '/assets/transparent/cloud-mentor-senior.png',
+      transparentPoses: '/assets/transparent/cloud-mentor-poses.png',
       alt: `Mentor Cloud en modo ${providers.gcp.name}`,
       seniorAlt: `Mentor cloud ${providers.gcp.short} experto`,
     },

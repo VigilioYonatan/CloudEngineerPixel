@@ -7,6 +7,8 @@ import type { Provider } from '../../../data/course';
 import type { investigationFor } from '../../../data/seniorInvestigations';
 import type { SeniorPlaybook } from '../../../data/seniorPlaybooks';
 import { loadSeniorWorkbookMarkdown } from '../../../lib/markdownGuideLoader';
+import { CodeReviewLab } from './CodeReviewLab';
+import { IncidentTimeline } from './IncidentTimeline';
 
 type InvestigationDetails = ReturnType<typeof investigationFor>;
 
@@ -85,7 +87,11 @@ export function InvestigationStage({
         </section>
       )}
 
+      <IncidentTimeline caseId={caseId} provider={cloudId} />
+
       <ArchitectureDiagram provider={cloudId} seniorCaseId={caseId} />
+
+      <CodeReviewLab caseId={caseId} provider={cloudId} />
 
       {playbook && (
         <section class="info-card sr-ops-brief" aria-label="Plan de respuesta operativo">
@@ -118,8 +124,17 @@ export function InvestigationStage({
             <section class="info-card sr-exhibit" key={exhibit.id}>
               <div class="sr-exhibit-heading">
                 <div>
-                  <small>{exhibit.kind.toUpperCase()}</small>
+                  <small>
+                    {exhibit.kind.toUpperCase()}
+                    {exhibit.evidenceId ? ` · ${exhibit.evidenceId}` : ''}
+                  </small>
                   <h3>{exhibit.name}</h3>
+                  {(exhibit.source || exhibit.timestamp) && (
+                    <span class="sr-exhibit-meta">
+                      {exhibit.source}
+                      {exhibit.timestamp ? ` · ${exhibit.timestamp}` : ''}
+                    </span>
+                  )}
                 </div>
                 <button class="btn btn-secondary" onClick={() => onInspectExhibit(exhibit.id)}>
                   {is_inspected ? <CheckCircle2 size={16} /> : <Search size={16} />}{' '}
@@ -128,6 +143,7 @@ export function InvestigationStage({
               </div>
               <CodeBlock
                 code={exhibit.body}
+                provider={cloudId}
                 risk="read-only"
                 contextLabel="READ ONLY / SYNTHETIC EVIDENCE"
               />

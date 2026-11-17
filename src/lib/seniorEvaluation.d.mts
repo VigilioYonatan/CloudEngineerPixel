@@ -8,6 +8,7 @@ export type SeniorEvaluationInput = {
   decisionLocked: boolean;
   decisionCorrect: boolean;
   requiredExhibits: string[];
+  distractorExhibits?: string[];
   inspected: string[];
   cited: string[];
   report: SeniorReport;
@@ -16,6 +17,7 @@ export type SeniorEvaluationInput = {
 export type SeniorEvaluationResult = Readonly<{
   decision: boolean;
   examinedReady: boolean;
+  distractorCited: boolean;
   citationsReady: boolean;
   reportReady: boolean;
   acknowledgementReady: boolean;

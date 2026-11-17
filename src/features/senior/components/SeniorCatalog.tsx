@@ -6,6 +6,7 @@ import type { Provider } from '../../../data/course';
 import { challenges, type Challenge } from '../../../data/senior';
 import { getProviderMeta } from '../../../domain/providers';
 import { progress } from '../../../lib/state';
+import { CloudProviderLogo } from '../../../shared/ui/CloudProviderLogo';
 import { MAX_RECENT_ATTEMPTS } from '../constants/senior.constants';
 
 type SeniorCatalogProps = {
@@ -35,7 +36,10 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
     <>
       <div class="sr-banner">
         <div>
-          <span class="sr-kicker">CLOUD ENGINEERING / SIMULADOR DE PRODUCCIÓN</span>
+          <span class="sr-kicker sr-kicker-with-logo">
+            <CloudProviderLogo providerId={p} size={18} />
+            CLOUD ENGINEERING / SIMULADOR DE PRODUCCIÓN · {cloud_meta.short}
+          </span>
           <h1>
             Senior Mode<span>_</span>
           </h1>

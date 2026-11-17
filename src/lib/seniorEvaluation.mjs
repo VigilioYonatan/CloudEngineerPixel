@@ -19,11 +19,16 @@ const arrayOfStrings = (value) =>
 /** @param {import('./seniorEvaluation.d.mts').SeniorEvaluationInput} input */
 export function evaluateSeniorEvidence(input) {
   const required = arrayOfStrings(input?.requiredExhibits).slice(0, 2);
+  const distractors = Array.isArray(input?.distractorExhibits)
+    ? arrayOfStrings(input.distractorExhibits)
+    : ['distractor'];
   const examined = arrayOfStrings(input?.inspected);
   const cited = arrayOfStrings(input?.cited);
   const decision = input?.decisionLocked === true && input?.decisionCorrect === true;
   const examinedReady = required.length === 2 && required.every((id) => examined.includes(id));
-  const citationsReady = examinedReady && required.every((id) => cited.includes(id));
+  const distractorCited = cited.some((id) => distractors.includes(id));
+  const citationsReady =
+    examinedReady && required.every((id) => cited.includes(id)) && !distractorCited;
   const report = input?.report || {};
   const reportFields = /** @type {const} */ (['cause', 'mitigation', 'rollback', 'validation']);
   const missingReportSections = reportFields.filter(
@@ -40,6 +45,7 @@ export function evaluateSeniorEvidence(input) {
   return Object.freeze({
     decision,
     examinedReady,
+    distractorCited,
     citationsReady,
     reportReady,
     acknowledgementReady,

@@ -51,7 +51,7 @@ export function useSeniorCaseSession() {
   const liveScope = useRef({ provider: p, caseId: current?.id });
   liveScope.current = { provider: p, caseId: current?.id };
 
-  const details = current ? investigationFor(current.id) : null;
+  const details = current ? investigationFor(current.id, p) : null;
   const diagnostic = current ? seniorDiagnostics[current.id] : null;
   const playbook = current ? seniorPlaybooks[current.id] : null;
   const sessionKey = current ? seniorSessionKey(p, current.id) : '';
@@ -103,6 +103,7 @@ export function useSeniorCaseSession() {
     decisionLocked,
     decisionCorrect,
     requiredExhibits: details?.exhibits.slice(0, 2).map((exhibit) => exhibit.id) || [],
+    distractorExhibits: ['distractor'],
     inspected,
     cited,
     report: answers,

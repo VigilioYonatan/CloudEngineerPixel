@@ -277,7 +277,7 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `ui-interaction-motion`, `ux-web-experience` · `vigilio-docs/standards/experience/motion-feedback-and-haptics.md`.
   - **Resultado 100%:** Control total del usuario sobre accesibilidad motriz/vestibular y sobre sus datos locales.
 
-- [ ] **F3-11 — Auto-alojar tipografías WOFF2 locales y eliminar dependencia de Google Fonts en `index.html`**
+- [x] **F3-11 — Auto-alojar tipografías WOFF2 locales y eliminar dependencia de Google Fonts en `index.html`**
   - **Tarea:** Incluir los subsets latinos WOFF2 de `DM Sans`, `Space Grotesk` y `JetBrains Mono` en `public/fonts/` con `@font-face` y `font-display: swap`, retirando los `<link href="https://fonts.googleapis.com...">` de `index.html`.
   - **Skills / Vigilio Docs:** `web-mfe-quality`, `web-mfe-security-delivery` · `vigilio-docs/stacks/frontend/web-mfe/security/9-seguridad-hardening-privacidad.md`.
   - **Resultado 100%:** Carga 100% local/offline sin fugas de IP a terceros y CSP endurecida sin dominios externos.
@@ -286,22 +286,22 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ### BLOQUE 4 — Senior Mode Nivel Producción Educativa (10 Tareas)
 
-- [ ] **F4-01 — Evidencias (`Exhibits`) realistas y nativas por proveedor para las 54 combinaciones (`18 casos × 3 nubes`)**
+- [x] **F4-01 — Evidencias (`Exhibits`) realistas y nativas por proveedor para las 54 combinaciones (`18 casos × 3 nubes`)**
   - **Tarea:** Ampliar `src/data/seniorInvestigations.ts` para que cada caso `S01–S18` entregue artefactos específicos según `aws`, `azure` o `gcp` (ej. en `S01`: diff real de `aws_db_instance` vs `azurerm_postgresql_flexible_server` vs `google_sql_database_instance`; en `S09`: S3 Bucket Policy + PublicAccessBlock vs Azure Blob anonymous access vs GCS IAM `allUsers`), con `evidenceId`, timestamp ISO, fuente (`CloudTrail / Activity Log / Cloud Audit Logs`) y comandos CLI de diagnóstico específicos por caso y nube.
   - **Skills / Vigilio Docs:** `aws-platform-foundation`, `terraform-iac-delivery`, `kubernetes-eks-delivery`, `complete-work-no-shortcuts` · `vigilio-docs/platform/sre/operational-evidence.md`.
   - **Resultado 100%:** Cambiar de AWS a Azure o GCP en cualquier caso Senior actualiza logs, configuraciones, nombres de recursos y comandos al ecosistema real elegido.
 
-- [ ] **F4-02 — Añadir contrapruebas / «Red Herrings» (ruido operativo realista) en la etapa Investigar**
+- [x] **F4-02 — Añadir contrapruebas / «Red Herrings» (ruido operativo realista) en la etapa Investigar**
   - **Tarea:** Incluir en cada expediente al menos un artefacto secundario benigno o síntoma colateral (ej. pico de CPU normal de cronjob o warning no relacionado) para que el alumno deba distinguir correlación real de falsa alarma al citar evidencias.
   - **Skills / Vigilio Docs:** `platform-observability-sre`, `diagnosing-bugs` · `vigilio-docs/standards/observability/slo-runbooks.md`.
   - **Resultado 100%:** Evaluación de citas verifica que el alumno seleccione las evidencias causales y descarte el distractor con explicación formativa.
 
-- [ ] **F4-03 — Componente `IncidentTimeline` interactivo por caso Senior**
+- [x] **F4-03 — Componente `IncidentTimeline` interactivo por caso Senior**
   - **Tarea:** Añadir línea de tiempo cronológica (`T-15m`, `T-00m alerta`, `T+04m síntoma`, `T+10m escalado`) vinculando despliegues, cambios de configuración, métricas y alertas para entrenar análisis de causalidad temporal.
   - **Skills / Vigilio Docs:** `platform-observability-sre`, `ux-web-experience` · `vigilio-docs/platform-runtime/1-observability-contract.md`.
   - **Resultado 100%:** Cada uno de los 18 expedientes cuenta con timeline navegable e inspeccionable.
 
-- [ ] **F4-04 — Nuevo laboratorio embebido `CodeReviewLab` para incidentes de código/configuración (S01, S02, S03, S07, S09, S12, S15)**
+- [x] **F4-04 — Nuevo laboratorio embebido `CodeReviewLab` para incidentes de código/configuración (S01, S02, S03, S07, S09, S12, S15)**
   - **Tarea:** Permitir inspeccionar fragmentos numerados por línea de HCL Terraform, políticas IAM/RBAC, `Deployment.yaml` de Kubernetes y workflows de GitHub Actions para señalar la línea exacta del defecto de seguridad/resiliencia y comparar contra la versión remediada.
   - **Skills / Vigilio Docs:** `terraform-iac-delivery`, `kubernetes-policy-runtime-security`, `software-supply-chain-security` · `vigilio-docs/platform/security/supply-chain.md`.
   - **Resultado 100%:** Revisión práctica de código de infraestructura determinista e interactiva dentro del expediente Senior.

@@ -45,7 +45,7 @@ export function CloudMentor({
           class="cloud-mentor-sprite"
           aria-hidden="true"
           style={{
-            backgroundImage: `url(${providerMeta.mascot.poses})`,
+            backgroundImage: `url(${providerMeta.mascot.transparentPoses})`,
             backgroundPosition: poseMeta.bgPosition,
           }}
         />
@@ -54,13 +54,16 @@ export function CloudMentor({
   }
 
   const imgSrc =
-    variant === 'senior-artwork' ? providerMeta.mascot.senior : providerMeta.mascot.default;
+    variant === 'senior-artwork'
+      ? providerMeta.mascot.transparentSenior
+      : providerMeta.mascot.transparentDefault;
   const imgAlt =
     alt || (variant === 'senior-artwork' ? providerMeta.mascot.seniorAlt : providerMeta.mascot.alt);
 
   return (
     <div
-      class={`cloud-mentor-stage cloud-mentor-${size} ${className}`}
+      key={`${providerId}-${variant}`}
+      class={`cloud-mentor-stage cloud-mentor-animated cloud-mentor-${size} ${className}`}
       style={{
         width: `${dimensions.width}px`,
         height: `${dimensions.height}px`,

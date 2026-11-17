@@ -1,7 +1,16 @@
 /** Synthetic, educational incident exhibits. No commands in this catalog are executed. */
 import type { Provider } from './course';
+import {
+  getAllProviderCommandsForCase,
+  getProviderCaseArtifactSpec,
+} from './seniorProviderExhibits';
+
 export type Exhibit = {
   id: string;
+  evidenceId?: string;
+  timestamp?: string;
+  source?: string;
+  isDistractor?: boolean;
   name: string;
   kind: 'logs' | 'metrics' | 'config' | 'runbook';
   body: string;
@@ -282,32 +291,62 @@ const providerReadOnlyCommands: Record<Provider, string> = {
   azure: 'az account show --output json',
   gcp: 'gcloud config list --format=json',
 };
-export function investigationFor(id: string): Investigation {
+export function investigationFor(id: string, provider: Provider = 'aws'): Investigation {
   const c = configs[id];
   if (!c) throw Error(`Caso Senior inexistente: ${id}`);
-  const [objective, label1, body1, analysis1, label2, body2, q1, q2] = c;
+  const [objective, label1, _body1, analysis1, label2, _body2, q1, q2] = c;
   const key = types[id];
   const service = {
     aws: serviceNames.aws[key],
     azure: serviceNames.azure[key],
     gcp: serviceNames.gcp[key],
   };
+  const nativeSpec = getProviderCaseArtifactSpec(id, provider);
+  const upperCloud = provider.toUpperCase();
+  const upperCase = id.toUpperCase();
+
   return {
     objective,
     exhibits: [
-      { id: 'primary', name: label1, kind: 'logs', body: body1, analysis: analysis1 },
+      {
+        id: 'primary',
+        evidenceId: `EVD-${upperCloud}-${upperCase}-01`,
+        timestamp: nativeSpec.timestampPrimary,
+        source: nativeSpec.auditSource,
+        name: `${label1} (${upperCloud})`,
+        kind: 'config',
+        body: nativeSpec.primaryBody,
+        analysis: analysis1,
+      },
       {
         id: 'secondary',
-        name: label2,
-        kind: 'metrics',
-        body: body2,
+        evidenceId: `EVD-${upperCloud}-${upperCase}-02`,
+        timestamp: nativeSpec.timestampSecondary,
+        source: nativeSpec.secondarySource,
+        name: `${label2} (${upperCloud})`,
+        kind: 'logs',
+        body: nativeSpec.secondaryBody,
         analysis: 'Contrasta esta señal con el expediente principal antes de tomar una decisión.',
       },
       {
+        id: 'distractor',
+        evidenceId: `EVD-${upperCloud}-${upperCase}-NOISE`,
+        timestamp: nativeSpec.timestampDistractor,
+        source: nativeSpec.secondarySource,
+        isDistractor: true,
+        name: nativeSpec.distractorTitle,
+        kind: 'metrics',
+        body: nativeSpec.distractorBody,
+        analysis: nativeSpec.distractorAnalysis,
+      },
+      {
         id: 'procedure',
+        evidenceId: `EVD-${upperCloud}-${upperCase}-RUNBOOK`,
+        timestamp: nativeSpec.timestampPrimary,
+        source: `Runbook SRE · ${service[provider]}`,
         name: 'Runbook de respuesta',
         kind: 'runbook',
-        body: `1. Establecer alcance del incidente\n2. Proteger datos y disponibilidad\n3. Revisar señales del servicio seleccionado\n4. Preparar cambio reversible\n5. Medir el resultado y registrar evidencia`,
+        body: `1. Establecer alcance del incidente en ${service[provider]}\n2. Proteger datos y disponibilidad\n3. Descartar ruido colateral (contrapruebas) frente a señales causales\n4. Preparar cambio reversible\n5. Medir el resultado y registrar evidencia`,
         analysis: 'Un runbook orienta la investigación; no sustituye una verificación real.',
       },
     ],
@@ -316,6 +355,6 @@ export function investigationFor(id: string): Investigation {
     verification:
       'Para acreditarlo se requiere revisión del informe y evidencias reales por parte de un docente.',
     service,
-    command: providerReadOnlyCommands,
+    command: getAllProviderCommandsForCase(id) || providerReadOnlyCommands,
   };
 }

@@ -1,11 +1,13 @@
 import {
   ArrowRight,
   BrainCircuit,
-  CheckCircle2,
   ChevronRight,
   Cloud,
-  Terminal,
+  Cpu,
+  Database,
+  ShieldCheck,
 } from 'lucide-preact';
+import { CLOUD_ESSENTIAL_SERVICES_2026 } from '../../../data/cloudServicesCatalog';
 import { getProviderMeta } from '../../../domain/providers';
 import { resolveResumeTarget } from '../../../domain/resumeLearning';
 import { lastVisited } from '../../../lib/onboardingState';
@@ -20,6 +22,13 @@ export function HomeHero() {
     progress.value.completed,
     active_cloud,
   );
+  const cloud_services = CLOUD_ESSENTIAL_SERVICES_2026[active_cloud];
+  const orbit_services = [
+    cloud_services[1],
+    cloud_services[5],
+    cloud_services[7],
+    cloud_services[6],
+  ];
 
   return (
     <section class="hero">
@@ -76,17 +85,21 @@ export function HomeHero() {
           </span>
         </div>
       </div>
-      <div class="hero-art">
+
+      <div class="hero-art" aria-label={`Servicios clave de ${active_meta.name} sobre la mascota`}>
         <div class="art-ring ring-one" />
         <div class="art-ring ring-two" />
-        <span class="orbit-chip chip-top">
-          <Cloud size={15} /> {active_meta.short} MODE
+        <span class="orbit-chip chip-top hero-orbit-a">
+          <Cloud size={15} /> {active_meta.short} · {orbit_services[0].shortLabel}
         </span>
-        <span class="orbit-chip chip-left">
-          <CheckCircle2 size={15} /> HANDS-ON
+        <span class="orbit-chip chip-left hero-orbit-b">
+          <Database size={15} /> {orbit_services[1].shortLabel}
         </span>
-        <span class="orbit-chip chip-bottom">
-          <Terminal size={14} /> &gt;_ ready
+        <span class="orbit-chip chip-right hero-orbit-c">
+          <Cpu size={14} /> {orbit_services[2].shortLabel}
+        </span>
+        <span class="orbit-chip chip-bottom hero-orbit-d">
+          <ShieldCheck size={14} /> {orbit_services[3].shortLabel}
         </span>
         <CloudMascot />
         <div class="mascot-floor" />

@@ -3,6 +3,7 @@ import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { getProviderMeta } from '../../../domain/providers';
 import type { SeniorStage } from '../../../lib/seniorSession.mjs';
 import { notify } from '../../../lib/state';
+import { CloudProviderLogo } from '../../../shared/ui/CloudProviderLogo';
 import { DecisionStage } from '../components/DecisionStage';
 import { DiagnosisStage } from '../components/DiagnosisStage';
 import { InstructorReview } from '../components/InstructorReview';
@@ -31,7 +32,8 @@ export function SeniorWorkbench() {
           </div>
           <div class="sr-top">
             <div>
-              <span class="sr-kicker">
+              <span class="sr-kicker sr-kicker-with-logo">
+                <CloudProviderLogo providerId={p} size={18} />
                 CENTRO DE OPERACIONES / {cloud_meta.short} / {current.id.toUpperCase()}
               </span>
               <h1>{current.title}</h1>

@@ -1,4 +1,4 @@
-import { CheckCircle2, ClipboardCheck, Download, FileText } from 'lucide-preact';
+import { AlertTriangle, CheckCircle2, ClipboardCheck, Download, FileText } from 'lucide-preact';
 import type { investigationFor } from '../../../data/seniorInvestigations';
 import { REPORT_MIN_CHARS } from '../../../lib/seniorEvaluation.mjs';
 import { REPORT_MAX_CHARS, type SeniorReport } from '../../../lib/seniorSession.mjs';
@@ -51,6 +51,11 @@ export function ReportStage({
     ['validation', 'Validación y riesgo residual', details.questions[2]],
   ];
 
+  const citableExhibits = details.exhibits.filter((exhibit) => exhibit.id !== 'procedure');
+  const citedDistractor = details.exhibits.find(
+    (exhibit) => exhibit.isDistractor && cited.includes(exhibit.id),
+  );
+
   return (
     <section class="info-card">
       <div class="card-heading">
@@ -84,12 +89,12 @@ export function ReportStage({
       ))}
 
       <fieldset class="sr-citations">
-        <legend>Vincula las evidencias examinadas a tu informe</legend>
+        <legend>Vincula las evidencias examinadas y descarta distractores</legend>
         <p class="sr-hint">
-          Selecciona las dos señales principales. Registrar una referencia no demuestra que tu
-          interpretación sea correcta.
+          Selecciona las señales causales reales y descarta el ruido colateral (contraprueba).
+          Registrar una referencia no demuestra que tu interpretación sea correcta.
         </p>
-        {details.exhibits.slice(0, 2).map((exhibit) => (
+        {citableExhibits.map((exhibit) => (
           <label key={exhibit.id}>
             <input
               type="checkbox"
@@ -100,11 +105,21 @@ export function ReportStage({
               }
             />
             <span>
-              {exhibit.name} · {exhibit.id}
+              {exhibit.name} · {exhibit.evidenceId || exhibit.id}
             </span>
           </label>
         ))}
       </fieldset>
+
+      {citedDistractor && (
+        <div role="alert" class="sr-distractor-warning">
+          <AlertTriangle size={18} />
+          <div>
+            <strong>Has citado una contraprueba benigna (falsa alarma)</strong>
+            <p>{citedDistractor.analysis} Desmarca esta señal no causal para continuar.</p>
+          </div>
+        </div>
+      )}
 
       <div class="sr-report-actions">
         <button class="btn btn-secondary" onClick={onSaveDraft}>
@@ -135,8 +150,8 @@ export function ReportStage({
 
       {!allReady && (
         <p class="sr-hint">
-          Para registrar: dos señales examinadas, hipótesis correcta, contención confirmada,
-          evidencias citadas, cuatro secciones completas y declaración de alcance.
+          Para registrar: dos señales causales examinadas y citadas (sin distractores), hipótesis
+          correcta, contención confirmada, cuatro secciones completas y declaración de alcance.
         </p>
       )}
 

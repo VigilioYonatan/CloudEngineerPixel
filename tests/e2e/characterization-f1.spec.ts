@@ -125,7 +125,9 @@ test('F1-01 characterization: Senior Mode completes all 4 stages to 100/100 and 
   for (const field of await page.locator('.sr-field textarea').all()) {
     await field.fill(detailedSection);
   }
-  for (const citation of await page.locator('.sr-citations input[type="checkbox"]').all()) {
+  for (const citation of await page
+    .locator('.sr-citations input[type="checkbox"]:not(:disabled)')
+    .all()) {
     await citation.check();
   }
   await page.locator('.sr-attestation input[type="checkbox"]').check();

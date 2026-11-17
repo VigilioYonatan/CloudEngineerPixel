@@ -4634,3 +4634,545 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   F4-01 .. F4-04 · Native Exhibits Metadata, Red Herring Alert,
+                    IncidentTimeline & CodeReviewLab
+   ========================================================================== */
+.sr-exhibit-meta {
+  display: block;
+  font:
+    11px "JetBrains Mono",
+    monospace;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sr-distractor-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gold) 12%, var(--surface2));
+  border: 1px solid var(--gold-text);
+  color: var(--text);
+}
+
+.sr-distractor-warning svg {
+  color: var(--gold-text);
+  flex: none;
+  margin-top: 2px;
+}
+
+.sr-distractor-warning strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.sr-distractor-warning p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* F4-03 · Interactive IncidentTimeline */
+.sr-timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.sr-timeline-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sr-timeline-pill {
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  text-align: left;
+  display: grid;
+  gap: 3px;
+  min-height: var(--tap-target-min, 44px);
+}
+
+.sr-timeline-pill strong {
+  font:
+    700 12px "JetBrains Mono",
+    monospace;
+  color: var(--accent-text);
+}
+
+.sr-timeline-pill span {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.sr-timeline-pill.timeline-selected {
+  border-color: var(--accent);
+  background: var(--soft);
+}
+
+.sr-timeline-detail {
+  padding: 14px 16px;
+  border-radius: 11px;
+  background: var(--surface2);
+  border-left: 3px solid var(--accent);
+  display: grid;
+  gap: 8px;
+}
+
+.sr-timeline-detail.kind-noise {
+  border-left-color: var(--gold);
+}
+
+.sr-timeline-detail.kind-alert {
+  border-left-color: var(--red-text);
+}
+
+.sr-timeline-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sr-timeline-detail-head small {
+  font:
+    10.5px "JetBrains Mono",
+    monospace;
+  color: var(--muted);
+}
+
+.sr-timeline-detail p {
+  margin: 0;
+  font-size: 12.5px;
+}
+
+.sr-timeline-question {
+  color: var(--text) !important;
+}
+
+/* F4-04 · Embedded CodeReviewLab */
+.sr-codereview {
+  display: grid;
+  gap: 12px;
+}
+
+.codereview-lines {
+  border-radius: 10px;
+  border: 1px solid var(--code-border, #243448);
+  background: var(--code-bg, #080e18);
+  padding: 8px;
+  display: grid;
+  gap: 2px;
+  overflow-x: auto;
+}
+
+.codereview-line-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--code-body-text, #c6f3d4);
+  text-align: left;
+  font:
+    12px / 1.5 "JetBrains Mono",
+    monospace;
+  white-space: pre;
+}
+
+.codereview-line-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.codereview-lineno {
+  color: #8ba3bf;
+  user-select: none;
+  flex: none;
+}
+
+.codereview-line-btn.line-hit {
+  background: rgba(52, 211, 153, 0.16);
+  border-color: rgba(52, 211, 153, 0.45);
+}
+
+.codereview-line-btn.line-miss {
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.codereview-remediated {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+@media (max-width: 780px) {
+  .sr-timeline-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   Mascota PNG Transparente + Transiciones Suaves + Servicios Home 2026
+   ========================================================================== */
+.cloud-mentor-stage {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+}
+
+.cloud-mentor-stage .cloud-mentor-img,
+.cloud-mentor-stage .cloud-mentor-sprite {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.32));
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.35s ease;
+}
+
+.cloud-mentor-animated {
+  animation:
+    mentorReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    mentorFloat 5.2s ease-in-out infinite;
+}
+
+.hero-art .art-ring {
+  animation: ringPulse 7.5s ease-in-out infinite;
+}
+
+.hero-art .ring-two {
+  animation: ringSpin 28s linear infinite;
+  border-style: dashed;
+}
+
+.hero-art .chip-right {
+  right: 2%;
+  top: 26%;
+}
+
+.hero-orbit-a {
+  animation: orbitBobA 4.6s ease-in-out infinite;
+}
+
+.hero-orbit-b {
+  animation: orbitBobB 5.4s ease-in-out infinite;
+}
+
+.hero-orbit-c {
+  animation: orbitBobA 5.1s ease-in-out infinite reverse;
+}
+
+.hero-orbit-d {
+  animation: orbitBobB 4.8s ease-in-out infinite reverse;
+}
+
+.senior-halo {
+  animation: seniorHaloPulse 4.5s ease-in-out infinite;
+}
+
+.senior-orbit-tag {
+  position: absolute;
+  z-index: 3;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(16, 26, 43, 0.88);
+  border: 1px solid rgba(244, 196, 91, 0.45);
+  color: var(--on-dark-gold);
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
+  letter-spacing: 0.04em;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  animation: orbitBobA 4.8s ease-in-out infinite;
+}
+
+.senior-orbit-top {
+  top: 18px;
+  right: 12px;
+}
+
+.senior-orbit-bottom {
+  bottom: 20px;
+  left: 8px;
+  animation-delay: -2.2s;
+}
+
+.home-services-strip {
+  margin-top: 22px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 14px;
+}
+
+.home-services-strip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.home-services-strip-head span {
+  font:
+    700 11px "JetBrains Mono",
+    monospace;
+  color: var(--accent-text);
+}
+
+.home-services-pills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.home-service-pill {
+  padding: 12px 14px;
+  border-radius: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 3px;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.home-service-pill:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.home-service-pill small {
+  font:
+    700 9.5px "JetBrains Mono",
+    monospace;
+  color: var(--accent-text);
+  text-transform: uppercase;
+}
+
+.home-service-pill strong {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.home-service-pill span {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+@keyframes mentorReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mentorFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes orbitBobA {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes orbitBobB {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes ringSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ringPulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes seniorHaloPulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@media (max-width: 970px) {
+  .home-services-pills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .home-services-pills {
+    grid-template-columns: 1fr;
+  }
+  .senior-orbit-tag {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   CloudProviderLogo + Rich Dropdown Switcher (AWS, Azure, GCP)
+   ========================================================================== */
+.cloud-logo-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 6px;
+}
+
+.cloud-logo-chip img {
+  display: block;
+  object-fit: contain;
+}
+
+.cloud-logo-aws {
+  background: rgba(255, 255, 255, 0.94);
+  padding: 2px 4px;
+}
+
+.provider-switcher-wrap {
+  position: relative;
+}
+
+.provider-menu-trigger {
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  min-height: 39px;
+}
+
+.provider-chevron-open {
+  transform: rotate(180deg);
+}
+
+.provider-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 80;
+  min-width: 224px;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong, var(--border));
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 4px;
+}
+
+.provider-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  min-height: 44px;
+}
+
+.provider-option:hover {
+  background: var(--surface2);
+}
+
+.provider-option-active {
+  background: var(--soft);
+  border-color: var(--accent-border, var(--accent));
+}
+
+.provider-option-text {
+  display: grid;
+  gap: 1px;
+  flex: 1;
+}
+
+.provider-option-text strong {
+  font-size: 11.5px;
+}
+
+.provider-option-text small {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.provider-option-check {
+  color: var(--accent-text);
+  flex: none;
+}
+
+.sr-kicker-with-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 420px) {
+  .provider-trigger-label {
+    display: none;
+  }
+}
