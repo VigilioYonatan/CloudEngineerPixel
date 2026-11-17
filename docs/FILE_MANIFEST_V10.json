@@ -569,7 +569,7 @@
     "src/lib/seniorSession.mjs": "1facac9edab05fe32aac91863172d6aedbd584a08d2a4a8b8a453107a7176656",
     "src/lib/state.ts": "89942084937c7f9c381c8b32c5de4fef37b752522f533282ba5bab42c50b0e3e",
     "src/main.tsx": "e03c39675e206ebfb964343cfcf77d049a57f6ff03d19bad1adc707881626661",
-    "src/styles.css": "a0d922d4abbb7cfe59ec2e3cd207133bc65e8bb2c08f945ce12b9de3fe55ade1",
+    "src/styles.css": "7d7b9a558b383e563d040b58f24634fe888a1f512f49b37dad24e02d279b6596",
     "tests/content.test.mjs": "35953807f31de881dbec807e3652a4c8df19ff02718b86497cc609be5f235613",
     "tests/e2e/academy.spec.ts": "e23de7354d44c58f6354e1bb6d7f9ed27d880cbbc7787d9797ad0dba4b74796d",
     "tests/e2e/senior-checkpoint-v9.spec.ts": "0893d314b768d3ddd71cb6e814b87996a988dbe0cd56b4b69f4f918414c877b7",

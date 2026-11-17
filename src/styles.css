@@ -5295,6 +5295,97 @@ p {
   }
 }
 
+/* Global Pixel Senior UX/UI: Silkscreen accents across Mapa, Aula, Labs, Proyectos, Simuladores, Senior & Progreso */
+.steps-list li span,
+.sr-stage-tabs button span,
+.progress-cards strong,
+.progress-6d-card strong,
+.sim-hop-pill strong,
+.sr-mascot-pill,
+.badge-sev,
+.tag {
+  font-family: "Silkscreen", "JetBrains Mono", monospace;
+}
+
+.sr-mascot-pill,
+.badge-sev,
+.tag {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.steps-list li span,
+.sr-stage-tabs button span {
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.senior-dot {
+  animation: pixelBlink 1.4s steps(2, end) infinite;
+}
+
+.kicker::after,
+.sr-kicker::after,
+.page-kicker::after {
+  content: "_";
+  margin-left: 4px;
+  color: var(--accent-text);
+  animation: pixelBlink 1.1s steps(2, end) infinite;
+}
+
+@keyframes pixelBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+/* Responsive safety for all interactive tab bars and 6D/grid layouts */
+.sim-tabs,
+.sr-stage-tabs,
+.gopixel-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .page-head-with-mascot,
+  .page-intro {
+    padding: 18px;
+    border-radius: 16px;
+  }
+  .progress-6d-grid,
+  .sr-tradeoff-grid,
+  .unit-spec-grid {
+    grid-template-columns: 1fr;
+  }
+  .sim-tabs button,
+  .sr-stage-tabs button {
+    min-height: 44px;
+  }
+}
+
+[data-motion="reduced"] .senior-dot,
+[data-motion="reduced"] .kicker::after,
+[data-motion="reduced"] .sr-kicker::after,
+[data-motion="reduced"] .page-kicker::after {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .senior-dot,
+  .kicker::after,
+  .sr-kicker::after,
+  .page-kicker::after {
+    animation: none !important;
+  }
+}
+
 @media (max-width: 760px) {
   .page-head-with-mascot {
     flex-direction: column;
