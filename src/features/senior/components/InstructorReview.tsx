@@ -1,4 +1,4 @@
-import { ClipboardCheck, Download, Info, Save } from 'lucide-preact';
+import { ClipboardCheck, Download, Info, Save, Upload } from 'lucide-preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Provider } from '../../../data/course';
 import { seniorRubric } from '../../../data/seniorRubric';
@@ -10,6 +10,11 @@ import {
   reviewKey,
   type InstructorReview as ReviewModel,
 } from '../../../lib/instructorReview.mjs';
+import {
+  parseStudentSubmissionFile,
+  validateInstructorReviewSchema,
+  type StudentSubmissionSummary,
+} from '../../../lib/instructorReviewSchema.mjs';
 import { notify, progress, setNotes } from '../../../lib/state';
 import { downloadReport } from '../libs/downloadJsonFile';
 
@@ -25,6 +30,8 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
     parseInstructorReview(progress.value.notes[storage_key], cloud, caseId),
   );
   const [dirty, setDirty] = useState(false);
+  const [studentSubmission, setStudentSubmission] = useState<StudentSubmissionSummary | null>(null);
+  const [importError, setImportError] = useState('');
   const grade = gradeInstructorReview(form);
   const draft_ref = useRef({ storageKey: storage_key, cloud, form, dirty });
   draft_ref.current = { storageKey: storage_key, cloud, form, dirty };
@@ -52,12 +59,28 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
     notify('Borrador de revisión local guardado');
   };
 
+  const handle_import_student = async (file: File | null) => {
+    if (!file) return;
+    try {
+      const parsed = parseStudentSubmissionFile(await file.text());
+      setStudentSubmission(parsed);
+      setImportError('');
+      notify(
+        `Entrega ${parsed.caseId.toUpperCase()} (${parsed.provider.toUpperCase()}) cargada para revisión`,
+      );
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : 'Archivo de entrega inválido');
+    }
+  };
+
   const handle_export = () => {
     try {
       const data = exportInstructorReview(form, cloud, caseId);
+      const check = validateInstructorReviewSchema(data);
+      if (!check.valid) throw new Error(check.errors[0] || 'Error de validación schema');
       setNotes(storage_key, JSON.stringify(data));
       downloadReport(data, `revision-local-${cloud}-${caseId}.json`);
-      notify('Revisión docente local exportada (sin certificación)');
+      notify('Revisión docente local exportada y validada contra schema');
     } catch (error) {
       notify(error instanceof Error ? error.message : 'Revisión incompleta');
     }
@@ -66,13 +89,48 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
   return (
     <details class="sr-review info-card" aria-label="Rúbrica docente opcional">
       <summary>
-        <ClipboardCheck size={19} /> Revisión docente local (opcional){' '}
+        <ClipboardCheck size={19} /> Revisión local no autenticada (opcional){' '}
         <span>5 criterios / 100 puntos</span>
       </summary>
       <p class="sr-hint">
-        <Info size={15} /> Este formulario se completa manualmente y no verifica la identidad de
-        quien puntúa. No acredita una certificación ni sustituye una evaluación externa.
+        <Info size={15} /> Revisión local no autenticada. Este formulario se completa manualmente y
+        no verifica la identidad de quien puntúa ni sustituye una evaluación externa.
       </p>
+      <div class="sr-report-actions" style={{ marginBottom: '12px' }}>
+        <label class="btn btn-secondary btn-compact sr-import-label">
+          <Upload size={15} /> Importar entrega del alumno (JSON)
+          <input
+            type="file"
+            accept=".json,application/json"
+            aria-label="Importar entrega del alumno"
+            onChange={(event) => {
+              const input = event.currentTarget as HTMLInputElement;
+              void handle_import_student(input.files?.[0] || null);
+              input.value = '';
+            }}
+          />
+        </label>
+      </div>
+      {importError && (
+        <p class="sr-checkpoint-error" role="alert">
+          {importError}
+        </p>
+      )}
+      {studentSubmission && (
+        <div class="sr-attempt-detail" aria-label="Entrega importada de solo lectura">
+          <strong>
+            Entrega del alumno: {studentSubmission.caseId.toUpperCase()} ·{' '}
+            {studentSubmission.provider.toUpperCase()}
+            {studentSubmission.score !== null ? ` · ${studentSubmission.score}/100` : ''}
+          </strong>
+          <p class="sr-hint">
+            <strong>Causa:</strong> {studentSubmission.report.cause || 'Sin contenido'}
+          </p>
+          <p class="sr-hint">
+            <strong>Mitigación:</strong> {studentSubmission.report.mitigation || 'Sin contenido'}
+          </p>
+        </div>
+      )}
       <label class="sr-field">
         <strong>Alias del revisor (sin información sensible)</strong>
         <input

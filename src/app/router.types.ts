@@ -15,7 +15,15 @@ export const APP_VIEWS = [
 
 export type AppView = (typeof APP_VIEWS)[number];
 
-export const VALID_SIMULATOR_ROUTE_IDS = ['cidr', 'iam', 'scale', 'slo', 'architecture'] as const;
+export const VALID_SIMULATOR_ROUTE_IDS = [
+  'cidr',
+  'iam',
+  'scale',
+  'slo',
+  'architecture',
+  'routing',
+  'terraform-plan',
+] as const;
 
 export type SimulatorRouteId = (typeof VALID_SIMULATOR_ROUTE_IDS)[number];
 

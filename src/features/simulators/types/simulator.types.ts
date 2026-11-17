@@ -1,4 +1,11 @@
-export type SimulatorMode = 'cidr' | 'iam' | 'scale' | 'slo' | 'architecture';
+export type SimulatorMode =
+  | 'cidr'
+  | 'iam'
+  | 'scale'
+  | 'slo'
+  | 'architecture'
+  | 'routing'
+  | 'terraform-plan';
 
 export type IamAction = 'read' | 'write' | 'admin';
 

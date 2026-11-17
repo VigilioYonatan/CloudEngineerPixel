@@ -331,7 +331,7 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `complete-work-no-shortcuts` · `vigilio-docs/standards/engineering/use-case-traceability.md`.
   - **Resultado 100%:** Ciclo pedagógico cerrado entre Senior Mode y las 90 unidades del Aula.
 
-- [ ] **F4-10 — Importación/Exportación de Revisión Docente Local con validación de schema JSON**
+- [x] **F4-10 — Importación/Exportación de Revisión Docente Local con validación de schema JSON**
   - **Tarea:** Permitir al instructor/revisor importar un `expediente-senior-<cloud>-<case>.json` o `informe-<cloud>-<case>.json` del alumno para evaluarlo localmente contra `schemas/instructor-review.schema.json` sin tocar el propio borrador del revisor, manteniendo siempre visible la etiqueta `"Revisión local no autenticada"`.
   - **Skills / Vigilio Docs:** `web-mfe-security-delivery`, `web-mfe-build-feature` · `vigilio-docs/standards/security/authorization.md`.
   - **Resultado 100%:** Flujo completo alumno → exporta informe → docente revisa con rúbrica ponderada → exporta feedback JSON validado.
@@ -340,22 +340,22 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ### BLOQUE 5 — Motores de Simulación Puros + Nuevos Simuladores Interactivos (11 Tareas)
 
-- [ ] **F5-01 — Extraer y endurecer los 5 motores existentes como funciones puras tipadas (`src/features/simulators/engines/`)**
+- [x] **F5-01 — Extraer y endurecer los 5 motores existentes como funciones puras tipadas (`src/features/simulators/engines/`)**
   - **Tarea:** Sacar de `App.tsx` los motores `cidrEngine.ts`, `iamEngine.ts`, `autoscalingEngine.ts`, `sloEngine.ts` y `architectureDecisionEngine.ts` con entradas/salidas estrictas, versión del modelo, explicaciones paso a paso, botón `Reiniciar`, `Copiar resultado` y `Descargar reporte`.
   - **Skills / Vigilio Docs:** `symbol-ownership-architecture`, `web-mfe-build-feature` · `vigilio-docs/standards/engineering/file-and-symbol-ownership.md`.
   - **Resultado 100%:** 100% de lógica matemática/evaluativa desacoplada del DOM y probada unitariamente; en CIDR calcula además IPs reservadas reales por nube (`AWS = 5`, `Azure = 5`, `GCP = 4`) y casos `/0`, `/31`, `/32`.
 
-- [ ] **F5-02 — Mejorar `iamEngine.ts` con evaluación explícita de `Deny > Allow`, condiciones y alcance por nube**
+- [x] **F5-02 — Mejorar `iamEngine.ts` con evaluación explícita de `Deny > Allow`, condiciones y alcance por nube**
   - **Tarea:** Soportar múltiples declaraciones (Identity Policy + Resource Policy / Guardrail SCP / Azure Deny Assignment / GCP IAM Binding), demostrando precedencia de `Explicit Deny`, `Implicit Deny` por defecto y condiciones básicas (`MFA`, región), declarando explícitamente las diferencias del modelo educativo frente al evaluador oficial.
   - **Skills / Vigilio Docs:** `aws-platform-foundation` · `vigilio-docs/standards/security/authorization.md`.
   - **Resultado 100%:** Simulador IAM enseña mínimo privilegio real, *explicit deny* y diferencias AWS IAM vs Azure RBAC vs GCP IAM.
 
-- [ ] **F5-03 — Nuevo Simulador 06: `Routing & Firewall Lab` (`routingEngine.ts`)**
+- [x] **F5-03 — Nuevo Simulador 06: `Routing & Firewall Lab` (`routingEngine.ts`)**
   - **Tarea:** Simular flujo de paquetes entre Internet, subred pública (ALB/NAT), subred privada (App) y subred aislada (DB) evaluando tabla de rutas (longest prefix match), Security Groups (stateful) vs NACL/NSG/Firewall Rules y Private Endpoints.
   - **Skills / Vigilio Docs:** `aws-platform-foundation`, `web-mfe-build-feature` · `vigilio-docs/platform/aws/platform-foundation.md`.
   - **Resultado 100%:** Diagnostica visualmente si un paquete llega o cae bloqueado y en qué salto exacto ocurre el bloqueo.
 
-- [ ] **F5-04 — Nuevo Simulador 07: `Terraform Plan & Drift Inspector` (`terraformPlanEngine.ts`)**
+- [x] **F5-04 — Nuevo Simulador 07: `Terraform Plan & Drift Inspector` (`terraformPlanEngine.ts`)**
   - **Tarea:** Analizar escenarios de `terraform plan` (`create`, `update in-place`, `destroy and recreate / ForceNew`, `drift` fuera de banda y falta de `state locking`), calculando blast radius y recomendando acción segura (`prevent_destroy`, `moved`, ventana/restore drill).
   - **Skills / Vigilio Docs:** `terraform-iac-delivery` · `vigilio-docs/platform/iac/state-and-drift.md`.
   - **Resultado 100%:** Entrena lectura crítica de planes IaC sin ejecutar binarios ni pedir credenciales.

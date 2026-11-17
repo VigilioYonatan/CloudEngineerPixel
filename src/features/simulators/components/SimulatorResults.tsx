@@ -36,6 +36,8 @@ type SimulatorResultsProps = {
   days: number;
   sloBudget: SloBudgetCalculation;
   runs: number;
+  steps?: string[];
+  officialModelNote?: string;
 };
 
 export function SimulatorResults(props: SimulatorResultsProps) {
@@ -209,6 +211,14 @@ export function SimulatorResults(props: SimulatorResultsProps) {
         </>
       )}
 
+      {props.officialModelNote && <p class="sr-hint">{props.officialModelNote}</p>}
+      {props.steps && props.steps.length > 0 && (
+        <ul class="sim-steps-list" aria-label="Evaluación paso a paso">
+          {props.steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ul>
+      )}
       {props.runs > 0 && <Tag kind="accent">{props.runs} ejecuciones en esta sesión</Tag>}
     </div>
   );

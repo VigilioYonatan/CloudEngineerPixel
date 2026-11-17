@@ -12,6 +12,7 @@ import type {
   SimulatorMode,
   WorkloadKind,
 } from '../types/simulator.types';
+import { IamPolicyControls } from './IamPolicyControls';
 
 type SimulatorControlsProps = {
   mode: SimulatorMode;
@@ -21,6 +22,14 @@ type SimulatorControlsProps = {
   onChangeAction: (value: IamAction) => void;
   scope: IamScope;
   onChangeScope: (value: IamScope) => void;
+  guardrailDeny?: boolean;
+  onChangeGuardrailDeny?: (value: boolean) => void;
+  mfaRequired?: boolean;
+  onChangeMfaRequired?: (value: boolean) => void;
+  mfaPresent?: boolean;
+  onChangeMfaPresent?: (value: boolean) => void;
+  regionMatched?: boolean;
+  onChangeRegionMatched?: (value: boolean) => void;
   rps: number;
   onChangeRps: (value: number) => void;
   capacity: number;
@@ -61,37 +70,20 @@ export function SimulatorControls(props: SimulatorControlsProps) {
           <p>Prueba /16, /24, /28 y observa cómo cambia la capacidad del segmento.</p>
         </>
       ) : mode === 'iam' ? (
-        <>
-          <label>
-            Acción requerida
-            <select
-              value={props.action}
-              onChange={(event) =>
-                props.onChangeAction((event.currentTarget as HTMLSelectElement).value as IamAction)
-              }
-            >
-              <option value="read">Lectura de recursos</option>
-              <option value="write">Modificar recursos</option>
-              <option value="admin">Administrador completo</option>
-            </select>
-          </label>
-          <label>
-            Ámbito asignado
-            <select
-              value={props.scope}
-              onChange={(event) =>
-                props.onChangeScope((event.currentTarget as HTMLSelectElement).value as IamScope)
-              }
-            >
-              <option value="single">Recurso específico</option>
-              <option value="all">Todos los recursos</option>
-            </select>
-          </label>
-          <p>
-            Política simplificada para aprender mínimo privilegio. No reemplaza un evaluador IAM
-            real.
-          </p>
-        </>
+        <IamPolicyControls
+          action={props.action}
+          onChangeAction={props.onChangeAction}
+          scope={props.scope}
+          onChangeScope={props.onChangeScope}
+          guardrailDeny={props.guardrailDeny}
+          onChangeGuardrailDeny={props.onChangeGuardrailDeny}
+          mfaRequired={props.mfaRequired}
+          onChangeMfaRequired={props.onChangeMfaRequired}
+          mfaPresent={props.mfaPresent}
+          onChangeMfaPresent={props.onChangeMfaPresent}
+          regionMatched={props.regionMatched}
+          onChangeRegionMatched={props.onChangeRegionMatched}
+        />
       ) : mode === 'scale' ? (
         <>
           <label>
