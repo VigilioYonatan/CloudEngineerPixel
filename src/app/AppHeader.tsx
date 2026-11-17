@@ -1,22 +1,16 @@
-import {
-  BookOpen,
-  BrainCircuit,
-  ChartNoAxesCombined,
-  CloudCog,
-  Compass,
-  FlaskConical,
-  Info,
-  LayoutDashboard,
-  Menu,
-  Moon,
-  Settings,
-  Sun,
-  Terminal,
-  Trophy,
-  X,
-} from 'lucide-preact';
+import { CloudCog, Info, Menu, Moon, Settings, Sun, X } from 'lucide-preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { mobileMenu, navigate, theme, view } from '../lib/state';
+import {
+  PixelBookIcon,
+  PixelChartIcon,
+  PixelCrownIcon,
+  PixelFlaskIcon,
+  PixelHomeIcon,
+  PixelMapIcon,
+  PixelTerminalIcon,
+  PixelTrophyIcon,
+} from '../shared/ui/PixelNavIcons';
 import { CloudProviderSwitcher } from './CloudProviderSwitcher';
 
 export function AppHeader() {
@@ -73,53 +67,53 @@ export function AppHeader() {
             class={view.value === 'home' ? 'nav-current' : ''}
             onClick={() => navigate('home')}
           >
-            <LayoutDashboard size={16} />
+            <PixelHomeIcon size={16} />
             Inicio
           </button>
           <button class={view.value === 'map' ? 'nav-current' : ''} onClick={() => navigate('map')}>
-            <Compass size={16} />
+            <PixelMapIcon size={16} />
             Mapa
           </button>
           <button
             class={['learn', 'lesson'].includes(view.value) ? 'nav-current' : ''}
             onClick={() => navigate('learn')}
           >
-            <BookOpen size={16} />
+            <PixelBookIcon size={16} />
             Aprender
           </button>
           <button
             class={['labs', 'lab'].includes(view.value) ? 'nav-current' : ''}
             onClick={() => navigate('labs')}
           >
-            <Terminal size={16} />
+            <PixelTerminalIcon size={16} />
             Laboratorios
           </button>
           <button
             class={view.value === 'projects' ? 'nav-current' : ''}
             onClick={() => navigate('projects')}
           >
-            <Trophy size={16} />
+            <PixelTrophyIcon size={16} />
             Proyectos
           </button>
           <button
             class={view.value === 'simulator' ? 'nav-current' : ''}
             onClick={() => navigate('simulator')}
           >
-            <FlaskConical size={16} />
+            <PixelFlaskIcon size={16} />
             Simuladores
           </button>
           <button
             class={view.value === 'senior' ? 'nav-current' : ''}
             onClick={() => navigate('senior')}
           >
-            <BrainCircuit size={16} />
+            <PixelCrownIcon size={16} />
             Senior Mode <span class="senior-dot" />
           </button>
           <button
             class={view.value === 'progress' ? 'nav-current' : ''}
             onClick={() => navigate('progress')}
           >
-            <ChartNoAxesCombined size={16} />
+            <PixelChartIcon size={16} />
             Mi progreso
           </button>
 

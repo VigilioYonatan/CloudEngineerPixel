@@ -5235,6 +5235,66 @@ p {
   }
 }
 
+/* Pixel Senior UX: Silkscreen pixel display accents & crisp stepped animations */
+.pixel-nav-icon {
+  flex: none;
+  transition: transform 0.16s steps(2, end);
+}
+
+.top-nav button:hover .pixel-nav-icon,
+.top-nav button.nav-current .pixel-nav-icon {
+  transform: translateY(-1px) scale(1.08);
+}
+
+.level-ghost-num {
+  font-family: "Silkscreen", monospace !important;
+  letter-spacing: 0.04em;
+  animation: pixelGhostPulse 3.6s steps(4, end) infinite;
+}
+
+.level-icon span,
+.stats-strip strong,
+.intro-stat strong,
+.sr-score strong {
+  font-family: "Silkscreen", monospace;
+  letter-spacing: -0.02em;
+}
+
+.kicker,
+.sr-kicker,
+.page-kicker,
+.eyebrow {
+  font-family: "Silkscreen", "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+@keyframes pixelGhostPulse {
+  0%,
+  100% {
+    opacity: 0.14;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.24;
+    transform: translateY(-2px);
+  }
+}
+
+[data-motion="reduced"] .level-ghost-num,
+[data-motion="reduced"] .pixel-nav-icon {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-ghost-num,
+  .pixel-nav-icon {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 @media (max-width: 760px) {
   .page-head-with-mascot {
     flex-direction: column;
