@@ -25,10 +25,10 @@ test('V9: UTF-8 size is checked by bytes rather than JavaScript string length',(
 
 test('V9: Senior case importer tracks the active provider and case across async file reads',()=>{
  const source=readFileSync(new URL('../src/SeniorWorkbench.tsx',import.meta.url),'utf8');
- assert.match(source,/liveScope\.current\.provider!==requestedProvider/);
- assert.match(source,/liveScope\.current\.caseId!==requestedCase/);
+ assert.match(source,/liveScope\.current\.provider\s*!==\s*requestedProvider/);
+ assert.match(source,/liveScope\.current\.caseId\s*!==\s*requestedCase/);
  assert.match(source,/¿Restaurar este expediente/);
- assert.match(source,/setSession\(imported\)/);
+ assert.match(source,/setSession\(\s*imported\s*\)/);
  assert.match(source,/role="alert"/);
 });
 
@@ -36,7 +36,7 @@ test('V9: state warns when local persistence fails and defers object URL cleanup
  const source=readFileSync(new URL('../src/lib/state.ts',import.meta.url),'utf8');
  assert.match(source,/warnedStorageFailure/);
  assert.match(source,/No fue posible guardar el progreso local/);
- assert.match(source,/setTimeout\(\(\)=>URL\.revokeObjectURL\(url\),1000\)/);
+ assert.match(source,/setTimeout\(\s*\(\)\s*=>\s*URL\.revokeObjectURL\(url\),\s*1000\s*\)/);
 });
 
 test('V9: DevSecOps and browser testing remain part of the release, without hard-coded cloud keys',()=>{

@@ -12,8 +12,9 @@ export const SENIOR_SCORE_WEIGHTS = Object.freeze({
   acknowledgement: 10,
 });
 
-const textLength = value => typeof value === 'string' ? value.trim().length : 0;
-const arrayOfStrings = value => Array.isArray(value) ? [...new Set(value.filter(item => typeof item === 'string'))] : [];
+const textLength = (value) => (typeof value === 'string' ? value.trim().length : 0);
+const arrayOfStrings = (value) =>
+  Array.isArray(value) ? [...new Set(value.filter((item) => typeof item === 'string'))] : [];
 
 /** @param {import('./seniorEvaluation.d.mts').SeniorEvaluationInput} input */
 export function evaluateSeniorEvidence(input) {
@@ -21,11 +22,13 @@ export function evaluateSeniorEvidence(input) {
   const examined = arrayOfStrings(input?.inspected);
   const cited = arrayOfStrings(input?.cited);
   const decision = input?.decisionLocked === true && input?.decisionCorrect === true;
-  const examinedReady = required.length === 2 && required.every(id => examined.includes(id));
-  const citationsReady = examinedReady && required.every(id => cited.includes(id));
+  const examinedReady = required.length === 2 && required.every((id) => examined.includes(id));
+  const citationsReady = examinedReady && required.every((id) => cited.includes(id));
   const report = input?.report || {};
   const reportFields = /** @type {const} */ (['cause', 'mitigation', 'rollback', 'validation']);
-  const missingReportSections = reportFields.filter(field => textLength(report[field]) < REPORT_MIN_CHARS);
+  const missingReportSections = reportFields.filter(
+    (field) => textLength(report[field]) < REPORT_MIN_CHARS,
+  );
   const reportReady = missingReportSections.length === 0;
   const acknowledgementReady = input?.acknowledged === true;
   const score =
@@ -35,8 +38,13 @@ export function evaluateSeniorEvidence(input) {
     (reportReady ? SENIOR_SCORE_WEIGHTS.report : 0) +
     (acknowledgementReady ? SENIOR_SCORE_WEIGHTS.acknowledgement : 0);
   return Object.freeze({
-    decision, examinedReady, citationsReady, reportReady, acknowledgementReady,
-    missingReportSections, score,
+    decision,
+    examinedReady,
+    citationsReady,
+    reportReady,
+    acknowledgementReady,
+    missingReportSections,
+    score,
     ready: decision && examinedReady && citationsReady && reportReady && acknowledgementReady,
     educationalOnly: true,
   });

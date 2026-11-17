@@ -20,8 +20,8 @@ test('poisoned or oversized citations get sanitized',()=>{
 });
 test('provider selector guards corrupted saved values',()=>{
   const code=read('src/lib/state.ts');
-  assert.match(code,/storedProvider==='azure'\|\|storedProvider==='gcp'/);
-  assert.match(code,/if\(!\['aws','azure','gcp'\]\.includes\(p\)\)return/);
+  assert.match(code,/storedProvider\s*===\s*['"]azure['"]\s*\|\|\s*storedProvider\s*===\s*['"]gcp['"]/);
+  assert.match(code,/if\s*\(\s*!\s*\[\s*['"]aws['"],\s*['"]azure['"],\s*['"]gcp['"]\s*\]\.includes\(p\)\s*\)\s*return/);
 });
 test('never include cloud secrets, credentials or write operations in web labs',()=>{
   const ui=read('src/SeniorWorkbench.tsx');

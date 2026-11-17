@@ -88,7 +88,7 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ---
 
-### BLOQUE 0 — Entorno, Git, Dependencias, Bugs Bloqueantes y Manifiesto (8 Tareas · 5/8 Completadas)
+### BLOQUE 0 — Entorno, Git, Dependencias, Bugs Bloqueantes y Manifiesto (8 Tareas · 8/8 Completadas — 100%)
 
 - [x] **F0-01 — Inicializar repositorio Git y configurar higiene base de ramas/commits (`PASS`)**
   - **Tarea:** Ejecutar `git init -b main`, verificar `.gitignore` (`node_modules`, `dist`, `playwright-report`, `test-results`, `coverage`, `sbom.cdx.json`) y crear commit inicial inmutable del estado V9 antes de tocar código fuente.
@@ -115,34 +115,34 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `web-mfe-build-feature` · `vigilio-docs/technology/catalog/typescript.md`.
   - **Resultado 100%:** `npm run typecheck` en `PASS` con `0` errores en código de navegador y tests E2E.
 
-- [ ] **F0-06 — Ejecutar y validar primer build productivo con Vite (`npm run build` + `npm run preview`)**
+- [x] **F0-06 — Ejecutar y validar primer build productivo con Vite (`npm run build` + `npm run preview`) (`PASS`)**
   - **Tarea:** Compilar bundle de producción en `dist/`, comprobar rutas estáticas (`base: './'`), carga de imágenes de mascota y descarga de cuadernos Senior.
   - **Skills / Vigilio Docs:** `web-mfe-quality` · `vigilio-docs/technology/libraries/vite.md`.
-  - **Resultado 100%:** `npm run build` genera `dist/` sin warnings críticos y `vite preview` sirve todas las rutas sin 404.
+  - **Resultado 100%:** `npm run build` genera los `63` artefactos estáticos en `dist/` (`index.html`, CSS `10.7 KB` gzip, JS `72.4 KB` gzip, `_headers`, 5 mascotas y 54 cuadernos) y `vite preview` responde HTTP `200` en todas las rutas críticas verificado automáticamente por BDD.
 
-- [ ] **F0-07 — Instalar navegador Chromium de Playwright y ejecutar la suite E2E base actual**
+- [x] **F0-07 — Instalar navegador Chromium de Playwright y ejecutar la suite E2E base actual (`PASS`)**
   - **Tarea:** Ejecutar `npx playwright install chromium` y correr los 8 tests actuales (`tests/e2e/academy.spec.ts` y `tests/e2e/senior-checkpoint-v9.spec.ts`) para levantar línea base real en navegador.
   - **Skills / Vigilio Docs:** `web-mfe-testing` · `vigilio-docs/technology/libraries/playwright.md`, `vigilio-docs/standards/testing/environment-preflight-and-e2e.md`.
-  - **Resultado 100%:** `8/8` tests E2E existentes pasando en Chromium real (`PASS`).
+  - **Resultado 100%:** Chromium `159.0.8154.6` instalado y `8/8` tests E2E base pasando en navegador real (`PASS`).
 
-- [ ] **F0-08 — Sincronizar versión visible de la plataforma y metadatos de entrega**
-  - **Tarea:** Eliminar el string quemado `"Versión 7.0.0"` en `SettingsPage` (`src/App.tsx`), alimentándolo desde constante tipada sincronizada con `package.json`, y actualizar el encabezado de `README.md` (que aún dice V8/V6).
-  - **Skills / Vigilio Docs:** `symbol-ownership-architecture`, `repository-readme-architecture` · `vigilio-docs/standards/engineering/file-and-symbol-ownership.md`.
-  - **Resultado 100%:** Versión coherente en `package.json`, UI (`Ajustes` / `Acerca`), `README.md` y exportaciones JSON.
+- [x] **F0-08 — Sincronizar versión visible de la plataforma y metadatos de entrega (`PASS`)**
+  - **Tarea:** Eliminar el string quemado `"Versión 7.0.0"` en `SettingsPage` (`src/App.tsx`), alimentándolo desde constante tipada sincronizada con `package.json` (`src/config/appMeta.ts`), incluir `appVersion` en `exportProgress()` y actualizar el encabezado de `README.md` preservando el registro histórico.
+  - **Skills / Vigilio Docs:** `symbol-ownership-architecture`, `repository-readme-architecture` · `vigilio-docs/standards/engineering/file-and-symbol-ownership.md`, `vigilio-docs/standards/engineering/readme-standard.md`.
+  - **Resultado 100%:** Versión coherente desde fuente única `package.json` (`9.0.0`) en UI (`Ajustes`), `README.md` y exportaciones JSON (`appVersion`).
 
 ---
 
-### BLOQUE 1 — Arquitectura Modular, Ownership de Símbolos y Desacople de `App.tsx` (9 Tareas)
+### BLOQUE 1 — Arquitectura Modular, Ownership de Símbolos y Desacople de `App.tsx` (9 Tareas · 2/9 Completadas)
 
-- [ ] **F1-01 — Tests de caracterización antes de dividir `src/App.tsx`**
-  - **Tarea:** Crear pruebas de integración/E2E que congelen el comportamiento actual de navegación, cambio de proveedor, quiz, lab, simuladores, progreso y ajustes antes de extraer un solo archivo.
-  - **Skills / Vigilio Docs:** `refactor-existing-code`, `web-mfe-testing` · `vigilio-docs/standards/engineering/refactoring-existing-code.md`.
-  - **Resultado 100%:** Suite de regresión verde que detecta cualquier ruptura durante la modularización.
+- [x] **F1-01 — Tests de caracterización antes de dividir `src/App.tsx` (`PASS`)**
+  - **Tarea:** Crear pruebas de integración/E2E (`tests/e2e/characterization-f1.spec.ts` + BDD `build-and-version.feature`) que congelen el comportamiento actual de las 8 vistas: navegación, filtros/búsqueda en catálogo, lecciones, quiz, `ProviderCheck`, checklist y notas de laboratorio, los 5 simuladores, resolución completa `100/100` en Senior Mode, exportación de progreso y cambio de tema/versión en Ajustes antes de extraer archivos.
+  - **Skills / Vigilio Docs:** `refactor-existing-code`, `web-mfe-testing` · `vigilio-docs/standards/engineering/refactoring-existing-code.md`, `vigilio-docs/standards/testing/e2e-quality-gates.md`.
+  - **Resultado 100%:** `14/14` tests E2E Playwright (`8` base + `6` de caracterización) pasando en Chromium real antes y después del formateo.
 
-- [ ] **F1-02 — Formatear código fuente y estilos minificados (`src/App.tsx`, `src/SeniorWorkbench.tsx`, `src/styles.css`)**
-  - **Tarea:** Desminificar y formatear con Biome todos los archivos de `src/` para que tengan líneas legibles, diffs limpios y mantenibilidad real.
+- [x] **F1-02 — Formatear código fuente y estilos minificados (`src/App.tsx`, `src/SeniorWorkbench.tsx`, `src/styles.css` y todo `src/`) (`PASS`)**
+  - **Tarea:** Migrar `biome.json` a `2.6.8`, corregir el flag obsoleto `--formatter-enabled` en `package.json`, adaptar expresiones regulares sensibles a minificación en tests legados y formatear con Biome los `26` archivos de `src/` (incluyendo `styles.css`, `App.tsx`, `SeniorWorkbench.tsx`, `data/*` y `lib/*`).
   - **Skills / Vigilio Docs:** `web-mfe-quality`, `refactor-existing-code` · `vigilio-docs/technology/libraries/biome.md`.
-  - **Resultado 100%:** Ningún archivo de código fuente tiene líneas de 15–50 KB; `biome format` pasa al 100%.
+  - **Resultado 100%:** `0` líneas minificadas gigantes en `src/`, `npm run format:check` y `npm run lint` pasan con `0` warnings/errores en `59` archivos.
 
 - [ ] **F1-03 — Retirar código muerto legado (`function Senior()` en `src/App.tsx`) preservando trazabilidad**
   - **Tarea:** Extraer o archivar limpiamente la función `Senior()` de V1/V2 en `src/App.tsx` (actualmente inalcanzable porque la vista `senior` renderiza `SeniorWorkbench`), verificando que ningún test dependa del texto muerto (ajustando solo si algún test estático grepea `App.tsx`).

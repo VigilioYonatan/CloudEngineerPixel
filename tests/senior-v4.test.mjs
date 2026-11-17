@@ -16,11 +16,11 @@ test('case workbooks are downloadable from static public assets',()=>{
 });
 test('V4 uses case-specific practice metadata, safer case timeline and per-provider history',()=>{
  const data=read('src/data/seniorPractices.ts');const ui=read('src/SeniorWorkbench.tsx');
- for(const id of ids)assert.ok(data.includes(`'${id}':`),id);
+ for(const id of ids)assert.match(data,new RegExp(`(?:['"]${id}['"]|\\b${id})\\s*:`),id);
  for(const cloud of clouds)assert.ok(ui.includes('practice.commands[p]'));
- assert.match(ui,/attempts=.*seniorAttempts/);assert.match(ui,/Bitácora personal/);
- assert.match(ui,/\/senior-guides\/\$\{p\}\/\$\{current\.id\}\.md/);
- assert.match(ui,/onClick=\{\(\)=>setChoice\(i\)\}/);
+ assert.match(ui,/attempts\s*=\s*[\s\S]*?seniorAttempts/);assert.match(ui,/Bitácora personal/);
+ assert.match(ui,/\/senior-guides\/\$\{\s*p\s*\}\/\$\{\s*current\.id\s*\}\.md/);
+ assert.match(ui,/onClick=\{\s*\(\)\s*=>\s*setChoice\(i\)\s*\}/);
 });
 test('V4 separates technical review from completion points',()=>{
  const ui=read('src/SeniorWorkbench.tsx');

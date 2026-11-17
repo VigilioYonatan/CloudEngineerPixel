@@ -25,5 +25,9 @@ export type SeniorEvaluationResult = Readonly<{
   educationalOnly: true;
 }>;
 export declare const REPORT_MIN_CHARS: number;
-export declare const SENIOR_SCORE_WEIGHTS: Readonly<Record<'decision' | 'examined' | 'citations' | 'report' | 'acknowledgement', number>>;
-export declare function evaluateSeniorEvidence(input: SeniorEvaluationInput): SeniorEvaluationResult;
+export declare const SENIOR_SCORE_WEIGHTS: Readonly<
+  Record<'decision' | 'examined' | 'citations' | 'report' | 'acknowledgement', number>
+>;
+export declare function evaluateSeniorEvidence(
+  input: SeniorEvaluationInput,
+): SeniorEvaluationResult;

@@ -1,42 +1,321 @@
 /** Synthetic, educational incident exhibits. No commands in this catalog are executed. */
-import type {Provider} from './course';
-export type Exhibit={id:string;name:string;kind:'logs'|'metrics'|'config'|'runbook';body:string;analysis:string};
-export type Investigation={objective:string;exhibits:Exhibit[];questions:[string,string,string];lesson:string;verification:string;service:Record<Provider,string>;command:Record<Provider,string>};
-const configs:Record<string,[string,string,string,string,string,string,string,string]>= {
- s01:['Proteger el estado de Terraform y diagnosticar por qué la base será reemplazada','Terraform plan','-/+ cloud_database.main must be replaced\n~ storage_encrypted: true -> false # forces replacement\n- deletion_protection: enabled','Cambio inseguro: cifrado se desactiva y fuerza reemplazo','Historial de cambios','merge 8f2a: refactor encryption flags\nReviewer: pending\nChange window: NOT approved','¿Qué atributo ocasiona la sustitución?','¿Qué recuperación existe antes de autorizar un apply?'],
- s02:['Reducir privilegios de CI sin romper el despliegue','Role policy','Effect: Allow\nAction: "*"\nResource: "*"\nPrincipal: pipeline-runner','El rol permite operaciones ajenas al despliegue','Audit trail','ci-runner accessed storage.list, iam.createRole, compute.delete\nExpected: functions.deploy only','¿Cuáles permisos necesita realmente el pipeline?','¿Cómo probarías una denegación explícita?'],
- s03:['Revocar una credencial filtrada y evaluar su uso','Secret scanning','secret=cloud_live_******** in commit 78e0\nrepository visibility=public\nfirst seen=09:42','La clave debe tratarse como comprometida','Access audit','token used from two IPs after commit\n09:51 list-resources\n09:55 read-object','¿Qué rotarías y en qué orden?','¿Qué evidencia preservarías para el postmortem?'],
- s04:['Restablecer una versión sana y diagnosticar los 503','Release events','release=2026.11.11-4\nreadiness failed: /ready\nhealthy endpoints=0/6','El despliegue eliminó todos los endpoints saludables','HTTP metrics','5xx ratio: before 0.2%; after 32%\nmedian latency: 180ms -> 2.3s','¿Qué señal habilita un rollback controlado?','¿Qué investigarías tras recuperar el servicio?'],
- s05:['Rastrear una conexión privada rota sin exponer la base','Network trace','src=10.20.2.8 dst=10.20.8.14:5432\nDNS resolved=YES\nTCP handshake=TIMEOUT','DNS funciona; tráfico TCP no llega','Security rules','db inbound 5432 allows 10.20.9.0/24\napp subnet=10.20.2.0/24','¿Qué regla impide el flujo?','¿Cómo demostrarías conectividad sin abrir 0.0.0.0/0?'],
- s06:['Atribuir un aumento de gasto antes de optimizar','Cost export','total $1,200 -> $7,600\negress inter-region +480%\ncompute idle: 26 nodes','Transferencias y nodos ociosos explican variación','Usage trend','new replication job: cross-region every 5min\nnew autoscaler minNodes=26','¿Qué dimensión explica más gasto?','¿Qué cambios validarías contra SLO?'],
- s07:['Investigar reinicios repetidos en Kubernetes','Pod events','Back-off restarting failed container\nlast termination exitCode=1\nOOMKilled=false','El proceso falla por una condición distinta a OOM','Container logs','ERROR CONFIG_DATABASE_URL missing\nstartup aborted at config validation','¿Qué configuración falta?','¿Qué prueba protege futuros despliegues?'],
- s08:['Demostrar que un respaldo puede restaurarse','Backup schedule','backup status=success daily\nretention=30d\nrestore tests: 0','La creación de backups no demuestra recuperación','DR requirements','business RPO=15m\nbusiness RTO=1h\nbackup interval=24h','¿Cumple la estrategia el RPO?','¿Cómo ejecutarías un restore drill seguro?'],
- s09:['Contener acceso público no autorizado a objetos','Bucket policy','principal=allUsers\naction=objects.get\nprefix=private/*','Los objetos internos podrían ser legibles anónimamente','Access report','anonymous GET 200 count=187\nfirst activity=08:12','¿Qué contención aplicarías primero?','¿Cómo investigarías el alcance de la exposición?'],
- s10:['Aplicar la política de error budget al cambio','Reliability dashboard','rolling 30d SLO=99.9%\nerror budget consumed=100%\nnew release risk=high','La tolerancia de fallo prevista está agotada','Release calendar','high-risk feature release tomorrow\nrollback test=not run','¿Debe aprobarse el cambio?','¿Qué condiciones permitirían reanudar entregas?'],
- s11:['Detectar el tramo responsable de latencia p99','Trace waterfall','checkout p99=3500ms\nauth=100ms; pricing=120ms; inventory=2800ms','El tramo inventory domina el tiempo extremo','Dependency chart','inventory retries=3 synchronous\ntimeout per call=900ms','¿Qué dependencia domina p99?','¿Cómo reducirías retries acumulativos?'],
- s12:['Contener un nodo comprometido sin perder evidencia','Runtime detection','privileged pod launched in kube-system\nnode=node-17\noutbound to suspicious destination','Hay indicios de compromiso y movimiento lateral','Audit findings','service-account token mounted\nprivileged=true\nnetwork policy=none','¿Qué aislarías primero?','¿Qué credenciales y workloads revisarías?'],
- s13:['Evaluar conmutación regional segura','Health report','primary error 81%\nsecondary available=YES\nreplica lag=14m','La réplica puede implicar pérdida de datos','Failover plan','RTO 1h\nRPO 15m\nlast drill 6 weeks ago','¿Cumple la réplica el RPO?','¿Qué prueba realizarías antes de cambiar tráfico?'],
- s14:['Prevenir efectos duplicados por reintentos','Queue evidence','delivery_count 2-4\nmessage_id repeats\npayment_id repeats','Entrega al menos una vez sin consumo idempotente','Database audit','charge rows duplicated for order=AB-132\nunique constraint on idempotency_key=NONE','¿Qué clave de negocio usarías?','¿Cómo compensarías los cobros ya realizados?'],
- s15:['Endurecer la cadena de suministro del CI/CD','Pipeline YAML','image: registry/app:latest\nCLOUD_KEY: long-lived secret\nartifact digest: not pinned','Artefactos mutables y credenciales de larga duración','Scanner results','critical CVE=2\nSBOM=missing\nsignature verification=disabled','¿Qué artefactos fijarías?','¿Cómo reemplazarías la clave por OIDC?'],
- s16:['Evitar que el escalado sature la base','Scale events','replicas 8 -> 48\nDB connections 500/500\nHTTP 5xx 17%','Más pods agotaron la dependencia compartida','Pool configuration','max_pool_per_pod=20\nDB max_connections=500\nconnection budget not enforced','¿Qué límite fijarías por réplica?','¿Cómo realizarías pruebas de carga controladas?'],
- s17:['Decidir si multicloud aporta valor al negocio','Business requirements','regulatory constraint=none\nrequested uptime=99.9%\nmandatory providers=none','No aparece un requisito que justifique tres nubes','TCO forecast','single cloud cost=100 units\nthree cloud cost=280 units\nresilience delta=not demonstrated','¿Qué beneficio justificaría el sobrecosto?','¿Qué ADR documentaría tu decisión?'],
- s18:['Defender una arquitectura ante requisitos verificables','Requirements','SLO 99.95%\nRTO <=60min\nRPO <=15min\nPII stored=yes','La solución requiere controles medibles','Architecture review','data encryption: TBD\nrestore drill: TBD\ntraffic failover: TBD','¿Cómo probarías SLO, RTO y RPO?','¿Qué amenazas y controles registrarías?'],
+import type { Provider } from './course';
+export type Exhibit = {
+  id: string;
+  name: string;
+  kind: 'logs' | 'metrics' | 'config' | 'runbook';
+  body: string;
+  analysis: string;
 };
-const serviceNames:Record<Provider,Record<string,string>>={
- aws:{database:'Amazon RDS',iam:'AWS IAM',secrets:'Secrets Manager / CloudTrail',release:'Elastic Load Balancing',network:'Amazon VPC',cost:'AWS Cost Explorer',k8s:'Amazon EKS',backup:'AWS Backup',storage:'Amazon S3',slo:'Amazon CloudWatch',traces:'AWS X-Ray',security:'Amazon GuardDuty',region:'Route 53',queue:'Amazon SQS',pipeline:'AWS CodePipeline',scale:'EC2 Auto Scaling',architecture:'AWS Well-Architected'},
- azure:{database:'Azure Database for PostgreSQL',iam:'Azure RBAC',secrets:'Azure Key Vault / Activity Log',release:'Azure Application Gateway',network:'Azure Virtual Network',cost:'Microsoft Cost Management',k8s:'Azure Kubernetes Service',backup:'Azure Backup',storage:'Azure Blob Storage',slo:'Azure Monitor',traces:'Application Insights',security:'Microsoft Defender for Cloud',region:'Azure Front Door',queue:'Azure Service Bus',pipeline:'Azure Pipelines',scale:'Azure Autoscale',architecture:'Azure Well-Architected'},
- gcp:{database:'Cloud SQL',iam:'Google Cloud IAM',secrets:'Secret Manager / Cloud Audit Logs',release:'Cloud Load Balancing',network:'Google Cloud VPC',cost:'Cloud Billing',k8s:'Google Kubernetes Engine',backup:'Backup and DR Service',storage:'Cloud Storage',slo:'Cloud Monitoring',traces:'Cloud Trace',security:'Security Command Center',region:'Cloud DNS',queue:'Pub/Sub',pipeline:'Cloud Build',scale:'Managed instance groups',architecture:'Google Cloud Architecture Framework'},
+export type Investigation = {
+  objective: string;
+  exhibits: Exhibit[];
+  questions: [string, string, string];
+  lesson: string;
+  verification: string;
+  service: Record<Provider, string>;
+  command: Record<Provider, string>;
 };
-const types:Record<string,string>={s01:'database',s02:'iam',s03:'secrets',s04:'release',s05:'network',s06:'cost',s07:'k8s',s08:'backup',s09:'storage',s10:'slo',s11:'traces',s12:'security',s13:'region',s14:'queue',s15:'pipeline',s16:'scale',s17:'architecture',s18:'architecture'};
-const providerReadOnlyCommands:Record<Provider,string>={aws:'aws sts get-caller-identity',azure:'az account show --output json',gcp:'gcloud config list --format=json'};
-export function investigationFor(id:string):Investigation {
- const c=configs[id];if(!c)throw Error(`Caso Senior inexistente: ${id}`);
- const [objective,label1,body1,analysis1,label2,body2,q1,q2]=c;
- const key=types[id];
- const service={aws:serviceNames.aws[key],azure:serviceNames.azure[key],gcp:serviceNames.gcp[key]};
- return {objective,exhibits:[
- {id:'primary',name:label1,kind:'logs',body:body1,analysis:analysis1},
- {id:'secondary',name:label2,kind:'metrics',body:body2,analysis:'Contrasta esta señal con el expediente principal antes de tomar una decisión.'},
- {id:'procedure',name:'Runbook de respuesta',kind:'runbook',body:`1. Establecer alcance del incidente\n2. Proteger datos y disponibilidad\n3. Revisar señales del servicio seleccionado\n4. Preparar cambio reversible\n5. Medir el resultado y registrar evidencia`,analysis:'Un runbook orienta la investigación; no sustituye una verificación real.'}
- ],questions:[q1,q2,'¿Cómo validarías que la corrección no introduce nuevos riesgos?'],lesson:`Este escenario es una simulación sintética sobre ${key}. No ejecuta cambios ni valida automáticamente el contenido de tu informe.`,verification:'Para acreditarlo se requiere revisión del informe y evidencias reales por parte de un docente.',service,command:providerReadOnlyCommands};
+const configs: Record<string, [string, string, string, string, string, string, string, string]> = {
+  s01: [
+    'Proteger el estado de Terraform y diagnosticar por qué la base será reemplazada',
+    'Terraform plan',
+    '-/+ cloud_database.main must be replaced\n~ storage_encrypted: true -> false # forces replacement\n- deletion_protection: enabled',
+    'Cambio inseguro: cifrado se desactiva y fuerza reemplazo',
+    'Historial de cambios',
+    'merge 8f2a: refactor encryption flags\nReviewer: pending\nChange window: NOT approved',
+    '¿Qué atributo ocasiona la sustitución?',
+    '¿Qué recuperación existe antes de autorizar un apply?',
+  ],
+  s02: [
+    'Reducir privilegios de CI sin romper el despliegue',
+    'Role policy',
+    'Effect: Allow\nAction: "*"\nResource: "*"\nPrincipal: pipeline-runner',
+    'El rol permite operaciones ajenas al despliegue',
+    'Audit trail',
+    'ci-runner accessed storage.list, iam.createRole, compute.delete\nExpected: functions.deploy only',
+    '¿Cuáles permisos necesita realmente el pipeline?',
+    '¿Cómo probarías una denegación explícita?',
+  ],
+  s03: [
+    'Revocar una credencial filtrada y evaluar su uso',
+    'Secret scanning',
+    'secret=cloud_live_******** in commit 78e0\nrepository visibility=public\nfirst seen=09:42',
+    'La clave debe tratarse como comprometida',
+    'Access audit',
+    'token used from two IPs after commit\n09:51 list-resources\n09:55 read-object',
+    '¿Qué rotarías y en qué orden?',
+    '¿Qué evidencia preservarías para el postmortem?',
+  ],
+  s04: [
+    'Restablecer una versión sana y diagnosticar los 503',
+    'Release events',
+    'release=2026.11.11-4\nreadiness failed: /ready\nhealthy endpoints=0/6',
+    'El despliegue eliminó todos los endpoints saludables',
+    'HTTP metrics',
+    '5xx ratio: before 0.2%; after 32%\nmedian latency: 180ms -> 2.3s',
+    '¿Qué señal habilita un rollback controlado?',
+    '¿Qué investigarías tras recuperar el servicio?',
+  ],
+  s05: [
+    'Rastrear una conexión privada rota sin exponer la base',
+    'Network trace',
+    'src=10.20.2.8 dst=10.20.8.14:5432\nDNS resolved=YES\nTCP handshake=TIMEOUT',
+    'DNS funciona; tráfico TCP no llega',
+    'Security rules',
+    'db inbound 5432 allows 10.20.9.0/24\napp subnet=10.20.2.0/24',
+    '¿Qué regla impide el flujo?',
+    '¿Cómo demostrarías conectividad sin abrir 0.0.0.0/0?',
+  ],
+  s06: [
+    'Atribuir un aumento de gasto antes de optimizar',
+    'Cost export',
+    'total $1,200 -> $7,600\negress inter-region +480%\ncompute idle: 26 nodes',
+    'Transferencias y nodos ociosos explican variación',
+    'Usage trend',
+    'new replication job: cross-region every 5min\nnew autoscaler minNodes=26',
+    '¿Qué dimensión explica más gasto?',
+    '¿Qué cambios validarías contra SLO?',
+  ],
+  s07: [
+    'Investigar reinicios repetidos en Kubernetes',
+    'Pod events',
+    'Back-off restarting failed container\nlast termination exitCode=1\nOOMKilled=false',
+    'El proceso falla por una condición distinta a OOM',
+    'Container logs',
+    'ERROR CONFIG_DATABASE_URL missing\nstartup aborted at config validation',
+    '¿Qué configuración falta?',
+    '¿Qué prueba protege futuros despliegues?',
+  ],
+  s08: [
+    'Demostrar que un respaldo puede restaurarse',
+    'Backup schedule',
+    'backup status=success daily\nretention=30d\nrestore tests: 0',
+    'La creación de backups no demuestra recuperación',
+    'DR requirements',
+    'business RPO=15m\nbusiness RTO=1h\nbackup interval=24h',
+    '¿Cumple la estrategia el RPO?',
+    '¿Cómo ejecutarías un restore drill seguro?',
+  ],
+  s09: [
+    'Contener acceso público no autorizado a objetos',
+    'Bucket policy',
+    'principal=allUsers\naction=objects.get\nprefix=private/*',
+    'Los objetos internos podrían ser legibles anónimamente',
+    'Access report',
+    'anonymous GET 200 count=187\nfirst activity=08:12',
+    '¿Qué contención aplicarías primero?',
+    '¿Cómo investigarías el alcance de la exposición?',
+  ],
+  s10: [
+    'Aplicar la política de error budget al cambio',
+    'Reliability dashboard',
+    'rolling 30d SLO=99.9%\nerror budget consumed=100%\nnew release risk=high',
+    'La tolerancia de fallo prevista está agotada',
+    'Release calendar',
+    'high-risk feature release tomorrow\nrollback test=not run',
+    '¿Debe aprobarse el cambio?',
+    '¿Qué condiciones permitirían reanudar entregas?',
+  ],
+  s11: [
+    'Detectar el tramo responsable de latencia p99',
+    'Trace waterfall',
+    'checkout p99=3500ms\nauth=100ms; pricing=120ms; inventory=2800ms',
+    'El tramo inventory domina el tiempo extremo',
+    'Dependency chart',
+    'inventory retries=3 synchronous\ntimeout per call=900ms',
+    '¿Qué dependencia domina p99?',
+    '¿Cómo reducirías retries acumulativos?',
+  ],
+  s12: [
+    'Contener un nodo comprometido sin perder evidencia',
+    'Runtime detection',
+    'privileged pod launched in kube-system\nnode=node-17\noutbound to suspicious destination',
+    'Hay indicios de compromiso y movimiento lateral',
+    'Audit findings',
+    'service-account token mounted\nprivileged=true\nnetwork policy=none',
+    '¿Qué aislarías primero?',
+    '¿Qué credenciales y workloads revisarías?',
+  ],
+  s13: [
+    'Evaluar conmutación regional segura',
+    'Health report',
+    'primary error 81%\nsecondary available=YES\nreplica lag=14m',
+    'La réplica puede implicar pérdida de datos',
+    'Failover plan',
+    'RTO 1h\nRPO 15m\nlast drill 6 weeks ago',
+    '¿Cumple la réplica el RPO?',
+    '¿Qué prueba realizarías antes de cambiar tráfico?',
+  ],
+  s14: [
+    'Prevenir efectos duplicados por reintentos',
+    'Queue evidence',
+    'delivery_count 2-4\nmessage_id repeats\npayment_id repeats',
+    'Entrega al menos una vez sin consumo idempotente',
+    'Database audit',
+    'charge rows duplicated for order=AB-132\nunique constraint on idempotency_key=NONE',
+    '¿Qué clave de negocio usarías?',
+    '¿Cómo compensarías los cobros ya realizados?',
+  ],
+  s15: [
+    'Endurecer la cadena de suministro del CI/CD',
+    'Pipeline YAML',
+    'image: registry/app:latest\nCLOUD_KEY: long-lived secret\nartifact digest: not pinned',
+    'Artefactos mutables y credenciales de larga duración',
+    'Scanner results',
+    'critical CVE=2\nSBOM=missing\nsignature verification=disabled',
+    '¿Qué artefactos fijarías?',
+    '¿Cómo reemplazarías la clave por OIDC?',
+  ],
+  s16: [
+    'Evitar que el escalado sature la base',
+    'Scale events',
+    'replicas 8 -> 48\nDB connections 500/500\nHTTP 5xx 17%',
+    'Más pods agotaron la dependencia compartida',
+    'Pool configuration',
+    'max_pool_per_pod=20\nDB max_connections=500\nconnection budget not enforced',
+    '¿Qué límite fijarías por réplica?',
+    '¿Cómo realizarías pruebas de carga controladas?',
+  ],
+  s17: [
+    'Decidir si multicloud aporta valor al negocio',
+    'Business requirements',
+    'regulatory constraint=none\nrequested uptime=99.9%\nmandatory providers=none',
+    'No aparece un requisito que justifique tres nubes',
+    'TCO forecast',
+    'single cloud cost=100 units\nthree cloud cost=280 units\nresilience delta=not demonstrated',
+    '¿Qué beneficio justificaría el sobrecosto?',
+    '¿Qué ADR documentaría tu decisión?',
+  ],
+  s18: [
+    'Defender una arquitectura ante requisitos verificables',
+    'Requirements',
+    'SLO 99.95%\nRTO <=60min\nRPO <=15min\nPII stored=yes',
+    'La solución requiere controles medibles',
+    'Architecture review',
+    'data encryption: TBD\nrestore drill: TBD\ntraffic failover: TBD',
+    '¿Cómo probarías SLO, RTO y RPO?',
+    '¿Qué amenazas y controles registrarías?',
+  ],
+};
+const serviceNames: Record<Provider, Record<string, string>> = {
+  aws: {
+    database: 'Amazon RDS',
+    iam: 'AWS IAM',
+    secrets: 'Secrets Manager / CloudTrail',
+    release: 'Elastic Load Balancing',
+    network: 'Amazon VPC',
+    cost: 'AWS Cost Explorer',
+    k8s: 'Amazon EKS',
+    backup: 'AWS Backup',
+    storage: 'Amazon S3',
+    slo: 'Amazon CloudWatch',
+    traces: 'AWS X-Ray',
+    security: 'Amazon GuardDuty',
+    region: 'Route 53',
+    queue: 'Amazon SQS',
+    pipeline: 'AWS CodePipeline',
+    scale: 'EC2 Auto Scaling',
+    architecture: 'AWS Well-Architected',
+  },
+  azure: {
+    database: 'Azure Database for PostgreSQL',
+    iam: 'Azure RBAC',
+    secrets: 'Azure Key Vault / Activity Log',
+    release: 'Azure Application Gateway',
+    network: 'Azure Virtual Network',
+    cost: 'Microsoft Cost Management',
+    k8s: 'Azure Kubernetes Service',
+    backup: 'Azure Backup',
+    storage: 'Azure Blob Storage',
+    slo: 'Azure Monitor',
+    traces: 'Application Insights',
+    security: 'Microsoft Defender for Cloud',
+    region: 'Azure Front Door',
+    queue: 'Azure Service Bus',
+    pipeline: 'Azure Pipelines',
+    scale: 'Azure Autoscale',
+    architecture: 'Azure Well-Architected',
+  },
+  gcp: {
+    database: 'Cloud SQL',
+    iam: 'Google Cloud IAM',
+    secrets: 'Secret Manager / Cloud Audit Logs',
+    release: 'Cloud Load Balancing',
+    network: 'Google Cloud VPC',
+    cost: 'Cloud Billing',
+    k8s: 'Google Kubernetes Engine',
+    backup: 'Backup and DR Service',
+    storage: 'Cloud Storage',
+    slo: 'Cloud Monitoring',
+    traces: 'Cloud Trace',
+    security: 'Security Command Center',
+    region: 'Cloud DNS',
+    queue: 'Pub/Sub',
+    pipeline: 'Cloud Build',
+    scale: 'Managed instance groups',
+    architecture: 'Google Cloud Architecture Framework',
+  },
+};
+const types: Record<string, string> = {
+  s01: 'database',
+  s02: 'iam',
+  s03: 'secrets',
+  s04: 'release',
+  s05: 'network',
+  s06: 'cost',
+  s07: 'k8s',
+  s08: 'backup',
+  s09: 'storage',
+  s10: 'slo',
+  s11: 'traces',
+  s12: 'security',
+  s13: 'region',
+  s14: 'queue',
+  s15: 'pipeline',
+  s16: 'scale',
+  s17: 'architecture',
+  s18: 'architecture',
+};
+const providerReadOnlyCommands: Record<Provider, string> = {
+  aws: 'aws sts get-caller-identity',
+  azure: 'az account show --output json',
+  gcp: 'gcloud config list --format=json',
+};
+export function investigationFor(id: string): Investigation {
+  const c = configs[id];
+  if (!c) throw Error(`Caso Senior inexistente: ${id}`);
+  const [objective, label1, body1, analysis1, label2, body2, q1, q2] = c;
+  const key = types[id];
+  const service = {
+    aws: serviceNames.aws[key],
+    azure: serviceNames.azure[key],
+    gcp: serviceNames.gcp[key],
+  };
+  return {
+    objective,
+    exhibits: [
+      { id: 'primary', name: label1, kind: 'logs', body: body1, analysis: analysis1 },
+      {
+        id: 'secondary',
+        name: label2,
+        kind: 'metrics',
+        body: body2,
+        analysis: 'Contrasta esta señal con el expediente principal antes de tomar una decisión.',
+      },
+      {
+        id: 'procedure',
+        name: 'Runbook de respuesta',
+        kind: 'runbook',
+        body: `1. Establecer alcance del incidente\n2. Proteger datos y disponibilidad\n3. Revisar señales del servicio seleccionado\n4. Preparar cambio reversible\n5. Medir el resultado y registrar evidencia`,
+        analysis: 'Un runbook orienta la investigación; no sustituye una verificación real.',
+      },
+    ],
+    questions: [q1, q2, '¿Cómo validarías que la corrección no introduce nuevos riesgos?'],
+    lesson: `Este escenario es una simulación sintética sobre ${key}. No ejecuta cambios ni valida automáticamente el contenido de tu informe.`,
+    verification:
+      'Para acreditarlo se requiere revisión del informe y evidencias reales por parte de un docente.',
+    service,
+    command: providerReadOnlyCommands,
+  };
 }

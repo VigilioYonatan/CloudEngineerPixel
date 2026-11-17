@@ -1,39 +1,2215 @@
-import {SeniorWorkbench} from './SeniorWorkbench';
-import {useState,useEffect} from 'preact/hooks';
-import {Cloud,CloudCog,LayoutDashboard,BookOpen,FlaskConical,BrainCircuit,ChartNoAxesCombined,Settings,Sun,Moon,Menu,X,ArrowRight,ArrowLeft,Check,CheckCircle2,ChevronRight,ChevronDown,ExternalLink,Copy,Terminal,ShieldCheck,Network,Server,Database,LockKeyhole,Layers,Activity,Code2,Trophy,Zap,Boxes,Route,RefreshCcw,Gauge,Wallet,Clock3,Search,Play,Sparkles,Target,Download,Upload,Trash2,AlertTriangle,ShieldAlert,ClipboardCheck,Info,BookMarked,ArrowUpRight,CloudDownload,MessageSquareText,CircleHelp} from 'lucide-preact';
-import {providers,modules,levelInfo,services,moduleService,questions,type Provider,type Level,type Module} from './data/course';
-import {challenges,type Challenge} from './data/senior';
-import {knowledge} from './data/knowledge';
-import {studyUnits} from './data/study';
-import {provider,theme,view,currentModule,currentTopic,levelFilter,searchText,progress,mobileMenu,toast,setProvider,navigate,completeTopic,setQuiz,completeSenior,setNotes,clearProgress,exportProgress,importProgress,notify} from './lib/state';
-const icons:Record<string,any>={cloud:Cloud,network:Network,server:Server,database:Database,shield:ShieldCheck,wallet:Wallet,terminal:Terminal,route:Route,zap:Zap,boxes:Boxes,code:Code2,activity:Activity,layers:Layers,lock:LockKeyhole,refresh:RefreshCcw,gauge:Gauge,trophy:Trophy};
-const Icon=({name,size=20,...rest}:{name:string;size?:number;class?:string})=>{const C=icons[name]||Cloud;return <C size={size} {...rest}/>};
-const getModule=()=>modules.find(m=>m.id===currentModule.value)||modules[0];
-const completedTopics=(m:Module,p:Provider)=>m.topics.filter((_,i)=>progress.value.completed.includes(`${p}:${m.id}:${i}`)).length;
-const allComplete=()=>progress.value.completed.length;
-const labId=(m:Module,p:Provider)=>`${p}:${m.id}:lab`;
-function ProgressBar({value,max=100}:{value:number;max?:number}){return <div class="progress-track"><span style={{width:`${Math.max(0,Math.min(100,max?value/max*100:0))}%`}}/></div>}
-function Tag({children,kind='default'}:{children:any;kind?:string}){return <span class={`tag tag-${kind}`}>{children}</span>}
-function Header(){const p=provider.value;return <header class="header"><div class="header-inner"><button class="brand" onClick={()=>navigate('home')} aria-label="Ir al inicio"><span class="brand-icon"><CloudCog size={25}/></span><span class="brand-type">CLOUD<span>ENGINEERING</span><small>ACADEMY <b>●</b> MULTICLOUD</small></span></button><nav class={`top-nav ${mobileMenu.value?'nav-open':''}`} aria-label="Navegación principal"><button class={view.value==='home'?'nav-current':''} onClick={()=>navigate('home')}><LayoutDashboard size={16}/>Inicio</button><button class={['learn','lesson','lab'].includes(view.value)?'nav-current':''} onClick={()=>navigate('learn')}><BookOpen size={16}/>Aprender</button><button class={view.value==='simulator'?'nav-current':''} onClick={()=>navigate('simulator')}><FlaskConical size={16}/>Simuladores</button><button class={view.value==='senior'?'nav-current':''} onClick={()=>navigate('senior')}><BrainCircuit size={16}/>Senior Mode <span class="senior-dot"/></button><button class={view.value==='progress'?'nav-current':''} onClick={()=>navigate('progress')}><ChartNoAxesCombined size={16}/>Mi progreso</button></nav><div class="header-actions"><div class="provider-menu"><span class="provider-led"/><select aria-label="Seleccionar proveedor cloud" value={p} onChange={e=>setProvider((e.currentTarget as HTMLSelectElement).value as Provider)}><option value="aws">☁ AWS</option><option value="azure">☁ AZURE</option><option value="gcp">☁ GOOGLE CLOUD</option></select><ChevronDown size={13}/></div><button class="icon-button hide-mobile" aria-label="Cambiar tema" title="Cambiar tema" onClick={()=>theme.value=theme.value==='dark'?'light':'dark'}>{theme.value==='dark'?<Sun size={18}/>:<Moon size={18}/>}</button><button class="icon-button hide-mobile" aria-label="Configuración" onClick={()=>navigate('settings')}><Settings size={18}/></button><button class="icon-button mobile-toggle" aria-label={mobileMenu.value?'Cerrar menú':'Abrir menú'} onClick={()=>mobileMenu.value=!mobileMenu.value}>{mobileMenu.value?<X size={21}/>:<Menu size={21}/>}</button></div></div></header>}
-function Footer(){return <footer class="footer"><div class="footer-inner"><div class="footer-brand"><CloudCog size={22}/><span>Cloud Engineering Academy</span></div><span>Aprende el concepto. Domina la nube. Piensa como ingeniero.</span><span>Educación independiente · AWS, Azure y Google Cloud no patrocinan esta academia.</span></div></footer>}
-function SectionHeading({eyebrow,title,description,side}:{eyebrow:string;title:string;description?:string;side?:any}){return <div class="section-heading"><div><span class="eyebrow"><span class="eyebrow-square"/>{eyebrow}</span><h2>{title}</h2>{description&&<p>{description}</p>}</div>{side}</div>}
-function Mascot({size='large',className=''}:{size?:'large'|'medium'|'small';className?:string}){return <img class={`mascot mascot-${size} ${className}`} src={providers[provider.value].mascot} alt={`Mentor Cloud en modo ${providers[provider.value].name}`}/>}
-function Home(){const p=providers[provider.value];const done=allComplete();return <main><section class="hero"><div class="hero-glow"/><div class="hero-copy"><div class="hero-pill"><span class="live-dot"/> TU PRÓXIMO NIVEL COMIENZA AQUÍ <ChevronRight size={14}/></div><h1>Domina el <span class="hero-emphasis">Cloud.</span><br/>Construye el <span class="hero-white">futuro.</span></h1><p>De tu primera instancia a una arquitectura de producción. Aprende <strong>AWS, Azure y Google Cloud</strong> con laboratorios, simuladores y desafíos de ingeniería real.</p><div class="hero-actions"><button class="btn btn-primary btn-lg" onClick={()=>navigate('learn')}>{done?'Continuar aprendiendo':'Empezar a aprender'}<ArrowRight size={19}/></button><button class="btn btn-ghost btn-lg" onClick={()=>navigate('senior')}><BrainCircuit size={18}/>Explorar Senior Mode</button></div><div class="hero-proof"><div class="avatar-stack"><span>☁</span><span>⚡</span><span>⌘</span></div><span><strong>18 módulos</strong> · 240 horas · 3 nubes</span></div></div><div class="hero-art"><div class="art-ring ring-one"/><div class="art-ring ring-two"/><span class="orbit-chip chip-top"><Cloud size={15}/> {p.short} MODE</span><span class="orbit-chip chip-left"><CheckCircle2 size={15}/> HANDS-ON</span><span class="orbit-chip chip-bottom"><Terminal size={14}/> &gt;_ ready</span><Mascot/><div class="mascot-floor"/></div><div class="hero-side-label">INGENIERÍA CLOUD / EDICIÓN 2026</div></section>
-<section class="stats-strip"><div><span class="stat-symbol"><BookOpen size={20}/></span><strong>18</strong><small>MÓDULOS</small></div><div><span class="stat-symbol"><Clock3 size={20}/></span><strong>240h</strong><small>FORMACIÓN</small></div><div><span class="stat-symbol"><FlaskConical size={20}/></span><strong>3</strong><small>RUTAS CLOUD</small></div><div><span class="stat-symbol"><ShieldCheck size={20}/></span><strong>18</strong><small>CASOS SENIOR</small></div></section>
-<section class="section-pad"><SectionHeading eyebrow="ESCOGE TU CAMINO" title="De principiante a arquitecto cloud" description="Tres niveles conectados. Una única metodología que se adapta a tu proveedor." side={<button class="text-action" onClick={()=>navigate('learn')}>Ver todos los módulos <ArrowRight size={16}/></button>}/><div class="level-cards">{(['fundamentos','intermedio','avanzado'] as Level[]).map((l,index)=>{const ms=modules.filter(m=>m.level===l);const d=levelInfo[l];return <button key={l} class={`level-card level-${l}`} onClick={()=>{levelFilter.value=l;navigate('learn')}}><div class="level-card-top"><div class="level-icon"><span>{d.number}</span></div><span class="level-hours">{ms.reduce((s,m)=>s+m.hours,0)} HORAS</span></div><div class="level-ghost-num">0{index+1}</div><span class="level-step">NIVEL {index+1}</span><h3>{d.name}</h3><p>{d.description}</p><div class="level-bottom"><span>{ms.length} módulos</span><span class="round-arrow"><ArrowUpRight size={19}/></span></div></button>})}</div></section>
-<section class="section-pad"><SectionHeading eyebrow="APRENDE CON TU NUBE" title="Una academia. Tres ecosistemas." description="Cambia de proveedor sin repetir teoría. Los ejemplos, comandos y prácticas sí cambian."/><div class="provider-cards">{(['aws','azure','gcp'] as Provider[]).map(id=><button key={id} class={`provider-card provider-card-${id} ${provider.value===id?'selected':''}`} onClick={()=>setProvider(id)}><div class="provider-card-head"><span class={`provider-mark provider-mark-${id}`}>{id==='aws'?'aws':id==='azure'?'A':'G'}</span>{provider.value===id&&<span class="selected-label"><Check size={14}/> ACTIVA</span>}</div><h3>{providers[id].name}</h3><p>{providers[id].tagline}</p><div class="provider-footer"><span>{provider.value===id?'Ruta seleccionada':'Elegir ruta'}</span><ArrowRight size={18}/></div></button>)}</div></section>
-<section class="feature-band"><div class="feature-band-copy"><span class="eyebrow"><span class="eyebrow-square"/>ENTRENA COMO EN PRODUCCIÓN</span><h2>Los tutoriales no bastan.<br/><span>Resuelve incidentes reales.</span></h2><p>Aprende a tomar decisiones bajo presión con 18 escenarios de ingeniería avanzada: seguridad, Terraform, Kubernetes, SRE, redes y costos.</p><div class="feature-checks"><span><CheckCircle2 size={16}/> Decisiones con consecuencias</span><span><CheckCircle2 size={16}/> Evidencias y rúbricas</span><span><CheckCircle2 size={16}/> Sin credenciales ni riesgos</span></div><button class="btn btn-gold" onClick={()=>navigate('senior')}>Entrar a Senior Mode <ArrowRight size={18}/></button></div><div class="feature-band-art"><div class="senior-halo"/><img src="/assets/cloud-mentor-senior.png" alt="Cloud Mentor en modo senior"/></div></section>
-<section class="section-pad"><SectionHeading eyebrow="APRENDER HACIENDO" title="Todo lo que necesitas para crecer"/><div class="feature-grid"><div><span class="feature-icon"><Terminal size={23}/></span><h3>Laboratorios guiados</h3><p>Comandos reales por proveedor, checklist de seguridad, evidencias y limpieza de recursos.</p></div><div><span class="feature-icon"><Network size={23}/></span><h3>Simuladores interactivos</h3><p>Practica CIDR, permisos IAM, capacidad y confiabilidad sin pagar una nube.</p></div><div><span class="feature-icon"><ChartNoAxesCombined size={23}/></span><h3>Progreso a tu ritmo</h3><p>Guarda avance por concepto y por proveedor, y exporta tus resultados en JSON.</p></div></div></section><section class="bottom-cta"><CloudCog size={39}/><div><h2>Tu viaje cloud empieza hoy.</h2><p>Elige una nube. Aprende los fundamentos. Construye con criterio.</p></div><button class="btn btn-primary" onClick={()=>navigate('learn')}>Explorar la academia <ArrowRight size={17}/></button></section></main>}
-function Learn(){const filtered=modules.filter(m=>(levelFilter.value==='todos'||m.level===levelFilter.value)&&`${m.title} ${m.subtitle} ${m.tags.join(' ')}`.toLowerCase().includes(searchText.value.toLowerCase()));return <main class="page-container"><div class="page-kicker"><BookOpen size={16}/> RUTAS DE APRENDIZAJE / {providers[provider.value].short}</div><section class="page-intro"><div><h1>Tu ruta hacia <span>Cloud Engineer.</span></h1><p>18 módulos, 3 niveles y aprendizaje práctico. Estás explorando la ruta de <strong>{providers[provider.value].name}</strong>.</p></div><div class="intro-stat"><span>PROGRESO ACTUAL</span><strong>{progress.value.completed.filter(x=>x.startsWith(`${provider.value}:`)).length}</strong><small>actividades completadas</small></div></section><div class="learn-toolbar"><div class="tabs">{[{id:'todos',name:'Todos los niveles'},...(['fundamentos','intermedio','avanzado'] as Level[]).map(id=>({id,name:levelInfo[id].name}))].map(t=><button key={t.id} class={levelFilter.value===t.id?'tab-active':''} onClick={()=>levelFilter.value=t.id}>{t.name}</button>)}</div><label class="search-field"><Search size={17}/><input type="search" placeholder="Buscar un módulo..." value={searchText.value} onInput={e=>searchText.value=(e.currentTarget as HTMLInputElement).value} aria-label="Buscar módulos"/></label></div>{filtered.length===0?<div class="empty-state">No hay módulos para esta búsqueda. <button onClick={()=>{searchText.value='';levelFilter.value='todos'}}>Restablecer filtros</button></div>:<div class="module-grid">{filtered.map((m,i)=>{const done=completedTopics(m,provider.value);return <button class="module-card" key={m.id} onClick={()=>{currentTopic.value=0;navigate('lesson',m.id)}}><div class="module-header"><div class="module-icon"><Icon name={m.icon} size={23}/></div><span class="module-num">#{String(modules.indexOf(m)+1).padStart(2,'0')}</span></div><div class="module-level"><span class={`level-indicator ${m.level}`}/>{levelInfo[m.level].name.toUpperCase()} · {m.hours}H</div><h3>{m.title}</h3><p>{m.subtitle}</p><div class="module-tags">{m.tags.map(t=><Tag key={t}>{t}</Tag>)}</div><div class="module-progress"><div><span>Lecciones</span><strong>{done}/{m.topics.length}</strong></div><ProgressBar value={done} max={m.topics.length}/></div><div class="module-link">{done?'Continuar módulo':'Empezar módulo'} <ArrowRight size={17}/></div></button>})}</div>}</main>}
-const topicExplanation=(title:string,m:Module,p:Provider)=>{const s=services[p][moduleService(m.id)];return {intro:`${title} es una competencia esencial dentro de ${m.title.toLowerCase()}. Antes de configurar recursos, identifica el objetivo, las dependencias, las restricciones de seguridad y el costo de operar la solución.`,goal:`En ${providers[p].name}, estudia cómo se relaciona este tema con ${s.label}. Comprueba los requisitos de región, identidad, red y observabilidad antes de implementar.`,steps:['Define el resultado esperado y qué evidencia lo demostraría.','Identifica el recurso y los permisos mínimos necesarios.','Diseña una configuración segura y reproducible.','Verifica el comportamiento y documenta los límites.','Elimina los recursos temporales y revisa costos.']};};
-function Lesson(){const m=getModule(),p=provider.value,s=services[p][moduleService(m.id)],idx=Math.min(currentTopic.value,m.topics.length-1),topic=m.topics[idx],ex=topicExplanation(topic,m,p),key=`${p}:${m.id}:${idx}`;const complete=progress.value.completed.includes(key),unit=studyUnits[`${m.id}:${idx}`];return <main class="page-container lesson-page"><div class="breadcrumb"><button onClick={()=>navigate('learn')}>Aprender</button><ChevronRight size={14}/><span>{levelInfo[m.level].name}</span><ChevronRight size={14}/><b>{m.title}</b></div><div class="lesson-layout"><aside class="lesson-sidebar"><div class="sidebar-course-head"><span class="sidebar-eyebrow">MÓDULO {String(modules.indexOf(m)+1).padStart(2,'0')}</span><h3>{m.title}</h3><p>{m.subtitle}</p><ProgressBar value={completedTopics(m,p)} max={m.topics.length}/><small>{completedTopics(m,p)} de {m.topics.length} lecciones</small></div><div class="sidebar-list"><strong>CONTENIDO DEL MÓDULO</strong>{m.topics.map((t,i)=><button key={i} class={i===idx?'sidebar-selected':''} onClick={()=>{currentTopic.value=i;window.scrollTo({top:0,behavior:'smooth'})}}><span class={`lesson-status ${progress.value.completed.includes(`${p}:${m.id}:${i}`)?'done':''}`}>{progress.value.completed.includes(`${p}:${m.id}:${i}`)?<Check size={13}/>:String(i+1).padStart(2,'0')}</span><span>{t}</span></button>)}</div><button class="sidebar-lab" onClick={()=>navigate('lab',m.id)}><FlaskConical size={18}/> Laboratorio práctico <ArrowRight size={16}/></button><button class="sidebar-back" onClick={()=>navigate('learn')}><ArrowLeft size={16}/> Todos los módulos</button></aside><article class="lesson-content"><div class="lesson-topline"><Tag kind="accent">{providers[p].short}</Tag><span><Clock3 size={14}/> ~25 min · Lección {idx+1}/{m.topics.length}</span></div><h1>{topic}</h1><p class="lesson-lead">{ex.intro}</p><div class="learning-outcome"><Target size={21}/><div><strong>Lo que aprenderás</strong><span>{m.outcome}</span></div></div><div class="content-divider"/><h2>01. Entiende el concepto</h2><p>{knowledge[m.id].principle}</p><p><strong>Trade-off técnico:</strong> {knowledge[m.id].tradeoff}</p><p><strong>Fallo frecuente:</strong> {knowledge[m.id].failure}</p><p><strong>Ejemplo aplicado:</strong> {knowledge[m.id].example}</p><div class="concept-grid"><div><Network size={22}/><strong>Diseño</strong><span>Topología, interfaces, límites y dependencias.</span></div><div><ShieldCheck size={22}/><strong>Seguridad</strong><span>Identidad, superficie expuesta y permisos mínimos.</span></div><div><Activity size={22}/><strong>Operación</strong><span>Monitoreo, recuperación, rendimiento y costo.</span></div></div><h2>02. Taller específico: {topic}</h2><div class="study-workshop"><div class="study-focus"><Target size={20}/><div><strong>Decisión técnica de esta unidad</strong><p>{unit.focus}</p></div></div><h3>Reto de ingeniería</h3><p>{unit.exercise}</p><h3>Cómo demostrar que funciona</h3><p>{unit.verify}</p><h3>Errores que debes evitar</h3><ul>{unit.pitfalls.map((pitfall,i)=><li key={i}>{pitfall}</li>)}</ul><h3>Comparativa multicloud</h3><p>{unit.compare}</p><div class="study-question"><strong>Pregunta de reflexión</strong><p>{unit.question}</p></div></div><h2>03. Aplicación en {providers[p].short}</h2><p>{ex.goal}</p><div class="service-panel"><div class="service-panel-top"><div><span class="service-panel-caption">SERVICIO RELACIONADO</span><strong>{s.label}</strong></div><Tag kind="accent">{providers[p].short}</Tag></div><p>{s.note}</p><div class="terminal-block"><div class="terminal-bar"><span class="terminal-lights"><i/><i/><i/></span><span>{providers[p].console.toLowerCase()}</span><button title="Copiar comando" aria-label="Copiar comando" onClick={()=>navigator.clipboard.writeText(s.cli).then(()=>notify('Comando copiado')).catch(()=>notify('No se pudo copiar'))}><Copy size={15}/> Copiar</button></div><pre><code>$ {s.cli}</code></pre></div><a class="official-link" href={s.doc} target="_blank" rel="noopener noreferrer">Documentación oficial del proveedor <ExternalLink size={15}/></a></div><h2>04. Procedimiento de ingeniería</h2><ol class="steps-list">{ex.steps.map((step,i)=><li key={step}><span>{String(i+1).padStart(2,'0')}</span><p>{step}</p></li>)}</ol><div class="warning-box"><AlertTriangle size={21}/><div><strong>Recursos y facturación</strong><span>Los comandos mostrados son ejemplos de consulta. No se ejecutan en el navegador. Los laboratorios reales requieren una cuenta propia, revisar posibles cargos y verificar el cleanup.</span></div></div><h2>05. Comprueba tu comprensión</h2><Quiz module={m}/><ProviderCheck module={m}/><div class="lesson-end"><button class={`btn ${complete?'btn-complete':'btn-primary'}`} onClick={()=>completeTopic(`${m.id}:${idx}`,p)}>{complete?<><CheckCircle2 size={18}/> Lección completada</>:<><Check size={18}/> Marcar como completada</>}</button><button class="btn btn-ghost" onClick={()=>idx<m.topics.length-1?(currentTopic.value=idx+1,window.scrollTo({top:0,behavior:'smooth'})):navigate('lab',m.id)}>{idx<m.topics.length-1?'Siguiente lección':'Ir al laboratorio'} <ArrowRight size={18}/></button></div></article></div></main>}
-function ProviderCheck({module:m}:{module:Module}){const p=provider.value;const [answer,setAnswer]=useState<string|null>(null);const category=moduleService(m.id);const expected=services[p][category].label;const all=[services.aws[category].label,services.azure[category].label,services.gcp[category].label];useEffect(()=>setAnswer(null),[p,m.id]);return <section class="provider-check"><div class="card-heading"><CloudCog size={19}/><h3>Chequeo práctico de {providers[p].short}</h3></div><p>En esta ruta, ¿qué servicio usarías como punto de partida para la capacidad <strong>{category}</strong>?</p><div class="quiz-options">{all.map((val,i)=><button key={`${p}:${i}`} class={`${answer===val?'quiz-selected':''} ${answer!==null&&val===expected?'quiz-correct':''} ${answer===val&&val!==expected?'quiz-wrong':''}`} onClick={()=>setAnswer(val)}><span>{String.fromCharCode(65+i)}</span>{val}</button>)}</div>{answer!==null&&<div class={`quiz-feedback ${answer===expected?'feedback-success':'feedback-warn'}`}><strong>{answer===expected?'Correcto: servicio de la ruta activa':'Esa opción corresponde a otra plataforma'}</strong><p>{services[p][category].note}</p></div>}<small>Este ejercicio distingue equivalencias de capacidad; no supone que las implementaciones sean idénticas.</small></section>}
-function Quiz({module:m}:{module:Module}){const [selected,setSelected]=useState<number|null>(null);const q=questions[m.id];const saved=progress.value.quiz[`${provider.value}:${m.id}`];useEffect(()=>setSelected(null),[m.id,provider.value]);return <div class="quiz-card"><div class="quiz-title"><CircleHelp size={19}/><strong>Knowledge Check</strong><Tag kind="accent">AUTOEVALUACIÓN</Tag></div><p>{q.q}</p><div class="quiz-options">{q.choices.map((choice,i)=><button key={i} class={`${selected===i?'quiz-selected':''} ${selected!==null&&i===q.correct?'quiz-correct':''} ${selected===i&&i!==q.correct?'quiz-wrong':''}`} onClick={()=>{setSelected(i);setQuiz(m.id,provider.value,i===q.correct?100:0)}}><span>{String.fromCharCode(65+i)}</span>{choice}{selected!==null&&i===q.correct&&<CheckCircle2 size={18}/>}</button>)}</div>{selected!==null&&<div class={`quiz-feedback ${selected===q.correct?'feedback-success':'feedback-warn'}`}><strong>{selected===q.correct?'¡Respuesta correcta!':'Sigue investigando.'}</strong><p>{q.why}</p></div>}{saved!==undefined&&selected===null&&<small class="prior-attempt">Última puntuación guardada: {saved}% · Puedes volver a intentarlo.</small>}</div>}
-function Lab(){const m=getModule(),p=provider.value,s=services[p][moduleService(m.id)],key=labId(m,p);const [checks,setChecks]=useState<boolean[]>([false,false,false,false,false]);const [evidence,setEvidence]=useState('');const [mode,setMode]=useState<'guided'|'real'>('guided');const tasks=['He comprendido el objetivo y el alcance.','He identificado los permisos mínimos y la región.','He consultado los recursos y validado los resultados.','He guardado evidencias y anotaciones sin secretos.','He eliminado recursos de práctica y revisado posibles cargos.'];return <main class="page-container"><div class="breadcrumb"><button onClick={()=>navigate('lesson',m.id)}>Volver al módulo</button><ChevronRight size={14}/> Laboratorio</div><div class="page-intro lab-heading"><div><div class="page-kicker"><FlaskConical size={17}/> LABORATORIO · {providers[p].short}</div><h1>Laboratorio: <span>{m.title}</span></h1><p>Práctica guiada de ingeniería. No se ejecuta infraestructura real en este navegador.</p></div><div class="lab-hero-icon"><FlaskConical size={47}/></div></div><div class="lab-tabs"><button class={mode==='guided'?'tab-active':''} onClick={()=>setMode('guided')}><BookOpen size={17}/> Guía y checklist</button><button class={mode==='real'?'tab-active':''} onClick={()=>setMode('real')}><CloudDownload size={17}/> Práctica en cuenta real</button></div><div class="lab-layout"><div class="lab-main">{mode==='guided'?<><section class="info-card"><div class="card-heading"><Target size={19}/><h3>Objetivo de la práctica</h3></div><p>{m.outcome} En tu ruta actual utilizaremos <strong>{s.label}</strong>.</p><div class="lab-meta"><Tag>Sin ejecución automática</Tag><Tag kind="accent">{providers[p].short}</Tag><Tag>20–45 min</Tag></div></section><section class="info-card"><div class="card-heading"><Terminal size={19}/><h3>Comando inicial</h3></div><p>Consulta los recursos disponibles. Antes de iniciar sesión, verifica que el contexto corresponda a una cuenta de laboratorio.</p><div class="terminal-block"><div class="terminal-bar"><span class="terminal-lights"><i/><i/><i/></span><span>terminal</span><button onClick={()=>navigator.clipboard.writeText(s.cli).then(()=>notify('Comando copiado')).catch(()=>notify('Copia manualmente el comando'))}><Copy size={14}/> Copiar</button></div><pre><code>$ {s.cli}</code></pre></div><p class="helper-text">Si no cuentas con credenciales, estudia la salida esperada en la documentación oficial y completa la modalidad conceptual.</p></section><section class="info-card"><div class="card-heading"><ClipboardCheck size={19}/><h3>Checklist de verificación</h3></div><div class="task-list">{tasks.map((t,i)=><label key={i} class={checks[i]?'task-checked':''}><input type="checkbox" checked={checks[i]} onChange={e=>setChecks(a=>a.map((v,j)=>j===i?(e.currentTarget as HTMLInputElement).checked:v))}/><span class="custom-check">{checks[i]&&<Check size={14}/>}</span><span>{t}</span></label>)}</div><ProgressBar value={checks.filter(Boolean).length} max={tasks.length}/><small>{checks.filter(Boolean).length} de {tasks.length} pasos verificados</small></section></>:<><section class="info-card"><div class="card-heading"><AlertTriangle size={19}/><h3>Antes de conectar tu cuenta</h3></div><div class="warning-box"><ShieldAlert size={22}/><div><strong>Los proveedores pueden generar cargos.</strong><span>La academia no crea, detiene ni elimina recursos. Trabaja únicamente en un entorno de prueba aislado, con presupuesto y permisos limitados.</span></div></div><ol class="plain-steps"><li>Activa MFA y credenciales temporales cuando sea posible.</li><li>Crea un presupuesto y alertas en tu cuenta.</li><li>Elige una región y etiqueta los recursos de laboratorio.</li><li>Consulta primero recursos existentes con un comando de solo lectura.</li><li>Documenta evidencias sin incluir claves, tokens ni datos privados.</li><li>Al terminar, elimina recursos y verifica la consola de facturación.</li></ol><a class="official-link" href={s.doc} target="_blank" rel="noopener noreferrer">Abrir guía oficial de {s.label}<ExternalLink size={15}/></a></section></>}<section class="info-card"><div class="card-heading"><BookMarked size={19}/><h3>Cuaderno de evidencias</h3></div><p>Anota lo aprendido, un problema encontrado y la forma de verificarlo. Evita guardar secretos.</p><textarea rows={5} value={evidence||progress.value.notes[key]||''} placeholder="Ejemplo: validé el listado de VPC y comprobé la región de mi proyecto..." onInput={e=>setEvidence((e.currentTarget as HTMLTextAreaElement).value)}/><button class="btn btn-secondary" onClick={()=>{setNotes(key,evidence||progress.value.notes[key]||'');notify('Notas guardadas en este navegador')}}><Check size={16}/> Guardar evidencias</button></section></div><aside class="lab-aside"><div class="info-card lab-sidecard"><h3>Tu evaluación</h3><p>La finalización de este laboratorio es una declaración local del alumno, no una validación de infraestructura real.</p><div class="score-ring">{checks.filter(Boolean).length}/{tasks.length}</div><button class="btn btn-primary full-width" disabled={!checks.every(Boolean)} onClick={()=>completeTopic(`${m.id}:lab`,p)}>{progress.value.completed.includes(key)?'Laboratorio registrado':'Registrar práctica'} <CheckCircle2 size={16}/></button>{!checks.every(Boolean)&&<small>Completa los cinco controles para habilitar el registro.</small>}</div><div class="info-card"><strong>Competencias</strong><div class="module-tags">{m.tags.map(t=><Tag key={t}>{t}</Tag>)}</div><button class="text-action" onClick={()=>navigate('simulator')}>Abrir simuladores <ArrowRight size={17}/></button></div></aside></div></main>}
-function Simulator(){const [mode,setMode]=useState<'cidr'|'iam'|'scale'|'slo'|'architecture'>('cidr');const [cidr,setCidr]=useState('10.0.0.0/24');const [action,setAction]=useState('read');const [scope,setScope]=useState('single');const [rps,setRps]=useState(1200);const [capacity,setCapacity]=useState(150);const [availability,setAvailability]=useState(99.9);const [days,setDays]=useState(30);const [runs,setRuns]=useState(0);const [workload,setWorkload]=useState<'web'|'events'|'batch'>('web');const [priority,setPriority]=useState<'simple'|'control'|'scale'>('simple');const architecture=workload==='web'?(priority==='control'?'compute':'serverless'):workload==='events'?'serverless':priority==='control'?'compute':'serverless';const cidrResult=(()=>{const parts=cidr.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d{1,2})$/);if(!parts||parts.slice(1,5).some(n=>+n>255)||+parts[5]>32)return null;const prefix=+parts[5],count=2**(32-prefix);const ip=parts.slice(1,5).reduce((a,b)=>((a<<8)|+b)>>>0,0);const mask=prefix===0?0:(0xffffffff<<(32-prefix))>>>0;const net=ip&mask;const fmt=(x:number)=>[24,16,8,0].map(s=>(x>>>s)&255).join('.');return {net:fmt(net>>>0),broadcast:fmt((net|~mask)>>>0),count,prefix,host:Math.max(0,count-2)};})();const allowed=action==='read'||(action==='write'&&scope==='single');const replicas=Math.ceil(rps/Math.max(1,capacity));const downtime=Math.round((1-availability/100)*days*24*60*60);const minutes=Math.floor(downtime/60);return <main class="page-container"><div class="page-kicker"><FlaskConical size={16}/> CLOUD ENGINEERING LAB</div><section class="page-intro"><div><h1>Simula. Experimenta. <span>Comprende.</span></h1><p>Entornos didácticos que funcionan en tu navegador. Sin credenciales y sin cargos de infraestructura.</p></div><div class="intro-stat"><span>LABORATORIOS</span><strong>05</strong><small>motores interactivos</small></div></section><div class="sim-tabs">{[{id:'cidr',title:'Redes / CIDR',icon:Network},{id:'iam',title:'Decisiones IAM',icon:ShieldCheck},{id:'scale',title:'Autoescalado',icon:Gauge},{id:'slo',title:'SLO & Fiabilidad',icon:Activity},{id:'architecture',title:'Architecture Studio',icon:Layers}].map(t=><button key={t.id} class={mode===t.id?'sim-active':''} onClick={()=>setMode(t.id as any)}><t.icon size={20}/>{t.title}</button>)}</div><div class="sim-body"><div class="sim-controller"><div class="card-heading"><Terminal size={19}/><h3>Configuración del experimento</h3></div>{mode==='cidr'?<><label>Red con prefijo CIDR<input value={cidr} onInput={e=>setCidr((e.currentTarget as HTMLInputElement).value)} placeholder="10.0.0.0/24"/></label><p>Prueba /16, /24, /28 y observa cómo cambia la capacidad del segmento.</p></>:mode==='iam'?<><label>Acción requerida<select value={action} onChange={e=>setAction((e.currentTarget as HTMLSelectElement).value)}><option value="read">Lectura de recursos</option><option value="write">Modificar recursos</option><option value="admin">Administrador completo</option></select></label><label>Ámbito asignado<select value={scope} onChange={e=>setScope((e.currentTarget as HTMLSelectElement).value)}><option value="single">Recurso específico</option><option value="all">Todos los recursos</option></select></label><p>Política simplificada para aprender mínimo privilegio. No reemplaza un evaluador IAM real.</p></>:mode==='scale'?<><label>Solicitudes por segundo <strong>{rps} req/s</strong><input type="range" min="100" max="6000" step="100" value={rps} onInput={e=>setRps(+(e.currentTarget as HTMLInputElement).value)}/></label><label>Capacidad estimada por réplica <strong>{capacity} req/s</strong><input type="range" min="50" max="500" step="25" value={capacity} onInput={e=>setCapacity(+(e.currentTarget as HTMLInputElement).value)}/></label><p>Modelo teórico sin latencia, colas ni límites de dependencias. En sistemas reales se requiere medir carga y margen.</p></>:mode==='architecture'?<><label>Tipo de carga<select value={workload} onChange={e=>setWorkload((e.currentTarget as HTMLSelectElement).value as any)}><option value="web">Sitio web / API</option><option value="events">Eventos asíncronos</option><option value="batch">Procesamiento por lotes</option></select></label><label>Prioridad principal<select value={priority} onChange={e=>setPriority((e.currentTarget as HTMLSelectElement).value as any)}><option value="simple">Menor complejidad operativa</option><option value="control">Control del runtime y sistema</option><option value="scale">Escalado automático</option></select></label><p>Este motor propone un punto de partida, no una arquitectura validada. Antes de decidir debes revisar identidad, presupuesto, requisitos de red, rendimiento y RTO/RPO.</p></>:<><label>Objetivo de disponibilidad <strong>{availability}%</strong><input type="range" min="95" max="99.99" step="0.01" value={availability} onInput={e=>setAvailability(+(e.currentTarget as HTMLInputElement).value)}/></label><label>Ventana del objetivo<select value={days} onChange={e=>setDays(+(e.currentTarget as HTMLSelectElement).value)}><option value="7">7 días</option><option value="30">30 días</option><option value="90">90 días</option></select></label><p>El presupuesto de error no equivale al downtime real observado ni garantiza fiabilidad.</p></>}<button class="btn btn-primary full-width" onClick={()=>{setRuns(runs+1);progress.value={...progress.value,simRuns:progress.value.simRuns+1};notify('Simulación actualizada')}}><Play size={17}/> Ejecutar simulación</button></div><div class="sim-result"><span class="eyebrow"><span class="eyebrow-square"/> RESULTADO · {providers[provider.value].short}</span>{mode==='cidr'?<><div class="result-heading"><Network size={28}/><h2>Calculadora de subredes</h2></div>{cidrResult?<><div class="result-big">{cidrResult.count.toLocaleString('es-ES')}<small>direcciones totales</small></div><div class="result-stats"><div><small>Dirección de red</small><strong>{cidrResult.net}</strong></div><div><small>Última dirección</small><strong>{cidrResult.broadcast}</strong></div><div><small>Prefijo</small><strong>/{cidrResult.prefix}</strong></div><div><small>Hosts teóricos IPv4*</small><strong>{cidrResult.host}</strong></div></div><p class="result-note">* En subredes cloud existen reservas adicionales según proveedor. No interpretes «hosts teóricos» como IPs asignables reales.</p></>:<div class="empty-state">Formato inválido. Utiliza IPv4/prefijo, por ejemplo 10.0.0.0/24.</div>}</>:mode==='iam'?<><div class="result-heading"><ShieldCheck size={28}/><h2>Evaluador didáctico IAM</h2></div><div class={`result-banner ${allowed?'good':'bad'}`}>{allowed?<CheckCircle2 size={23}/>:<ShieldAlert size={23}/>} {allowed?'Permitido en el modelo':'Denegado en el modelo'}</div><p>{action==='admin'?'Las operaciones administrativas amplias requieren privilegios explícitos y una justificación fuerte.':scope==='all'&&action==='write'?'Modificar todos los recursos viola el alcance de esta política mínima de ejemplo.':'La operación está dentro de las reglas educativas configuradas.'}</p><div class="terminal-block"><pre><code>{JSON.stringify({effect:allowed?'Allow':'Deny',action,resource:scope==='single'?'resource/selected':'*',model:'educational'},null,2)}</code></pre></div></>:mode==='scale'?<><div class="result-heading"><Gauge size={28}/><h2>Planificador de réplicas</h2></div><div class="result-big">{replicas}<small>réplicas teóricas necesarias</small></div><div class="bar-visual">{Array.from({length:Math.min(20,replicas)},(_,i)=><div key={i} title={`Réplica ${i+1}`}><Server size={22}/></div>)}</div><p class="result-note">Este cálculo supone distribución ideal. La base de datos, el arranque, las cuotas y el presupuesto pueden limitar el escalamiento real.</p></>:mode==='architecture'?<><div class="result-heading"><Layers size={28}/><h2>Architecture Decision Studio</h2></div><div class="result-big" style={{fontSize:'clamp(24px,3vw,38px)'}}>{services[provider.value][architecture].label}<small>Punto de partida sugerido en {providers[provider.value].short}</small></div><p class="result-note">{workload==='events'?'El procesamiento por eventos exige idempotencia, reintentos controlados, DLQ y observabilidad.':workload==='batch'?'El procesamiento por lotes requiere colas, planificación, tiempos de ejecución máximos y control de costes.':'Una aplicación web debe resolver identidad, almacenamiento de sesión, entrada segura, métricas y persistencia.'}</p><div class="result-stats"><div><small>Alternativa</small><strong>{services[provider.value][architecture==='compute'?'serverless':'compute'].label}</strong></div><div><small>Restricción priorizada</small><strong>{priority==='simple'?'Simplicidad':priority==='control'?'Control':'Escala'}</strong></div></div><a class="official-link" target="_blank" rel="noopener noreferrer" href={services[provider.value][architecture].doc}>Revisar documentación oficial <ExternalLink size={15}/></a><p class="result-note">Una decisión madura compara al menos dos opciones con TCO, seguridad, escalabilidad, RTO/RPO y capacidad de operación.</p></>:<><div class="result-heading"><Activity size={28}/><h2>Presupuesto de error SLO</h2></div><div class="result-big">{minutes.toLocaleString('es-ES')} min<small>indisponibilidad máxima teórica en {days} días</small></div><div class="result-stats"><div><small>Objetivo SLO</small><strong>{availability.toFixed(2)}%</strong></div><div><small>Ventana</small><strong>{days} días</strong></div></div><p class="result-note">Error budget aproximado: (1 − SLO) × duración. El indicador debe definirse con un SLI apropiado.</p></>}{runs>0&&<Tag kind="accent">{runs} ejecuciones en esta sesión</Tag>}</div></div></main>}
-const seniorService:Record<string,string>={s01:'identity',s02:'network',s03:'monitor',s04:'compute',s05:'identity',s06:'storage',s07:'kubernetes',s08:'database',s09:'storage',s10:'monitor',s11:'monitor',s12:'kubernetes',s13:'network',s14:'serverless',s15:'identity',s16:'kubernetes',s17:'network',s18:'compute'};
-function Senior(){const [chosen,setChosen]=useState<Challenge|null>(null);const [choice,setChoice]=useState<number|null>(null);const [evidence,setEvidence]=useState('');const [filter,setFilter]=useState('todos');const [checked,setChecked]=useState<number[]>([]);const list=challenges.filter(c=>filter==='todos'||c.severity===filter);if(chosen){const correct=choice===chosen.correct;const incidentService=services[provider.value][seniorService[chosen.id]||'compute'];const seniorKey=`${provider.value}:${chosen.id}`;return <main class="page-container senior-detail"><div class="breadcrumb"><button onClick={()=>{setChosen(null);setChoice(null);setChecked([])}}><ArrowLeft size={15}/> Volver a Senior Mode</button><ChevronRight size={14}/>{chosen.id.toUpperCase()}</div><div class="senior-detail-heading"><Tag kind="gold">{chosen.category}</Tag><Tag kind={chosen.severity==='Crítica'?'danger':'default'}>SEVERIDAD {chosen.severity.toUpperCase()}</Tag><h1>{chosen.title}</h1><p>{chosen.brief}</p><div class="senior-provider-hint"><Cloud size={17}/>{providers[provider.value].short}: investigar con {incidentService.label}</div></div><div class="senior-detail-grid"><div><div class="info-card"><div class="card-heading"><Activity size={20}/><h3>Señales de producción</h3></div><div class="terminal-block"><div class="terminal-bar"><span class="terminal-lights"><i/><i/><i/></span><span>INCIDENT / EVIDENCE</span></div><pre><code>{chosen.signal}</code></pre></div><p>Lee la evidencia. Identifica el riesgo. Elige la primera acción profesionalmente defendible.</p><div class="senior-specific"><strong>Contexto de {providers[provider.value].name}</strong><p>{incidentService.note}</p><div class="terminal-block"><pre><code>$ {incidentService.cli}</code></pre></div><a class="official-link" target="_blank" rel="noopener noreferrer" href={incidentService.doc}>Documentación del servicio <ExternalLink size={14}/></a><small>Comando orientativo de consulta: no se ejecuta en esta academia.</small></div></div><div class="info-card"><div class="card-heading"><BrainCircuit size={20}/><h3>Decision Lab</h3></div><p>¿Cuál es la mejor primera respuesta?</p><div class="decision-options">{chosen.choices.map((opt,i)=><button class={`${choice===i?'decision-selected':''} ${choice!==null&&i===chosen.correct?'decision-correct':''}`} onClick={()=>setChoice(i)} key={i}><span>{String.fromCharCode(65+i)}</span>{opt}</button>)}</div>{choice!==null&&<div class={`quiz-feedback ${correct?'feedback-success':'feedback-warn'}`}><strong>{correct?'Decisión defendible':'Decisión con riesgos importantes'}</strong><p>{chosen.reason}</p></div>}</div><div class="info-card"><div class="card-heading"><MessageSquareText size={20}/><h3>Informe de incidente / ADR</h3></div><p>Registra hipótesis, verificación, riesgo residual y decisión. El texto es una evidencia declarada, no una revisión humana.</p><textarea rows={5} placeholder="Hipótesis, hallazgos, decisiones y plan de verificación..." value={evidence||progress.value.notes[`senior:${provider.value}:${chosen.id}`]||''} onInput={e=>setEvidence((e.currentTarget as HTMLTextAreaElement).value)}/><button class="btn btn-secondary" onClick={()=>{setNotes(`senior:${provider.value}:${chosen.id}`,evidence||progress.value.notes[`senior:${provider.value}:${chosen.id}`]||'');notify('Informe guardado')}}><Check size={16}/> Guardar informe</button></div></div><aside><div class="info-card"><h3>Rúbrica de evidencias</h3><p>Estas comprobaciones son autodeclaradas. Para acreditación profesional se necesitaría evaluación externa.</p><div class="task-list">{chosen.proof.map((e,i)=><label key={e} class={checked.includes(i)?'task-checked':''}><input type="checkbox" checked={checked.includes(i)} onChange={ev=>setChecked((ev.currentTarget as HTMLInputElement).checked?[...checked,i]:checked.filter(x=>x!==i))}/><span class="custom-check">{checked.includes(i)&&<Check size={14}/>}</span><span>{e}</span></label>)}</div><button class="btn btn-gold full-width" disabled={!correct||checked.length!==chosen.proof.length} onClick={()=>{completeSenior(seniorKey);notify('Caso Senior registrado')}}>{progress.value.senior.includes(seniorKey)?'Caso completado':'Registrar resolución'}<Trophy size={17}/></button>{(!correct||checked.length!==chosen.proof.length)&&<small>Requiere una decisión correcta y revisar todas las evidencias.</small>}</div><div class="info-card"><strong>Competencias</strong><div class="module-tags">{chosen.skills.map(s=><Tag key={s}>{s}</Tag>)}</div><button class="text-action" onClick={()=>{setChosen(null);setChoice(null);setChecked([])}}>Ver todos los desafíos <ArrowRight size={16}/></button></div></aside></div></main>}
-return <main class="page-container"><div class="senior-hero"><div class="senior-hero-copy"><div class="senior-label"><Sparkles size={16}/> MODO EXPERTO DESBLOQUEADO</div><h1>Senior Mode<span>_</span></h1><p>Los sistemas de producción no te dan opciones perfectas. Entrena criterio técnico con incidentes, arquitectura, seguridad, SRE y FinOps.</p><div class="senior-hero-stats"><span><strong>{challenges.length}</strong> escenarios</span><span><strong>{progress.value.senior.filter(id=>id.startsWith(`${provider.value}:`)).length}</strong> resueltos</span><span><strong>6</strong> dominios clave</span></div></div><img src={providers[provider.value].mascot} alt={`Mentor cloud ${providers[provider.value].short} experto`}/></div><SectionHeading eyebrow="DESAFÍOS DE PRODUCCIÓN" title="Piensa antes de ejecutar." description="Los casos son simulaciones educativas. Registra tus evidencias y defiende tus decisiones." side={<select class="filter-select" value={filter} onChange={e=>setFilter((e.currentTarget as HTMLSelectElement).value)}><option value="todos">Todas las severidades</option><option>Crítica</option><option>Alta</option><option>Media</option></select>}/><div class="senior-grid">{list.map(c=><button class="senior-card" key={c.id} onClick={()=>{setChosen(c);setChoice(null);setEvidence('');setChecked([]);window.scrollTo({top:0,behavior:'smooth'})}}><div class="senior-card-head"><span class="senior-id">{c.id.toUpperCase()}</span><Tag kind={c.severity==='Crítica'?'danger':c.severity==='Alta'?'gold':'default'}>{c.severity}</Tag></div><div class="senior-card-icon"><ShieldAlert size={25}/></div><span class="senior-category">{c.category}</span><h3>{c.title}</h3><p>{c.brief}</p><div class="senior-card-footer">{progress.value.senior.includes(`${provider.value}:${c.id}`)?<span class="success-text"><CheckCircle2 size={16}/> Registrado</span>:<span>Investigar caso</span>}<ArrowUpRight size={18}/></div></button>)}</div></main>}
-function Progress(){const p=provider.value;const done=progress.value.completed.filter(x=>x.startsWith(`${p}:`));const all=modules.reduce((s,m)=>s+m.topics.length+1,0);const score=Object.values(progress.value.quiz).filter(v=>v===100).length;return <main class="page-container"><div class="page-kicker"><ChartNoAxesCombined size={17}/> MI CENTRO DE PROGRESO</div><section class="page-intro"><div><h1>Cada avance <span>cuenta.</span></h1><p>Tu progreso se guarda en este navegador. Exporta una copia para conservarlo o transferirlo.</p></div></section><div class="progress-cards"><div><BookOpen size={23}/><strong>{done.length}<small>/{all}</small></strong><span>Actividades en {providers[p].short}</span></div><div><Trophy size={23}/><strong>{progress.value.senior.length}<small>/18</small></strong><span>Desafíos Senior</span></div><div><CheckCircle2 size={23}/><strong>{score}</strong><span>Quizzes con 100%</span></div><div><FlaskConical size={23}/><strong>{progress.value.simRuns}</strong><span>Simulaciones ejecutadas</span></div></div><section class="info-card progress-panel"><div class="card-heading"><Layers size={20}/><h3>Progreso por nivel · {providers[p].short}</h3></div>{(['fundamentos','intermedio','avanzado'] as Level[]).map(l=>{const ms=modules.filter(m=>m.level===l),max=ms.reduce((s,m)=>s+m.topics.length+1,0),d=ms.reduce((s,m)=>s+progress.value.completed.filter(k=>k.startsWith(`${p}:${m.id}:`)).length,0);return <div class="level-progress" key={l}><div><strong>{levelInfo[l].name}</strong><span>{d} / {max} actividades</span></div><ProgressBar value={d} max={max}/></div>})}</section><section class="info-card progress-panel"><div class="card-heading"><Cloud size={20}/><h3>Tu experiencia multicloud</h3></div><div class="cloud-progress-grid">{(['aws','azure','gcp'] as Provider[]).map(id=><button key={id} onClick={()=>setProvider(id)} class={provider.value===id?'cloud-progress-current':''}><span class={`provider-mark provider-mark-${id}`}>{id==='aws'?'aws':id==='azure'?'A':'G'}</span><strong>{providers[id].name}</strong><small>{progress.value.completed.filter(x=>x.startsWith(`${id}:`)).length} actividades completadas</small><ProgressBar value={progress.value.completed.filter(x=>x.startsWith(`${id}:`)).length} max={all}/></button>)}</div></section><section class="info-card progress-panel"><div class="card-heading"><Download size={20}/><h3>Respaldo del progreso</h3></div><p>El progreso no se sincroniza en servidores. Puedes exportar un archivo JSON e importarlo posteriormente.</p><div class="action-row"><button class="btn btn-secondary" onClick={exportProgress}><Download size={17}/> Exportar progreso</button><label class="btn btn-secondary file-label"><Upload size={17}/> Importar progreso<input type="file" accept="application/json,.json" onChange={e=>{const f=(e.currentTarget as HTMLInputElement).files?.[0];if(f)importProgress(f).catch(err=>notify(`Error: ${err.message}`));(e.currentTarget as HTMLInputElement).value='';}}/></label><button class="btn btn-danger" onClick={clearProgress}><Trash2 size={16}/> Reiniciar progreso</button></div></section></main>}
-function SettingsPage(){return <main class="page-container settings-page"><div class="page-kicker"><Settings size={17}/> PREFERENCIAS</div><section class="page-intro"><div><h1>Tu academia. <span>Tu ritmo.</span></h1><p>Personaliza la apariencia y la nube de aprendizaje.</p></div></section><section class="info-card"><div class="card-heading"><Cloud size={20}/><h3>Proveedor principal</h3></div><div class="settings-providers">{(['aws','azure','gcp'] as Provider[]).map(p=><button key={p} onClick={()=>setProvider(p)} class={provider.value===p?'setting-selected':''}><span class={`provider-mark provider-mark-${p}`}>{p==='aws'?'aws':p==='azure'?'A':'G'}</span><strong>{providers[p].name}</strong>{provider.value===p&&<CheckCircle2 size={20}/>}</button>)}</div></section><section class="info-card"><div class="card-heading"><Sun size={20}/><h3>Apariencia</h3></div><div class="action-row"><button class={`btn ${theme.value==='dark'?'btn-primary':'btn-secondary'}`} onClick={()=>theme.value='dark'}><Moon size={17}/> Oscuro</button><button class={`btn ${theme.value==='light'?'btn-primary':'btn-secondary'}`} onClick={()=>theme.value='light'}><Sun size={17}/> Claro</button></div></section><section class="info-card"><div class="card-heading"><ShieldCheck size={20}/><h3>Privacidad y seguridad</h3></div><p>La academia no requiere credenciales cloud. El progreso se guarda solo en el almacenamiento de este navegador; no usamos un backend para recopilar tus respuestas. No introduzcas tokens, claves ni información personal sensible en tus notas.</p><button class="btn btn-secondary" onClick={()=>navigate('progress')}>Administrar datos de progreso <ArrowRight size={17}/></button></section><section class="info-card"><div class="card-heading"><Info size={20}/><h3>Sobre Cloud Engineering Academy</h3></div><p>Versión 7.0.0 · Plataforma educativa independiente inspirada en la experiencia de GoPixel Academy y en las prácticas de ingeniería de Vigilio. Los servicios, comandos y límites pueden cambiar. Consulta siempre la documentación oficial antes de ejecutar cambios reales.</p></section></main>}
-export function App(){useEffect(()=>{const handler=(e:KeyboardEvent)=>{if(e.key==='Escape')mobileMenu.value=false;};window.addEventListener('keydown',handler);return()=>window.removeEventListener('keydown',handler)},[]);return <div class="app-shell"><Header/>{view.value==='home'?<Home/>:view.value==='learn'?<Learn/>:view.value==='lesson'?<Lesson/>:view.value==='lab'?<Lab/>:view.value==='simulator'?<Simulator/>:view.value==='senior'?<SeniorWorkbench/>:view.value==='progress'?<Progress/>:<SettingsPage/>}<Footer/>{toast.value&&<div role="status" class="toast"><CheckCircle2 size={17}/>{toast.value}<button aria-label="Cerrar notificación" onClick={()=>toast.value=''}><X size={15}/></button></div>}</div>}
+import { SeniorWorkbench } from './SeniorWorkbench';
+import { APP_VERSION } from './config/appMeta';
+import { useState, useEffect } from 'preact/hooks';
+import {
+  Cloud,
+  CloudCog,
+  LayoutDashboard,
+  BookOpen,
+  FlaskConical,
+  BrainCircuit,
+  ChartNoAxesCombined,
+  Settings,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  ChevronDown,
+  ExternalLink,
+  Copy,
+  Terminal,
+  ShieldCheck,
+  Network,
+  Server,
+  Database,
+  LockKeyhole,
+  Layers,
+  Activity,
+  Code2,
+  Trophy,
+  Zap,
+  Boxes,
+  Route,
+  RefreshCcw,
+  Gauge,
+  Wallet,
+  Clock3,
+  Search,
+  Play,
+  Sparkles,
+  Target,
+  Download,
+  Upload,
+  Trash2,
+  AlertTriangle,
+  ShieldAlert,
+  ClipboardCheck,
+  Info,
+  BookMarked,
+  ArrowUpRight,
+  CloudDownload,
+  MessageSquareText,
+  CircleHelp,
+} from 'lucide-preact';
+import {
+  providers,
+  modules,
+  levelInfo,
+  services,
+  moduleService,
+  questions,
+  type Provider,
+  type Level,
+  type Module,
+} from './data/course';
+import { challenges, type Challenge } from './data/senior';
+import { knowledge } from './data/knowledge';
+import { studyUnits } from './data/study';
+import {
+  provider,
+  theme,
+  view,
+  currentModule,
+  currentTopic,
+  levelFilter,
+  searchText,
+  progress,
+  mobileMenu,
+  toast,
+  setProvider,
+  navigate,
+  completeTopic,
+  setQuiz,
+  completeSenior,
+  setNotes,
+  clearProgress,
+  exportProgress,
+  importProgress,
+  notify,
+} from './lib/state';
+const icons: Record<string, any> = {
+  cloud: Cloud,
+  network: Network,
+  server: Server,
+  database: Database,
+  shield: ShieldCheck,
+  wallet: Wallet,
+  terminal: Terminal,
+  route: Route,
+  zap: Zap,
+  boxes: Boxes,
+  code: Code2,
+  activity: Activity,
+  layers: Layers,
+  lock: LockKeyhole,
+  refresh: RefreshCcw,
+  gauge: Gauge,
+  trophy: Trophy,
+};
+const Icon = ({ name, size = 20, ...rest }: { name: string; size?: number; class?: string }) => {
+  const C = icons[name] || Cloud;
+  return <C size={size} {...rest} />;
+};
+const getModule = () => modules.find((m) => m.id === currentModule.value) || modules[0];
+const completedTopics = (m: Module, p: Provider) =>
+  m.topics.filter((_, i) => progress.value.completed.includes(`${p}:${m.id}:${i}`)).length;
+const allComplete = () => progress.value.completed.length;
+const labId = (m: Module, p: Provider) => `${p}:${m.id}:lab`;
+function ProgressBar({ value, max = 100 }: { value: number; max?: number }) {
+  return (
+    <div class="progress-track">
+      <span style={{ width: `${Math.max(0, Math.min(100, max ? (value / max) * 100 : 0))}%` }} />
+    </div>
+  );
+}
+function Tag({ children, kind = 'default' }: { children: any; kind?: string }) {
+  return <span class={`tag tag-${kind}`}>{children}</span>;
+}
+function Header() {
+  const p = provider.value;
+  return (
+    <header class="header">
+      <div class="header-inner">
+        <button class="brand" onClick={() => navigate('home')} aria-label="Ir al inicio">
+          <span class="brand-icon">
+            <CloudCog size={25} />
+          </span>
+          <span class="brand-type">
+            CLOUD<span>ENGINEERING</span>
+            <small>
+              ACADEMY <b>●</b> MULTICLOUD
+            </small>
+          </span>
+        </button>
+        <nav
+          class={`top-nav ${mobileMenu.value ? 'nav-open' : ''}`}
+          aria-label="Navegación principal"
+        >
+          <button
+            class={view.value === 'home' ? 'nav-current' : ''}
+            onClick={() => navigate('home')}
+          >
+            <LayoutDashboard size={16} />
+            Inicio
+          </button>
+          <button
+            class={['learn', 'lesson', 'lab'].includes(view.value) ? 'nav-current' : ''}
+            onClick={() => navigate('learn')}
+          >
+            <BookOpen size={16} />
+            Aprender
+          </button>
+          <button
+            class={view.value === 'simulator' ? 'nav-current' : ''}
+            onClick={() => navigate('simulator')}
+          >
+            <FlaskConical size={16} />
+            Simuladores
+          </button>
+          <button
+            class={view.value === 'senior' ? 'nav-current' : ''}
+            onClick={() => navigate('senior')}
+          >
+            <BrainCircuit size={16} />
+            Senior Mode <span class="senior-dot" />
+          </button>
+          <button
+            class={view.value === 'progress' ? 'nav-current' : ''}
+            onClick={() => navigate('progress')}
+          >
+            <ChartNoAxesCombined size={16} />
+            Mi progreso
+          </button>
+        </nav>
+        <div class="header-actions">
+          <div class="provider-menu">
+            <span class="provider-led" />
+            <select
+              aria-label="Seleccionar proveedor cloud"
+              value={p}
+              onChange={(e) =>
+                setProvider((e.currentTarget as HTMLSelectElement).value as Provider)
+              }
+            >
+              <option value="aws">☁ AWS</option>
+              <option value="azure">☁ AZURE</option>
+              <option value="gcp">☁ GOOGLE CLOUD</option>
+            </select>
+            <ChevronDown size={13} />
+          </div>
+          <button
+            class="icon-button hide-mobile"
+            aria-label="Cambiar tema"
+            title="Cambiar tema"
+            onClick={() => (theme.value = theme.value === 'dark' ? 'light' : 'dark')}
+          >
+            {theme.value === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button
+            class="icon-button hide-mobile"
+            aria-label="Configuración"
+            onClick={() => navigate('settings')}
+          >
+            <Settings size={18} />
+          </button>
+          <button
+            class="icon-button mobile-toggle"
+            aria-label={mobileMenu.value ? 'Cerrar menú' : 'Abrir menú'}
+            onClick={() => (mobileMenu.value = !mobileMenu.value)}
+          >
+            {mobileMenu.value ? <X size={21} /> : <Menu size={21} />}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+function Footer() {
+  return (
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <CloudCog size={22} />
+          <span>Cloud Engineering Academy</span>
+        </div>
+        <span>Aprende el concepto. Domina la nube. Piensa como ingeniero.</span>
+        <span>
+          Educación independiente · AWS, Azure y Google Cloud no patrocinan esta academia.
+        </span>
+      </div>
+    </footer>
+  );
+}
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+  side,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  side?: any;
+}) {
+  return (
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">
+          <span class="eyebrow-square" />
+          {eyebrow}
+        </span>
+        <h2>{title}</h2>
+        {description && <p>{description}</p>}
+      </div>
+      {side}
+    </div>
+  );
+}
+function Mascot({
+  size = 'large',
+  className = '',
+}: {
+  size?: 'large' | 'medium' | 'small';
+  className?: string;
+}) {
+  return (
+    <img
+      class={`mascot mascot-${size} ${className}`}
+      src={providers[provider.value].mascot}
+      alt={`Mentor Cloud en modo ${providers[provider.value].name}`}
+    />
+  );
+}
+function Home() {
+  const p = providers[provider.value];
+  const done = allComplete();
+  return (
+    <main>
+      <section class="hero">
+        <div class="hero-glow" />
+        <div class="hero-copy">
+          <div class="hero-pill">
+            <span class="live-dot" /> TU PRÓXIMO NIVEL COMIENZA AQUÍ <ChevronRight size={14} />
+          </div>
+          <h1>
+            Domina el <span class="hero-emphasis">Cloud.</span>
+            <br />
+            Construye el <span class="hero-white">futuro.</span>
+          </h1>
+          <p>
+            De tu primera instancia a una arquitectura de producción. Aprende{' '}
+            <strong>AWS, Azure y Google Cloud</strong> con laboratorios, simuladores y desafíos de
+            ingeniería real.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" onClick={() => navigate('learn')}>
+              {done ? 'Continuar aprendiendo' : 'Empezar a aprender'}
+              <ArrowRight size={19} />
+            </button>
+            <button class="btn btn-ghost btn-lg" onClick={() => navigate('senior')}>
+              <BrainCircuit size={18} />
+              Explorar Senior Mode
+            </button>
+          </div>
+          <div class="hero-proof">
+            <div class="avatar-stack">
+              <span>☁</span>
+              <span>⚡</span>
+              <span>⌘</span>
+            </div>
+            <span>
+              <strong>18 módulos</strong> · 240 horas · 3 nubes
+            </span>
+          </div>
+        </div>
+        <div class="hero-art">
+          <div class="art-ring ring-one" />
+          <div class="art-ring ring-two" />
+          <span class="orbit-chip chip-top">
+            <Cloud size={15} /> {p.short} MODE
+          </span>
+          <span class="orbit-chip chip-left">
+            <CheckCircle2 size={15} /> HANDS-ON
+          </span>
+          <span class="orbit-chip chip-bottom">
+            <Terminal size={14} /> &gt;_ ready
+          </span>
+          <Mascot />
+          <div class="mascot-floor" />
+        </div>
+        <div class="hero-side-label">INGENIERÍA CLOUD / EDICIÓN 2026</div>
+      </section>
+      <section class="stats-strip">
+        <div>
+          <span class="stat-symbol">
+            <BookOpen size={20} />
+          </span>
+          <strong>18</strong>
+          <small>MÓDULOS</small>
+        </div>
+        <div>
+          <span class="stat-symbol">
+            <Clock3 size={20} />
+          </span>
+          <strong>240h</strong>
+          <small>FORMACIÓN</small>
+        </div>
+        <div>
+          <span class="stat-symbol">
+            <FlaskConical size={20} />
+          </span>
+          <strong>3</strong>
+          <small>RUTAS CLOUD</small>
+        </div>
+        <div>
+          <span class="stat-symbol">
+            <ShieldCheck size={20} />
+          </span>
+          <strong>18</strong>
+          <small>CASOS SENIOR</small>
+        </div>
+      </section>
+      <section class="section-pad">
+        <SectionHeading
+          eyebrow="ESCOGE TU CAMINO"
+          title="De principiante a arquitecto cloud"
+          description="Tres niveles conectados. Una única metodología que se adapta a tu proveedor."
+          side={
+            <button class="text-action" onClick={() => navigate('learn')}>
+              Ver todos los módulos <ArrowRight size={16} />
+            </button>
+          }
+        />
+        <div class="level-cards">
+          {(['fundamentos', 'intermedio', 'avanzado'] as Level[]).map((l, index) => {
+            const ms = modules.filter((m) => m.level === l);
+            const d = levelInfo[l];
+            return (
+              <button
+                key={l}
+                class={`level-card level-${l}`}
+                onClick={() => {
+                  levelFilter.value = l;
+                  navigate('learn');
+                }}
+              >
+                <div class="level-card-top">
+                  <div class="level-icon">
+                    <span>{d.number}</span>
+                  </div>
+                  <span class="level-hours">{ms.reduce((s, m) => s + m.hours, 0)} HORAS</span>
+                </div>
+                <div class="level-ghost-num">0{index + 1}</div>
+                <span class="level-step">NIVEL {index + 1}</span>
+                <h3>{d.name}</h3>
+                <p>{d.description}</p>
+                <div class="level-bottom">
+                  <span>{ms.length} módulos</span>
+                  <span class="round-arrow">
+                    <ArrowUpRight size={19} />
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+      <section class="section-pad">
+        <SectionHeading
+          eyebrow="APRENDE CON TU NUBE"
+          title="Una academia. Tres ecosistemas."
+          description="Cambia de proveedor sin repetir teoría. Los ejemplos, comandos y prácticas sí cambian."
+        />
+        <div class="provider-cards">
+          {(['aws', 'azure', 'gcp'] as Provider[]).map((id) => (
+            <button
+              key={id}
+              class={`provider-card provider-card-${id} ${provider.value === id ? 'selected' : ''}`}
+              onClick={() => setProvider(id)}
+            >
+              <div class="provider-card-head">
+                <span class={`provider-mark provider-mark-${id}`}>
+                  {id === 'aws' ? 'aws' : id === 'azure' ? 'A' : 'G'}
+                </span>
+                {provider.value === id && (
+                  <span class="selected-label">
+                    <Check size={14} /> ACTIVA
+                  </span>
+                )}
+              </div>
+              <h3>{providers[id].name}</h3>
+              <p>{providers[id].tagline}</p>
+              <div class="provider-footer">
+                <span>{provider.value === id ? 'Ruta seleccionada' : 'Elegir ruta'}</span>
+                <ArrowRight size={18} />
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+      <section class="feature-band">
+        <div class="feature-band-copy">
+          <span class="eyebrow">
+            <span class="eyebrow-square" />
+            ENTRENA COMO EN PRODUCCIÓN
+          </span>
+          <h2>
+            Los tutoriales no bastan.
+            <br />
+            <span>Resuelve incidentes reales.</span>
+          </h2>
+          <p>
+            Aprende a tomar decisiones bajo presión con 18 escenarios de ingeniería avanzada:
+            seguridad, Terraform, Kubernetes, SRE, redes y costos.
+          </p>
+          <div class="feature-checks">
+            <span>
+              <CheckCircle2 size={16} /> Decisiones con consecuencias
+            </span>
+            <span>
+              <CheckCircle2 size={16} /> Evidencias y rúbricas
+            </span>
+            <span>
+              <CheckCircle2 size={16} /> Sin credenciales ni riesgos
+            </span>
+          </div>
+          <button class="btn btn-gold" onClick={() => navigate('senior')}>
+            Entrar a Senior Mode <ArrowRight size={18} />
+          </button>
+        </div>
+        <div class="feature-band-art">
+          <div class="senior-halo" />
+          <img src="/assets/cloud-mentor-senior.png" alt="Cloud Mentor en modo senior" />
+        </div>
+      </section>
+      <section class="section-pad">
+        <SectionHeading eyebrow="APRENDER HACIENDO" title="Todo lo que necesitas para crecer" />
+        <div class="feature-grid">
+          <div>
+            <span class="feature-icon">
+              <Terminal size={23} />
+            </span>
+            <h3>Laboratorios guiados</h3>
+            <p>
+              Comandos reales por proveedor, checklist de seguridad, evidencias y limpieza de
+              recursos.
+            </p>
+          </div>
+          <div>
+            <span class="feature-icon">
+              <Network size={23} />
+            </span>
+            <h3>Simuladores interactivos</h3>
+            <p>Practica CIDR, permisos IAM, capacidad y confiabilidad sin pagar una nube.</p>
+          </div>
+          <div>
+            <span class="feature-icon">
+              <ChartNoAxesCombined size={23} />
+            </span>
+            <h3>Progreso a tu ritmo</h3>
+            <p>Guarda avance por concepto y por proveedor, y exporta tus resultados en JSON.</p>
+          </div>
+        </div>
+      </section>
+      <section class="bottom-cta">
+        <CloudCog size={39} />
+        <div>
+          <h2>Tu viaje cloud empieza hoy.</h2>
+          <p>Elige una nube. Aprende los fundamentos. Construye con criterio.</p>
+        </div>
+        <button class="btn btn-primary" onClick={() => navigate('learn')}>
+          Explorar la academia <ArrowRight size={17} />
+        </button>
+      </section>
+    </main>
+  );
+}
+function Learn() {
+  const filtered = modules.filter(
+    (m) =>
+      (levelFilter.value === 'todos' || m.level === levelFilter.value) &&
+      `${m.title} ${m.subtitle} ${m.tags.join(' ')}`
+        .toLowerCase()
+        .includes(searchText.value.toLowerCase()),
+  );
+  return (
+    <main class="page-container">
+      <div class="page-kicker">
+        <BookOpen size={16} /> RUTAS DE APRENDIZAJE / {providers[provider.value].short}
+      </div>
+      <section class="page-intro">
+        <div>
+          <h1>
+            Tu ruta hacia <span>Cloud Engineer.</span>
+          </h1>
+          <p>
+            18 módulos, 3 niveles y aprendizaje práctico. Estás explorando la ruta de{' '}
+            <strong>{providers[provider.value].name}</strong>.
+          </p>
+        </div>
+        <div class="intro-stat">
+          <span>PROGRESO ACTUAL</span>
+          <strong>
+            {progress.value.completed.filter((x) => x.startsWith(`${provider.value}:`)).length}
+          </strong>
+          <small>actividades completadas</small>
+        </div>
+      </section>
+      <div class="learn-toolbar">
+        <div class="tabs">
+          {[
+            { id: 'todos', name: 'Todos los niveles' },
+            ...(['fundamentos', 'intermedio', 'avanzado'] as Level[]).map((id) => ({
+              id,
+              name: levelInfo[id].name,
+            })),
+          ].map((t) => (
+            <button
+              key={t.id}
+              class={levelFilter.value === t.id ? 'tab-active' : ''}
+              onClick={() => (levelFilter.value = t.id)}
+            >
+              {t.name}
+            </button>
+          ))}
+        </div>
+        <label class="search-field">
+          <Search size={17} />
+          <input
+            type="search"
+            placeholder="Buscar un módulo..."
+            value={searchText.value}
+            onInput={(e) => (searchText.value = (e.currentTarget as HTMLInputElement).value)}
+            aria-label="Buscar módulos"
+          />
+        </label>
+      </div>
+      {filtered.length === 0 ? (
+        <div class="empty-state">
+          No hay módulos para esta búsqueda.{' '}
+          <button
+            onClick={() => {
+              searchText.value = '';
+              levelFilter.value = 'todos';
+            }}
+          >
+            Restablecer filtros
+          </button>
+        </div>
+      ) : (
+        <div class="module-grid">
+          {filtered.map((m, i) => {
+            const done = completedTopics(m, provider.value);
+            return (
+              <button
+                class="module-card"
+                key={m.id}
+                onClick={() => {
+                  currentTopic.value = 0;
+                  navigate('lesson', m.id);
+                }}
+              >
+                <div class="module-header">
+                  <div class="module-icon">
+                    <Icon name={m.icon} size={23} />
+                  </div>
+                  <span class="module-num">#{String(modules.indexOf(m) + 1).padStart(2, '0')}</span>
+                </div>
+                <div class="module-level">
+                  <span class={`level-indicator ${m.level}`} />
+                  {levelInfo[m.level].name.toUpperCase()} · {m.hours}H
+                </div>
+                <h3>{m.title}</h3>
+                <p>{m.subtitle}</p>
+                <div class="module-tags">
+                  {m.tags.map((t) => (
+                    <Tag key={t}>{t}</Tag>
+                  ))}
+                </div>
+                <div class="module-progress">
+                  <div>
+                    <span>Lecciones</span>
+                    <strong>
+                      {done}/{m.topics.length}
+                    </strong>
+                  </div>
+                  <ProgressBar value={done} max={m.topics.length} />
+                </div>
+                <div class="module-link">
+                  {done ? 'Continuar módulo' : 'Empezar módulo'} <ArrowRight size={17} />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </main>
+  );
+}
+const topicExplanation = (title: string, m: Module, p: Provider) => {
+  const s = services[p][moduleService(m.id)];
+  return {
+    intro: `${title} es una competencia esencial dentro de ${m.title.toLowerCase()}. Antes de configurar recursos, identifica el objetivo, las dependencias, las restricciones de seguridad y el costo de operar la solución.`,
+    goal: `En ${providers[p].name}, estudia cómo se relaciona este tema con ${s.label}. Comprueba los requisitos de región, identidad, red y observabilidad antes de implementar.`,
+    steps: [
+      'Define el resultado esperado y qué evidencia lo demostraría.',
+      'Identifica el recurso y los permisos mínimos necesarios.',
+      'Diseña una configuración segura y reproducible.',
+      'Verifica el comportamiento y documenta los límites.',
+      'Elimina los recursos temporales y revisa costos.',
+    ],
+  };
+};
+function Lesson() {
+  const m = getModule(),
+    p = provider.value,
+    s = services[p][moduleService(m.id)],
+    idx = Math.min(currentTopic.value, m.topics.length - 1),
+    topic = m.topics[idx],
+    ex = topicExplanation(topic, m, p),
+    key = `${p}:${m.id}:${idx}`;
+  const complete = progress.value.completed.includes(key),
+    unit = studyUnits[`${m.id}:${idx}`];
+  return (
+    <main class="page-container lesson-page">
+      <div class="breadcrumb">
+        <button onClick={() => navigate('learn')}>Aprender</button>
+        <ChevronRight size={14} />
+        <span>{levelInfo[m.level].name}</span>
+        <ChevronRight size={14} />
+        <b>{m.title}</b>
+      </div>
+      <div class="lesson-layout">
+        <aside class="lesson-sidebar">
+          <div class="sidebar-course-head">
+            <span class="sidebar-eyebrow">
+              MÓDULO {String(modules.indexOf(m) + 1).padStart(2, '0')}
+            </span>
+            <h3>{m.title}</h3>
+            <p>{m.subtitle}</p>
+            <ProgressBar value={completedTopics(m, p)} max={m.topics.length} />
+            <small>
+              {completedTopics(m, p)} de {m.topics.length} lecciones
+            </small>
+          </div>
+          <div class="sidebar-list">
+            <strong>CONTENIDO DEL MÓDULO</strong>
+            {m.topics.map((t, i) => (
+              <button
+                key={i}
+                class={i === idx ? 'sidebar-selected' : ''}
+                onClick={() => {
+                  currentTopic.value = i;
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                <span
+                  class={`lesson-status ${progress.value.completed.includes(`${p}:${m.id}:${i}`) ? 'done' : ''}`}
+                >
+                  {progress.value.completed.includes(`${p}:${m.id}:${i}`) ? (
+                    <Check size={13} />
+                  ) : (
+                    String(i + 1).padStart(2, '0')
+                  )}
+                </span>
+                <span>{t}</span>
+              </button>
+            ))}
+          </div>
+          <button class="sidebar-lab" onClick={() => navigate('lab', m.id)}>
+            <FlaskConical size={18} /> Laboratorio práctico <ArrowRight size={16} />
+          </button>
+          <button class="sidebar-back" onClick={() => navigate('learn')}>
+            <ArrowLeft size={16} /> Todos los módulos
+          </button>
+        </aside>
+        <article class="lesson-content">
+          <div class="lesson-topline">
+            <Tag kind="accent">{providers[p].short}</Tag>
+            <span>
+              <Clock3 size={14} /> ~25 min · Lección {idx + 1}/{m.topics.length}
+            </span>
+          </div>
+          <h1>{topic}</h1>
+          <p class="lesson-lead">{ex.intro}</p>
+          <div class="learning-outcome">
+            <Target size={21} />
+            <div>
+              <strong>Lo que aprenderás</strong>
+              <span>{m.outcome}</span>
+            </div>
+          </div>
+          <div class="content-divider" />
+          <h2>01. Entiende el concepto</h2>
+          <p>{knowledge[m.id].principle}</p>
+          <p>
+            <strong>Trade-off técnico:</strong> {knowledge[m.id].tradeoff}
+          </p>
+          <p>
+            <strong>Fallo frecuente:</strong> {knowledge[m.id].failure}
+          </p>
+          <p>
+            <strong>Ejemplo aplicado:</strong> {knowledge[m.id].example}
+          </p>
+          <div class="concept-grid">
+            <div>
+              <Network size={22} />
+              <strong>Diseño</strong>
+              <span>Topología, interfaces, límites y dependencias.</span>
+            </div>
+            <div>
+              <ShieldCheck size={22} />
+              <strong>Seguridad</strong>
+              <span>Identidad, superficie expuesta y permisos mínimos.</span>
+            </div>
+            <div>
+              <Activity size={22} />
+              <strong>Operación</strong>
+              <span>Monitoreo, recuperación, rendimiento y costo.</span>
+            </div>
+          </div>
+          <h2>02. Taller específico: {topic}</h2>
+          <div class="study-workshop">
+            <div class="study-focus">
+              <Target size={20} />
+              <div>
+                <strong>Decisión técnica de esta unidad</strong>
+                <p>{unit.focus}</p>
+              </div>
+            </div>
+            <h3>Reto de ingeniería</h3>
+            <p>{unit.exercise}</p>
+            <h3>Cómo demostrar que funciona</h3>
+            <p>{unit.verify}</p>
+            <h3>Errores que debes evitar</h3>
+            <ul>
+              {unit.pitfalls.map((pitfall, i) => (
+                <li key={i}>{pitfall}</li>
+              ))}
+            </ul>
+            <h3>Comparativa multicloud</h3>
+            <p>{unit.compare}</p>
+            <div class="study-question">
+              <strong>Pregunta de reflexión</strong>
+              <p>{unit.question}</p>
+            </div>
+          </div>
+          <h2>03. Aplicación en {providers[p].short}</h2>
+          <p>{ex.goal}</p>
+          <div class="service-panel">
+            <div class="service-panel-top">
+              <div>
+                <span class="service-panel-caption">SERVICIO RELACIONADO</span>
+                <strong>{s.label}</strong>
+              </div>
+              <Tag kind="accent">{providers[p].short}</Tag>
+            </div>
+            <p>{s.note}</p>
+            <div class="terminal-block">
+              <div class="terminal-bar">
+                <span class="terminal-lights">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span>{providers[p].console.toLowerCase()}</span>
+                <button
+                  title="Copiar comando"
+                  aria-label="Copiar comando"
+                  onClick={() =>
+                    navigator.clipboard
+                      .writeText(s.cli)
+                      .then(() => notify('Comando copiado'))
+                      .catch(() => notify('No se pudo copiar'))
+                  }
+                >
+                  <Copy size={15} /> Copiar
+                </button>
+              </div>
+              <pre>
+                <code>$ {s.cli}</code>
+              </pre>
+            </div>
+            <a class="official-link" href={s.doc} target="_blank" rel="noopener noreferrer">
+              Documentación oficial del proveedor <ExternalLink size={15} />
+            </a>
+          </div>
+          <h2>04. Procedimiento de ingeniería</h2>
+          <ol class="steps-list">
+            {ex.steps.map((step, i) => (
+              <li key={step}>
+                <span>{String(i + 1).padStart(2, '0')}</span>
+                <p>{step}</p>
+              </li>
+            ))}
+          </ol>
+          <div class="warning-box">
+            <AlertTriangle size={21} />
+            <div>
+              <strong>Recursos y facturación</strong>
+              <span>
+                Los comandos mostrados son ejemplos de consulta. No se ejecutan en el navegador. Los
+                laboratorios reales requieren una cuenta propia, revisar posibles cargos y verificar
+                el cleanup.
+              </span>
+            </div>
+          </div>
+          <h2>05. Comprueba tu comprensión</h2>
+          <Quiz module={m} />
+          <ProviderCheck module={m} />
+          <div class="lesson-end">
+            <button
+              class={`btn ${complete ? 'btn-complete' : 'btn-primary'}`}
+              onClick={() => completeTopic(`${m.id}:${idx}`, p)}
+            >
+              {complete ? (
+                <>
+                  <CheckCircle2 size={18} /> Lección completada
+                </>
+              ) : (
+                <>
+                  <Check size={18} /> Marcar como completada
+                </>
+              )}
+            </button>
+            <button
+              class="btn btn-ghost"
+              onClick={() =>
+                idx < m.topics.length - 1
+                  ? ((currentTopic.value = idx + 1),
+                    window.scrollTo({ top: 0, behavior: 'smooth' }))
+                  : navigate('lab', m.id)
+              }
+            >
+              {idx < m.topics.length - 1 ? 'Siguiente lección' : 'Ir al laboratorio'}{' '}
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        </article>
+      </div>
+    </main>
+  );
+}
+function ProviderCheck({ module: m }: { module: Module }) {
+  const p = provider.value;
+  const [answer, setAnswer] = useState<string | null>(null);
+  const category = moduleService(m.id);
+  const expected = services[p][category].label;
+  const all = [
+    services.aws[category].label,
+    services.azure[category].label,
+    services.gcp[category].label,
+  ];
+  useEffect(() => setAnswer(null), [p, m.id]);
+  return (
+    <section class="provider-check">
+      <div class="card-heading">
+        <CloudCog size={19} />
+        <h3>Chequeo práctico de {providers[p].short}</h3>
+      </div>
+      <p>
+        En esta ruta, ¿qué servicio usarías como punto de partida para la capacidad{' '}
+        <strong>{category}</strong>?
+      </p>
+      <div class="quiz-options">
+        {all.map((val, i) => (
+          <button
+            key={`${p}:${i}`}
+            class={`${answer === val ? 'quiz-selected' : ''} ${answer !== null && val === expected ? 'quiz-correct' : ''} ${answer === val && val !== expected ? 'quiz-wrong' : ''}`}
+            onClick={() => setAnswer(val)}
+          >
+            <span>{String.fromCharCode(65 + i)}</span>
+            {val}
+          </button>
+        ))}
+      </div>
+      {answer !== null && (
+        <div class={`quiz-feedback ${answer === expected ? 'feedback-success' : 'feedback-warn'}`}>
+          <strong>
+            {answer === expected
+              ? 'Correcto: servicio de la ruta activa'
+              : 'Esa opción corresponde a otra plataforma'}
+          </strong>
+          <p>{services[p][category].note}</p>
+        </div>
+      )}
+      <small>
+        Este ejercicio distingue equivalencias de capacidad; no supone que las implementaciones sean
+        idénticas.
+      </small>
+    </section>
+  );
+}
+function Quiz({ module: m }: { module: Module }) {
+  const [selected, setSelected] = useState<number | null>(null);
+  const q = questions[m.id];
+  const saved = progress.value.quiz[`${provider.value}:${m.id}`];
+  useEffect(() => setSelected(null), [m.id, provider.value]);
+  return (
+    <div class="quiz-card">
+      <div class="quiz-title">
+        <CircleHelp size={19} />
+        <strong>Knowledge Check</strong>
+        <Tag kind="accent">AUTOEVALUACIÓN</Tag>
+      </div>
+      <p>{q.q}</p>
+      <div class="quiz-options">
+        {q.choices.map((choice, i) => (
+          <button
+            key={i}
+            class={`${selected === i ? 'quiz-selected' : ''} ${selected !== null && i === q.correct ? 'quiz-correct' : ''} ${selected === i && i !== q.correct ? 'quiz-wrong' : ''}`}
+            onClick={() => {
+              setSelected(i);
+              setQuiz(m.id, provider.value, i === q.correct ? 100 : 0);
+            }}
+          >
+            <span>{String.fromCharCode(65 + i)}</span>
+            {choice}
+            {selected !== null && i === q.correct && <CheckCircle2 size={18} />}
+          </button>
+        ))}
+      </div>
+      {selected !== null && (
+        <div
+          class={`quiz-feedback ${selected === q.correct ? 'feedback-success' : 'feedback-warn'}`}
+        >
+          <strong>{selected === q.correct ? '¡Respuesta correcta!' : 'Sigue investigando.'}</strong>
+          <p>{q.why}</p>
+        </div>
+      )}
+      {saved !== undefined && selected === null && (
+        <small class="prior-attempt">
+          Última puntuación guardada: {saved}% · Puedes volver a intentarlo.
+        </small>
+      )}
+    </div>
+  );
+}
+function Lab() {
+  const m = getModule(),
+    p = provider.value,
+    s = services[p][moduleService(m.id)],
+    key = labId(m, p);
+  const [checks, setChecks] = useState<boolean[]>([false, false, false, false, false]);
+  const [evidence, setEvidence] = useState('');
+  const [mode, setMode] = useState<'guided' | 'real'>('guided');
+  const tasks = [
+    'He comprendido el objetivo y el alcance.',
+    'He identificado los permisos mínimos y la región.',
+    'He consultado los recursos y validado los resultados.',
+    'He guardado evidencias y anotaciones sin secretos.',
+    'He eliminado recursos de práctica y revisado posibles cargos.',
+  ];
+  return (
+    <main class="page-container">
+      <div class="breadcrumb">
+        <button onClick={() => navigate('lesson', m.id)}>Volver al módulo</button>
+        <ChevronRight size={14} /> Laboratorio
+      </div>
+      <div class="page-intro lab-heading">
+        <div>
+          <div class="page-kicker">
+            <FlaskConical size={17} /> LABORATORIO · {providers[p].short}
+          </div>
+          <h1>
+            Laboratorio: <span>{m.title}</span>
+          </h1>
+          <p>
+            Práctica guiada de ingeniería. No se ejecuta infraestructura real en este navegador.
+          </p>
+        </div>
+        <div class="lab-hero-icon">
+          <FlaskConical size={47} />
+        </div>
+      </div>
+      <div class="lab-tabs">
+        <button class={mode === 'guided' ? 'tab-active' : ''} onClick={() => setMode('guided')}>
+          <BookOpen size={17} /> Guía y checklist
+        </button>
+        <button class={mode === 'real' ? 'tab-active' : ''} onClick={() => setMode('real')}>
+          <CloudDownload size={17} /> Práctica en cuenta real
+        </button>
+      </div>
+      <div class="lab-layout">
+        <div class="lab-main">
+          {mode === 'guided' ? (
+            <>
+              <section class="info-card">
+                <div class="card-heading">
+                  <Target size={19} />
+                  <h3>Objetivo de la práctica</h3>
+                </div>
+                <p>
+                  {m.outcome} En tu ruta actual utilizaremos <strong>{s.label}</strong>.
+                </p>
+                <div class="lab-meta">
+                  <Tag>Sin ejecución automática</Tag>
+                  <Tag kind="accent">{providers[p].short}</Tag>
+                  <Tag>20–45 min</Tag>
+                </div>
+              </section>
+              <section class="info-card">
+                <div class="card-heading">
+                  <Terminal size={19} />
+                  <h3>Comando inicial</h3>
+                </div>
+                <p>
+                  Consulta los recursos disponibles. Antes de iniciar sesión, verifica que el
+                  contexto corresponda a una cuenta de laboratorio.
+                </p>
+                <div class="terminal-block">
+                  <div class="terminal-bar">
+                    <span class="terminal-lights">
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                    <span>terminal</span>
+                    <button
+                      onClick={() =>
+                        navigator.clipboard
+                          .writeText(s.cli)
+                          .then(() => notify('Comando copiado'))
+                          .catch(() => notify('Copia manualmente el comando'))
+                      }
+                    >
+                      <Copy size={14} /> Copiar
+                    </button>
+                  </div>
+                  <pre>
+                    <code>$ {s.cli}</code>
+                  </pre>
+                </div>
+                <p class="helper-text">
+                  Si no cuentas con credenciales, estudia la salida esperada en la documentación
+                  oficial y completa la modalidad conceptual.
+                </p>
+              </section>
+              <section class="info-card">
+                <div class="card-heading">
+                  <ClipboardCheck size={19} />
+                  <h3>Checklist de verificación</h3>
+                </div>
+                <div class="task-list">
+                  {tasks.map((t, i) => (
+                    <label key={i} class={checks[i] ? 'task-checked' : ''}>
+                      <input
+                        type="checkbox"
+                        checked={checks[i]}
+                        onChange={(e) =>
+                          setChecks((a) =>
+                            a.map((v, j) =>
+                              j === i ? (e.currentTarget as HTMLInputElement).checked : v,
+                            ),
+                          )
+                        }
+                      />
+                      <span class="custom-check">{checks[i] && <Check size={14} />}</span>
+                      <span>{t}</span>
+                    </label>
+                  ))}
+                </div>
+                <ProgressBar value={checks.filter(Boolean).length} max={tasks.length} />
+                <small>
+                  {checks.filter(Boolean).length} de {tasks.length} pasos verificados
+                </small>
+              </section>
+            </>
+          ) : (
+            <>
+              <section class="info-card">
+                <div class="card-heading">
+                  <AlertTriangle size={19} />
+                  <h3>Antes de conectar tu cuenta</h3>
+                </div>
+                <div class="warning-box">
+                  <ShieldAlert size={22} />
+                  <div>
+                    <strong>Los proveedores pueden generar cargos.</strong>
+                    <span>
+                      La academia no crea, detiene ni elimina recursos. Trabaja únicamente en un
+                      entorno de prueba aislado, con presupuesto y permisos limitados.
+                    </span>
+                  </div>
+                </div>
+                <ol class="plain-steps">
+                  <li>Activa MFA y credenciales temporales cuando sea posible.</li>
+                  <li>Crea un presupuesto y alertas en tu cuenta.</li>
+                  <li>Elige una región y etiqueta los recursos de laboratorio.</li>
+                  <li>Consulta primero recursos existentes con un comando de solo lectura.</li>
+                  <li>Documenta evidencias sin incluir claves, tokens ni datos privados.</li>
+                  <li>Al terminar, elimina recursos y verifica la consola de facturación.</li>
+                </ol>
+                <a class="official-link" href={s.doc} target="_blank" rel="noopener noreferrer">
+                  Abrir guía oficial de {s.label}
+                  <ExternalLink size={15} />
+                </a>
+              </section>
+            </>
+          )}
+          <section class="info-card">
+            <div class="card-heading">
+              <BookMarked size={19} />
+              <h3>Cuaderno de evidencias</h3>
+            </div>
+            <p>
+              Anota lo aprendido, un problema encontrado y la forma de verificarlo. Evita guardar
+              secretos.
+            </p>
+            <textarea
+              rows={5}
+              value={evidence || progress.value.notes[key] || ''}
+              placeholder="Ejemplo: validé el listado de VPC y comprobé la región de mi proyecto..."
+              onInput={(e) => setEvidence((e.currentTarget as HTMLTextAreaElement).value)}
+            />
+            <button
+              class="btn btn-secondary"
+              onClick={() => {
+                setNotes(key, evidence || progress.value.notes[key] || '');
+                notify('Notas guardadas en este navegador');
+              }}
+            >
+              <Check size={16} /> Guardar evidencias
+            </button>
+          </section>
+        </div>
+        <aside class="lab-aside">
+          <div class="info-card lab-sidecard">
+            <h3>Tu evaluación</h3>
+            <p>
+              La finalización de este laboratorio es una declaración local del alumno, no una
+              validación de infraestructura real.
+            </p>
+            <div class="score-ring">
+              {checks.filter(Boolean).length}/{tasks.length}
+            </div>
+            <button
+              class="btn btn-primary full-width"
+              disabled={!checks.every(Boolean)}
+              onClick={() => completeTopic(`${m.id}:lab`, p)}
+            >
+              {progress.value.completed.includes(key)
+                ? 'Laboratorio registrado'
+                : 'Registrar práctica'}{' '}
+              <CheckCircle2 size={16} />
+            </button>
+            {!checks.every(Boolean) && (
+              <small>Completa los cinco controles para habilitar el registro.</small>
+            )}
+          </div>
+          <div class="info-card">
+            <strong>Competencias</strong>
+            <div class="module-tags">
+              {m.tags.map((t) => (
+                <Tag key={t}>{t}</Tag>
+              ))}
+            </div>
+            <button class="text-action" onClick={() => navigate('simulator')}>
+              Abrir simuladores <ArrowRight size={17} />
+            </button>
+          </div>
+        </aside>
+      </div>
+    </main>
+  );
+}
+function Simulator() {
+  const [mode, setMode] = useState<'cidr' | 'iam' | 'scale' | 'slo' | 'architecture'>('cidr');
+  const [cidr, setCidr] = useState('10.0.0.0/24');
+  const [action, setAction] = useState('read');
+  const [scope, setScope] = useState('single');
+  const [rps, setRps] = useState(1200);
+  const [capacity, setCapacity] = useState(150);
+  const [availability, setAvailability] = useState(99.9);
+  const [days, setDays] = useState(30);
+  const [runs, setRuns] = useState(0);
+  const [workload, setWorkload] = useState<'web' | 'events' | 'batch'>('web');
+  const [priority, setPriority] = useState<'simple' | 'control' | 'scale'>('simple');
+  const architecture =
+    workload === 'web'
+      ? priority === 'control'
+        ? 'compute'
+        : 'serverless'
+      : workload === 'events'
+        ? 'serverless'
+        : priority === 'control'
+          ? 'compute'
+          : 'serverless';
+  const cidrResult = (() => {
+    const parts = cidr.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d{1,2})$/);
+    if (!parts || parts.slice(1, 5).some((n) => +n > 255) || +parts[5] > 32) return null;
+    const prefix = +parts[5],
+      count = 2 ** (32 - prefix);
+    const ip = parts.slice(1, 5).reduce((a, b) => ((a << 8) | +b) >>> 0, 0);
+    const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+    const net = ip & mask;
+    const fmt = (x: number) => [24, 16, 8, 0].map((s) => (x >>> s) & 255).join('.');
+    return {
+      net: fmt(net >>> 0),
+      broadcast: fmt((net | ~mask) >>> 0),
+      count,
+      prefix,
+      host: Math.max(0, count - 2),
+    };
+  })();
+  const allowed = action === 'read' || (action === 'write' && scope === 'single');
+  const replicas = Math.ceil(rps / Math.max(1, capacity));
+  const downtime = Math.round((1 - availability / 100) * days * 24 * 60 * 60);
+  const minutes = Math.floor(downtime / 60);
+  return (
+    <main class="page-container">
+      <div class="page-kicker">
+        <FlaskConical size={16} /> CLOUD ENGINEERING LAB
+      </div>
+      <section class="page-intro">
+        <div>
+          <h1>
+            Simula. Experimenta. <span>Comprende.</span>
+          </h1>
+          <p>
+            Entornos didácticos que funcionan en tu navegador. Sin credenciales y sin cargos de
+            infraestructura.
+          </p>
+        </div>
+        <div class="intro-stat">
+          <span>LABORATORIOS</span>
+          <strong>05</strong>
+          <small>motores interactivos</small>
+        </div>
+      </section>
+      <div class="sim-tabs">
+        {[
+          { id: 'cidr', title: 'Redes / CIDR', icon: Network },
+          { id: 'iam', title: 'Decisiones IAM', icon: ShieldCheck },
+          { id: 'scale', title: 'Autoescalado', icon: Gauge },
+          { id: 'slo', title: 'SLO & Fiabilidad', icon: Activity },
+          { id: 'architecture', title: 'Architecture Studio', icon: Layers },
+        ].map((t) => (
+          <button
+            key={t.id}
+            class={mode === t.id ? 'sim-active' : ''}
+            onClick={() => setMode(t.id as any)}
+          >
+            <t.icon size={20} />
+            {t.title}
+          </button>
+        ))}
+      </div>
+      <div class="sim-body">
+        <div class="sim-controller">
+          <div class="card-heading">
+            <Terminal size={19} />
+            <h3>Configuración del experimento</h3>
+          </div>
+          {mode === 'cidr' ? (
+            <>
+              <label>
+                Red con prefijo CIDR
+                <input
+                  value={cidr}
+                  onInput={(e) => setCidr((e.currentTarget as HTMLInputElement).value)}
+                  placeholder="10.0.0.0/24"
+                />
+              </label>
+              <p>Prueba /16, /24, /28 y observa cómo cambia la capacidad del segmento.</p>
+            </>
+          ) : mode === 'iam' ? (
+            <>
+              <label>
+                Acción requerida
+                <select
+                  value={action}
+                  onChange={(e) => setAction((e.currentTarget as HTMLSelectElement).value)}
+                >
+                  <option value="read">Lectura de recursos</option>
+                  <option value="write">Modificar recursos</option>
+                  <option value="admin">Administrador completo</option>
+                </select>
+              </label>
+              <label>
+                Ámbito asignado
+                <select
+                  value={scope}
+                  onChange={(e) => setScope((e.currentTarget as HTMLSelectElement).value)}
+                >
+                  <option value="single">Recurso específico</option>
+                  <option value="all">Todos los recursos</option>
+                </select>
+              </label>
+              <p>
+                Política simplificada para aprender mínimo privilegio. No reemplaza un evaluador IAM
+                real.
+              </p>
+            </>
+          ) : mode === 'scale' ? (
+            <>
+              <label>
+                Solicitudes por segundo <strong>{rps} req/s</strong>
+                <input
+                  type="range"
+                  min="100"
+                  max="6000"
+                  step="100"
+                  value={rps}
+                  onInput={(e) => setRps(+(e.currentTarget as HTMLInputElement).value)}
+                />
+              </label>
+              <label>
+                Capacidad estimada por réplica <strong>{capacity} req/s</strong>
+                <input
+                  type="range"
+                  min="50"
+                  max="500"
+                  step="25"
+                  value={capacity}
+                  onInput={(e) => setCapacity(+(e.currentTarget as HTMLInputElement).value)}
+                />
+              </label>
+              <p>
+                Modelo teórico sin latencia, colas ni límites de dependencias. En sistemas reales se
+                requiere medir carga y margen.
+              </p>
+            </>
+          ) : mode === 'architecture' ? (
+            <>
+              <label>
+                Tipo de carga
+                <select
+                  value={workload}
+                  onChange={(e) => setWorkload((e.currentTarget as HTMLSelectElement).value as any)}
+                >
+                  <option value="web">Sitio web / API</option>
+                  <option value="events">Eventos asíncronos</option>
+                  <option value="batch">Procesamiento por lotes</option>
+                </select>
+              </label>
+              <label>
+                Prioridad principal
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority((e.currentTarget as HTMLSelectElement).value as any)}
+                >
+                  <option value="simple">Menor complejidad operativa</option>
+                  <option value="control">Control del runtime y sistema</option>
+                  <option value="scale">Escalado automático</option>
+                </select>
+              </label>
+              <p>
+                Este motor propone un punto de partida, no una arquitectura validada. Antes de
+                decidir debes revisar identidad, presupuesto, requisitos de red, rendimiento y
+                RTO/RPO.
+              </p>
+            </>
+          ) : (
+            <>
+              <label>
+                Objetivo de disponibilidad <strong>{availability}%</strong>
+                <input
+                  type="range"
+                  min="95"
+                  max="99.99"
+                  step="0.01"
+                  value={availability}
+                  onInput={(e) => setAvailability(+(e.currentTarget as HTMLInputElement).value)}
+                />
+              </label>
+              <label>
+                Ventana del objetivo
+                <select
+                  value={days}
+                  onChange={(e) => setDays(+(e.currentTarget as HTMLSelectElement).value)}
+                >
+                  <option value="7">7 días</option>
+                  <option value="30">30 días</option>
+                  <option value="90">90 días</option>
+                </select>
+              </label>
+              <p>
+                El presupuesto de error no equivale al downtime real observado ni garantiza
+                fiabilidad.
+              </p>
+            </>
+          )}
+          <button
+            class="btn btn-primary full-width"
+            onClick={() => {
+              setRuns(runs + 1);
+              progress.value = { ...progress.value, simRuns: progress.value.simRuns + 1 };
+              notify('Simulación actualizada');
+            }}
+          >
+            <Play size={17} /> Ejecutar simulación
+          </button>
+        </div>
+        <div class="sim-result">
+          <span class="eyebrow">
+            <span class="eyebrow-square" /> RESULTADO · {providers[provider.value].short}
+          </span>
+          {mode === 'cidr' ? (
+            <>
+              <div class="result-heading">
+                <Network size={28} />
+                <h2>Calculadora de subredes</h2>
+              </div>
+              {cidrResult ? (
+                <>
+                  <div class="result-big">
+                    {cidrResult.count.toLocaleString('es-ES')}
+                    <small>direcciones totales</small>
+                  </div>
+                  <div class="result-stats">
+                    <div>
+                      <small>Dirección de red</small>
+                      <strong>{cidrResult.net}</strong>
+                    </div>
+                    <div>
+                      <small>Última dirección</small>
+                      <strong>{cidrResult.broadcast}</strong>
+                    </div>
+                    <div>
+                      <small>Prefijo</small>
+                      <strong>/{cidrResult.prefix}</strong>
+                    </div>
+                    <div>
+                      <small>Hosts teóricos IPv4*</small>
+                      <strong>{cidrResult.host}</strong>
+                    </div>
+                  </div>
+                  <p class="result-note">
+                    * En subredes cloud existen reservas adicionales según proveedor. No interpretes
+                    «hosts teóricos» como IPs asignables reales.
+                  </p>
+                </>
+              ) : (
+                <div class="empty-state">
+                  Formato inválido. Utiliza IPv4/prefijo, por ejemplo 10.0.0.0/24.
+                </div>
+              )}
+            </>
+          ) : mode === 'iam' ? (
+            <>
+              <div class="result-heading">
+                <ShieldCheck size={28} />
+                <h2>Evaluador didáctico IAM</h2>
+              </div>
+              <div class={`result-banner ${allowed ? 'good' : 'bad'}`}>
+                {allowed ? <CheckCircle2 size={23} /> : <ShieldAlert size={23} />}{' '}
+                {allowed ? 'Permitido en el modelo' : 'Denegado en el modelo'}
+              </div>
+              <p>
+                {action === 'admin'
+                  ? 'Las operaciones administrativas amplias requieren privilegios explícitos y una justificación fuerte.'
+                  : scope === 'all' && action === 'write'
+                    ? 'Modificar todos los recursos viola el alcance de esta política mínima de ejemplo.'
+                    : 'La operación está dentro de las reglas educativas configuradas.'}
+              </p>
+              <div class="terminal-block">
+                <pre>
+                  <code>
+                    {JSON.stringify(
+                      {
+                        effect: allowed ? 'Allow' : 'Deny',
+                        action,
+                        resource: scope === 'single' ? 'resource/selected' : '*',
+                        model: 'educational',
+                      },
+                      null,
+                      2,
+                    )}
+                  </code>
+                </pre>
+              </div>
+            </>
+          ) : mode === 'scale' ? (
+            <>
+              <div class="result-heading">
+                <Gauge size={28} />
+                <h2>Planificador de réplicas</h2>
+              </div>
+              <div class="result-big">
+                {replicas}
+                <small>réplicas teóricas necesarias</small>
+              </div>
+              <div class="bar-visual">
+                {Array.from({ length: Math.min(20, replicas) }, (_, i) => (
+                  <div key={i} title={`Réplica ${i + 1}`}>
+                    <Server size={22} />
+                  </div>
+                ))}
+              </div>
+              <p class="result-note">
+                Este cálculo supone distribución ideal. La base de datos, el arranque, las cuotas y
+                el presupuesto pueden limitar el escalamiento real.
+              </p>
+            </>
+          ) : mode === 'architecture' ? (
+            <>
+              <div class="result-heading">
+                <Layers size={28} />
+                <h2>Architecture Decision Studio</h2>
+              </div>
+              <div class="result-big" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+                {services[provider.value][architecture].label}
+                <small>Punto de partida sugerido en {providers[provider.value].short}</small>
+              </div>
+              <p class="result-note">
+                {workload === 'events'
+                  ? 'El procesamiento por eventos exige idempotencia, reintentos controlados, DLQ y observabilidad.'
+                  : workload === 'batch'
+                    ? 'El procesamiento por lotes requiere colas, planificación, tiempos de ejecución máximos y control de costes.'
+                    : 'Una aplicación web debe resolver identidad, almacenamiento de sesión, entrada segura, métricas y persistencia.'}
+              </p>
+              <div class="result-stats">
+                <div>
+                  <small>Alternativa</small>
+                  <strong>
+                    {
+                      services[provider.value][
+                        architecture === 'compute' ? 'serverless' : 'compute'
+                      ].label
+                    }
+                  </strong>
+                </div>
+                <div>
+                  <small>Restricción priorizada</small>
+                  <strong>
+                    {priority === 'simple'
+                      ? 'Simplicidad'
+                      : priority === 'control'
+                        ? 'Control'
+                        : 'Escala'}
+                  </strong>
+                </div>
+              </div>
+              <a
+                class="official-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={services[provider.value][architecture].doc}
+              >
+                Revisar documentación oficial <ExternalLink size={15} />
+              </a>
+              <p class="result-note">
+                Una decisión madura compara al menos dos opciones con TCO, seguridad, escalabilidad,
+                RTO/RPO y capacidad de operación.
+              </p>
+            </>
+          ) : (
+            <>
+              <div class="result-heading">
+                <Activity size={28} />
+                <h2>Presupuesto de error SLO</h2>
+              </div>
+              <div class="result-big">
+                {minutes.toLocaleString('es-ES')} min
+                <small>indisponibilidad máxima teórica en {days} días</small>
+              </div>
+              <div class="result-stats">
+                <div>
+                  <small>Objetivo SLO</small>
+                  <strong>{availability.toFixed(2)}%</strong>
+                </div>
+                <div>
+                  <small>Ventana</small>
+                  <strong>{days} días</strong>
+                </div>
+              </div>
+              <p class="result-note">
+                Error budget aproximado: (1 − SLO) × duración. El indicador debe definirse con un
+                SLI apropiado.
+              </p>
+            </>
+          )}
+          {runs > 0 && <Tag kind="accent">{runs} ejecuciones en esta sesión</Tag>}
+        </div>
+      </div>
+    </main>
+  );
+}
+const seniorService: Record<string, string> = {
+  s01: 'identity',
+  s02: 'network',
+  s03: 'monitor',
+  s04: 'compute',
+  s05: 'identity',
+  s06: 'storage',
+  s07: 'kubernetes',
+  s08: 'database',
+  s09: 'storage',
+  s10: 'monitor',
+  s11: 'monitor',
+  s12: 'kubernetes',
+  s13: 'network',
+  s14: 'serverless',
+  s15: 'identity',
+  s16: 'kubernetes',
+  s17: 'network',
+  s18: 'compute',
+};
+function Senior() {
+  const [chosen, setChosen] = useState<Challenge | null>(null);
+  const [choice, setChoice] = useState<number | null>(null);
+  const [evidence, setEvidence] = useState('');
+  const [filter, setFilter] = useState('todos');
+  const [checked, setChecked] = useState<number[]>([]);
+  const list = challenges.filter((c) => filter === 'todos' || c.severity === filter);
+  if (chosen) {
+    const correct = choice === chosen.correct;
+    const incidentService = services[provider.value][seniorService[chosen.id] || 'compute'];
+    const seniorKey = `${provider.value}:${chosen.id}`;
+    return (
+      <main class="page-container senior-detail">
+        <div class="breadcrumb">
+          <button
+            onClick={() => {
+              setChosen(null);
+              setChoice(null);
+              setChecked([]);
+            }}
+          >
+            <ArrowLeft size={15} /> Volver a Senior Mode
+          </button>
+          <ChevronRight size={14} />
+          {chosen.id.toUpperCase()}
+        </div>
+        <div class="senior-detail-heading">
+          <Tag kind="gold">{chosen.category}</Tag>
+          <Tag kind={chosen.severity === 'Crítica' ? 'danger' : 'default'}>
+            SEVERIDAD {chosen.severity.toUpperCase()}
+          </Tag>
+          <h1>{chosen.title}</h1>
+          <p>{chosen.brief}</p>
+          <div class="senior-provider-hint">
+            <Cloud size={17} />
+            {providers[provider.value].short}: investigar con {incidentService.label}
+          </div>
+        </div>
+        <div class="senior-detail-grid">
+          <div>
+            <div class="info-card">
+              <div class="card-heading">
+                <Activity size={20} />
+                <h3>Señales de producción</h3>
+              </div>
+              <div class="terminal-block">
+                <div class="terminal-bar">
+                  <span class="terminal-lights">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span>INCIDENT / EVIDENCE</span>
+                </div>
+                <pre>
+                  <code>{chosen.signal}</code>
+                </pre>
+              </div>
+              <p>
+                Lee la evidencia. Identifica el riesgo. Elige la primera acción profesionalmente
+                defendible.
+              </p>
+              <div class="senior-specific">
+                <strong>Contexto de {providers[provider.value].name}</strong>
+                <p>{incidentService.note}</p>
+                <div class="terminal-block">
+                  <pre>
+                    <code>$ {incidentService.cli}</code>
+                  </pre>
+                </div>
+                <a
+                  class="official-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={incidentService.doc}
+                >
+                  Documentación del servicio <ExternalLink size={14} />
+                </a>
+                <small>Comando orientativo de consulta: no se ejecuta en esta academia.</small>
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="card-heading">
+                <BrainCircuit size={20} />
+                <h3>Decision Lab</h3>
+              </div>
+              <p>¿Cuál es la mejor primera respuesta?</p>
+              <div class="decision-options">
+                {chosen.choices.map((opt, i) => (
+                  <button
+                    class={`${choice === i ? 'decision-selected' : ''} ${choice !== null && i === chosen.correct ? 'decision-correct' : ''}`}
+                    onClick={() => setChoice(i)}
+                    key={i}
+                  >
+                    <span>{String.fromCharCode(65 + i)}</span>
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {choice !== null && (
+                <div class={`quiz-feedback ${correct ? 'feedback-success' : 'feedback-warn'}`}>
+                  <strong>
+                    {correct ? 'Decisión defendible' : 'Decisión con riesgos importantes'}
+                  </strong>
+                  <p>{chosen.reason}</p>
+                </div>
+              )}
+            </div>
+            <div class="info-card">
+              <div class="card-heading">
+                <MessageSquareText size={20} />
+                <h3>Informe de incidente / ADR</h3>
+              </div>
+              <p>
+                Registra hipótesis, verificación, riesgo residual y decisión. El texto es una
+                evidencia declarada, no una revisión humana.
+              </p>
+              <textarea
+                rows={5}
+                placeholder="Hipótesis, hallazgos, decisiones y plan de verificación..."
+                value={
+                  evidence || progress.value.notes[`senior:${provider.value}:${chosen.id}`] || ''
+                }
+                onInput={(e) => setEvidence((e.currentTarget as HTMLTextAreaElement).value)}
+              />
+              <button
+                class="btn btn-secondary"
+                onClick={() => {
+                  setNotes(
+                    `senior:${provider.value}:${chosen.id}`,
+                    evidence || progress.value.notes[`senior:${provider.value}:${chosen.id}`] || '',
+                  );
+                  notify('Informe guardado');
+                }}
+              >
+                <Check size={16} /> Guardar informe
+              </button>
+            </div>
+          </div>
+          <aside>
+            <div class="info-card">
+              <h3>Rúbrica de evidencias</h3>
+              <p>
+                Estas comprobaciones son autodeclaradas. Para acreditación profesional se
+                necesitaría evaluación externa.
+              </p>
+              <div class="task-list">
+                {chosen.proof.map((e, i) => (
+                  <label key={e} class={checked.includes(i) ? 'task-checked' : ''}>
+                    <input
+                      type="checkbox"
+                      checked={checked.includes(i)}
+                      onChange={(ev) =>
+                        setChecked(
+                          (ev.currentTarget as HTMLInputElement).checked
+                            ? [...checked, i]
+                            : checked.filter((x) => x !== i),
+                        )
+                      }
+                    />
+                    <span class="custom-check">{checked.includes(i) && <Check size={14} />}</span>
+                    <span>{e}</span>
+                  </label>
+                ))}
+              </div>
+              <button
+                class="btn btn-gold full-width"
+                disabled={!correct || checked.length !== chosen.proof.length}
+                onClick={() => {
+                  completeSenior(seniorKey);
+                  notify('Caso Senior registrado');
+                }}
+              >
+                {progress.value.senior.includes(seniorKey)
+                  ? 'Caso completado'
+                  : 'Registrar resolución'}
+                <Trophy size={17} />
+              </button>
+              {(!correct || checked.length !== chosen.proof.length) && (
+                <small>Requiere una decisión correcta y revisar todas las evidencias.</small>
+              )}
+            </div>
+            <div class="info-card">
+              <strong>Competencias</strong>
+              <div class="module-tags">
+                {chosen.skills.map((s) => (
+                  <Tag key={s}>{s}</Tag>
+                ))}
+              </div>
+              <button
+                class="text-action"
+                onClick={() => {
+                  setChosen(null);
+                  setChoice(null);
+                  setChecked([]);
+                }}
+              >
+                Ver todos los desafíos <ArrowRight size={16} />
+              </button>
+            </div>
+          </aside>
+        </div>
+      </main>
+    );
+  }
+  return (
+    <main class="page-container">
+      <div class="senior-hero">
+        <div class="senior-hero-copy">
+          <div class="senior-label">
+            <Sparkles size={16} /> MODO EXPERTO DESBLOQUEADO
+          </div>
+          <h1>
+            Senior Mode<span>_</span>
+          </h1>
+          <p>
+            Los sistemas de producción no te dan opciones perfectas. Entrena criterio técnico con
+            incidentes, arquitectura, seguridad, SRE y FinOps.
+          </p>
+          <div class="senior-hero-stats">
+            <span>
+              <strong>{challenges.length}</strong> escenarios
+            </span>
+            <span>
+              <strong>
+                {progress.value.senior.filter((id) => id.startsWith(`${provider.value}:`)).length}
+              </strong>{' '}
+              resueltos
+            </span>
+            <span>
+              <strong>6</strong> dominios clave
+            </span>
+          </div>
+        </div>
+        <img
+          src={providers[provider.value].mascot}
+          alt={`Mentor cloud ${providers[provider.value].short} experto`}
+        />
+      </div>
+      <SectionHeading
+        eyebrow="DESAFÍOS DE PRODUCCIÓN"
+        title="Piensa antes de ejecutar."
+        description="Los casos son simulaciones educativas. Registra tus evidencias y defiende tus decisiones."
+        side={
+          <select
+            class="filter-select"
+            value={filter}
+            onChange={(e) => setFilter((e.currentTarget as HTMLSelectElement).value)}
+          >
+            <option value="todos">Todas las severidades</option>
+            <option>Crítica</option>
+            <option>Alta</option>
+            <option>Media</option>
+          </select>
+        }
+      />
+      <div class="senior-grid">
+        {list.map((c) => (
+          <button
+            class="senior-card"
+            key={c.id}
+            onClick={() => {
+              setChosen(c);
+              setChoice(null);
+              setEvidence('');
+              setChecked([]);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
+            <div class="senior-card-head">
+              <span class="senior-id">{c.id.toUpperCase()}</span>
+              <Tag
+                kind={
+                  c.severity === 'Crítica' ? 'danger' : c.severity === 'Alta' ? 'gold' : 'default'
+                }
+              >
+                {c.severity}
+              </Tag>
+            </div>
+            <div class="senior-card-icon">
+              <ShieldAlert size={25} />
+            </div>
+            <span class="senior-category">{c.category}</span>
+            <h3>{c.title}</h3>
+            <p>{c.brief}</p>
+            <div class="senior-card-footer">
+              {progress.value.senior.includes(`${provider.value}:${c.id}`) ? (
+                <span class="success-text">
+                  <CheckCircle2 size={16} /> Registrado
+                </span>
+              ) : (
+                <span>Investigar caso</span>
+              )}
+              <ArrowUpRight size={18} />
+            </div>
+          </button>
+        ))}
+      </div>
+    </main>
+  );
+}
+function Progress() {
+  const p = provider.value;
+  const done = progress.value.completed.filter((x) => x.startsWith(`${p}:`));
+  const all = modules.reduce((s, m) => s + m.topics.length + 1, 0);
+  const score = Object.values(progress.value.quiz).filter((v) => v === 100).length;
+  return (
+    <main class="page-container">
+      <div class="page-kicker">
+        <ChartNoAxesCombined size={17} /> MI CENTRO DE PROGRESO
+      </div>
+      <section class="page-intro">
+        <div>
+          <h1>
+            Cada avance <span>cuenta.</span>
+          </h1>
+          <p>
+            Tu progreso se guarda en este navegador. Exporta una copia para conservarlo o
+            transferirlo.
+          </p>
+        </div>
+      </section>
+      <div class="progress-cards">
+        <div>
+          <BookOpen size={23} />
+          <strong>
+            {done.length}
+            <small>/{all}</small>
+          </strong>
+          <span>Actividades en {providers[p].short}</span>
+        </div>
+        <div>
+          <Trophy size={23} />
+          <strong>
+            {progress.value.senior.length}
+            <small>/18</small>
+          </strong>
+          <span>Desafíos Senior</span>
+        </div>
+        <div>
+          <CheckCircle2 size={23} />
+          <strong>{score}</strong>
+          <span>Quizzes con 100%</span>
+        </div>
+        <div>
+          <FlaskConical size={23} />
+          <strong>{progress.value.simRuns}</strong>
+          <span>Simulaciones ejecutadas</span>
+        </div>
+      </div>
+      <section class="info-card progress-panel">
+        <div class="card-heading">
+          <Layers size={20} />
+          <h3>Progreso por nivel · {providers[p].short}</h3>
+        </div>
+        {(['fundamentos', 'intermedio', 'avanzado'] as Level[]).map((l) => {
+          const ms = modules.filter((m) => m.level === l),
+            max = ms.reduce((s, m) => s + m.topics.length + 1, 0),
+            d = ms.reduce(
+              (s, m) =>
+                s + progress.value.completed.filter((k) => k.startsWith(`${p}:${m.id}:`)).length,
+              0,
+            );
+          return (
+            <div class="level-progress" key={l}>
+              <div>
+                <strong>{levelInfo[l].name}</strong>
+                <span>
+                  {d} / {max} actividades
+                </span>
+              </div>
+              <ProgressBar value={d} max={max} />
+            </div>
+          );
+        })}
+      </section>
+      <section class="info-card progress-panel">
+        <div class="card-heading">
+          <Cloud size={20} />
+          <h3>Tu experiencia multicloud</h3>
+        </div>
+        <div class="cloud-progress-grid">
+          {(['aws', 'azure', 'gcp'] as Provider[]).map((id) => (
+            <button
+              key={id}
+              onClick={() => setProvider(id)}
+              class={provider.value === id ? 'cloud-progress-current' : ''}
+            >
+              <span class={`provider-mark provider-mark-${id}`}>
+                {id === 'aws' ? 'aws' : id === 'azure' ? 'A' : 'G'}
+              </span>
+              <strong>{providers[id].name}</strong>
+              <small>
+                {progress.value.completed.filter((x) => x.startsWith(`${id}:`)).length} actividades
+                completadas
+              </small>
+              <ProgressBar
+                value={progress.value.completed.filter((x) => x.startsWith(`${id}:`)).length}
+                max={all}
+              />
+            </button>
+          ))}
+        </div>
+      </section>
+      <section class="info-card progress-panel">
+        <div class="card-heading">
+          <Download size={20} />
+          <h3>Respaldo del progreso</h3>
+        </div>
+        <p>
+          El progreso no se sincroniza en servidores. Puedes exportar un archivo JSON e importarlo
+          posteriormente.
+        </p>
+        <div class="action-row">
+          <button class="btn btn-secondary" onClick={exportProgress}>
+            <Download size={17} /> Exportar progreso
+          </button>
+          <label class="btn btn-secondary file-label">
+            <Upload size={17} /> Importar progreso
+            <input
+              type="file"
+              accept="application/json,.json"
+              onChange={(e) => {
+                const f = (e.currentTarget as HTMLInputElement).files?.[0];
+                if (f) importProgress(f).catch((err) => notify(`Error: ${err.message}`));
+                (e.currentTarget as HTMLInputElement).value = '';
+              }}
+            />
+          </label>
+          <button class="btn btn-danger" onClick={clearProgress}>
+            <Trash2 size={16} /> Reiniciar progreso
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}
+function SettingsPage() {
+  return (
+    <main class="page-container settings-page">
+      <div class="page-kicker">
+        <Settings size={17} /> PREFERENCIAS
+      </div>
+      <section class="page-intro">
+        <div>
+          <h1>
+            Tu academia. <span>Tu ritmo.</span>
+          </h1>
+          <p>Personaliza la apariencia y la nube de aprendizaje.</p>
+        </div>
+      </section>
+      <section class="info-card">
+        <div class="card-heading">
+          <Cloud size={20} />
+          <h3>Proveedor principal</h3>
+        </div>
+        <div class="settings-providers">
+          {(['aws', 'azure', 'gcp'] as Provider[]).map((p) => (
+            <button
+              key={p}
+              onClick={() => setProvider(p)}
+              class={provider.value === p ? 'setting-selected' : ''}
+            >
+              <span class={`provider-mark provider-mark-${p}`}>
+                {p === 'aws' ? 'aws' : p === 'azure' ? 'A' : 'G'}
+              </span>
+              <strong>{providers[p].name}</strong>
+              {provider.value === p && <CheckCircle2 size={20} />}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section class="info-card">
+        <div class="card-heading">
+          <Sun size={20} />
+          <h3>Apariencia</h3>
+        </div>
+        <div class="action-row">
+          <button
+            class={`btn ${theme.value === 'dark' ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => (theme.value = 'dark')}
+          >
+            <Moon size={17} /> Oscuro
+          </button>
+          <button
+            class={`btn ${theme.value === 'light' ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => (theme.value = 'light')}
+          >
+            <Sun size={17} /> Claro
+          </button>
+        </div>
+      </section>
+      <section class="info-card">
+        <div class="card-heading">
+          <ShieldCheck size={20} />
+          <h3>Privacidad y seguridad</h3>
+        </div>
+        <p>
+          La academia no requiere credenciales cloud. El progreso se guarda solo en el
+          almacenamiento de este navegador; no usamos un backend para recopilar tus respuestas. No
+          introduzcas tokens, claves ni información personal sensible en tus notas.
+        </p>
+        <button class="btn btn-secondary" onClick={() => navigate('progress')}>
+          Administrar datos de progreso <ArrowRight size={17} />
+        </button>
+      </section>
+      <section class="info-card">
+        <div class="card-heading">
+          <Info size={20} />
+          <h3>Sobre Cloud Engineering Academy</h3>
+        </div>
+        <p>
+          Versión {APP_VERSION} · Plataforma educativa independiente inspirada en la experiencia de
+          GoPixel Academy y en las prácticas de ingeniería de Vigilio. Los servicios, comandos y
+          límites pueden cambiar. Consulta siempre la documentación oficial antes de ejecutar
+          cambios reales.
+        </p>
+      </section>
+    </main>
+  );
+}
+export function App() {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') mobileMenu.value = false;
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+  return (
+    <div class="app-shell">
+      <Header />
+      {view.value === 'home' ? (
+        <Home />
+      ) : view.value === 'learn' ? (
+        <Learn />
+      ) : view.value === 'lesson' ? (
+        <Lesson />
+      ) : view.value === 'lab' ? (
+        <Lab />
+      ) : view.value === 'simulator' ? (
+        <Simulator />
+      ) : view.value === 'senior' ? (
+        <SeniorWorkbench />
+      ) : view.value === 'progress' ? (
+        <Progress />
+      ) : (
+        <SettingsPage />
+      )}
+      <Footer />
+      {toast.value && (
+        <div role="status" class="toast">
+          <CheckCircle2 size={17} />
+          {toast.value}
+          <button aria-label="Cerrar notificación" onClick={() => (toast.value = '')}>
+            <X size={15} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

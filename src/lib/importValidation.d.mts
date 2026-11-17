@@ -12,7 +12,13 @@ export type ValidatedProgress = {
     score: number;
     at: string;
     examined: string[];
-    report?: {cause:string;mitigation:string;validation:string;rollback?:string;citations?:string[]};
+    report?: {
+      cause: string;
+      mitigation: string;
+      validation: string;
+      rollback?: string;
+      citations?: string[];
+    };
   }>;
 };
-export function validateProgressImport(payload:unknown):ValidatedProgress;
+export function validateProgressImport(payload: unknown): ValidatedProgress;

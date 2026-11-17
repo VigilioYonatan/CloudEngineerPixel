@@ -1,11 +1,16 @@
-export type SeniorStage = 'investigar'|'diagnosticar'|'decidir'|'informe';
-export type SeniorReport = {cause:string;mitigation:string;rollback:string;validation:string};
+export type SeniorStage = 'investigar' | 'diagnosticar' | 'decidir' | 'informe';
+export type SeniorReport = {
+  cause: string;
+  mitigation: string;
+  rollback: string;
+  validation: string;
+};
 export type SeniorSession = {
   version: number;
   stage: SeniorStage;
-  choice: number|null;
+  choice: number | null;
   decisionLocked: boolean;
-  diagnosisChoice: number|null;
+  diagnosisChoice: number | null;
   diagnosisLocked: boolean;
   inspected: string[];
   cited: string[];
@@ -16,7 +21,7 @@ export const SENIOR_SESSION_VERSION: number;
 export const REPORT_MAX_CHARS: number;
 export const SESSION_MAX_LENGTH: number;
 export function emptySeniorSession(): SeniorSession;
-export function normalizeSeniorSession(value:unknown):SeniorSession;
-export function parseSeniorSession(raw:unknown):SeniorSession;
-export function serializeSeniorSession(value:unknown):string;
-export function seniorSessionKey(provider:string, caseId:string):string;
+export function normalizeSeniorSession(value: unknown): SeniorSession;
+export function parseSeniorSession(raw: unknown): SeniorSession;
+export function serializeSeniorSession(value: unknown): string;
+export function seniorSessionKey(provider: string, caseId: string): string;

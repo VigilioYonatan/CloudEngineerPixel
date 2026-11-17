@@ -1,4 +1,24 @@
-# Cloud Engineering Academy — V8 (Senior Mode, DevSecOps y QA)
+# Cloud Engineering Academy — Multicloud Engineering & Senior Mode
+
+> **Estado actual (fuente única de versión en `package.json`):** Academia interactiva multicloud (**AWS, Microsoft Azure y Google Cloud**) con simuladores deterministas, laboratorios guiados y **Senior Mode** basado en evidencias sintéticas. La versión activa de la plataforma se sincroniza automáticamente desde `package.json` hacia la interfaz (`Ajustes`) y los respaldos JSON exportados (`appVersion`), evitando desfases documentales. Consulta `PLAN_FALTANTES_100_SKILLS_VIGILIO.md` y `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` para el seguimiento verificable de capacidades.
+
+## Inicio Rápido y Puertas de Calidad (< 10 min)
+
+**Prerrequisitos:** Node.js LTS (`>= 22`, verificado con `npm run doctor`) y npm con `package-lock.json` versionado.
+
+```bash
+npm install
+npm run doctor
+npm run verify
+npm run test:bdd
+npm run test:e2e
+```
+
+---
+
+## Registro Histórico Preservado (V8 / V6 / V9)
+
+### Cloud Engineering Academy — V8 (Senior Mode, DevSecOps y QA)
 
 > **Entrega V8**: se conserva íntegra la V7, se incorpora revisión docente local opcional en Senior Mode,  controles DevSecOps sin instalación y nuevas pruebas. Sigue pendiente ejecutar Vite, TypeScript completo, Biome y Playwright con dependencias reales. No se declara producción lista ni formación de 240 horas totalmente desarrollada. Lee `docs/RELEASE_NOTES_V8.md`, `docs/DEVSECOPS_V8.md` y `docs/SENIOR_REVIEW_V8.md`.
 

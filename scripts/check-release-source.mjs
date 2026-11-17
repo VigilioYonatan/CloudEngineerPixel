@@ -4,12 +4,12 @@ import {resolve, dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const read=rel=>readFileSync(join(root,rel),'utf8');
-const cases=[...read('src/data/senior.ts').matchAll(/id:'(s\d\d)'/g)].map(m=>m[1]);
-const diagnostics=[...read('src/data/seniorDiagnostics.ts').matchAll(/^  (s\d\d):\s*\{/gm)].map(m=>m[1]);
+const cases=[...read('src/data/senior.ts').matchAll(/id:\s*['"](s\d\d)['"]/g)].map(m=>m[1]);
+const diagnostics=[...read('src/data/seniorDiagnostics.ts').matchAll(/^\s*(s\d\d):\s*\{/gm)].map(m=>m[1]);
 const providers=['aws','azure','gcp'];
-const playbooks=[...read('src/data/seniorPlaybooks.ts').matchAll(/^  (s\d\d):\s*\{/gm)].map(m=>m[1]);
-if(playbooks.length!==18||playbooks.join(',')!==cases.join(','))errors.push('Playbooks do not correspond to 18 Senior incidents');
 const errors=[];
+const playbooks=[...read('src/data/seniorPlaybooks.ts').matchAll(/^\s*(s\d\d):\s*\{/gm)].map(m=>m[1]);
+if(playbooks.length!==18||playbooks.join(',')!==cases.join(','))errors.push('Playbooks do not correspond to 18 Senior incidents');
 if(cases.length!==18||new Set(cases).size!==18)errors.push('Expected 18 unique Senior incidents');
 if(diagnostics.length!==18||diagnostics.join(',')!==cases.join(','))errors.push('Diagnostic cases do not correspond to Senior incidents');
 for(const cloud of providers){
@@ -23,7 +23,7 @@ for(const cloud of providers){
   }
 }
 // Validate local source references without needing a bundler installed.
-const fileNames=['src/App.tsx','src/SeniorWorkbench.tsx','src/InstructorReview.tsx','src/main.tsx',
+const fileNames=['src/App.tsx','src/SeniorWorkbench.tsx','src/InstructorReview.tsx','src/main.tsx','src/config/appMeta.ts',
   ...['course','knowledge','senior','seniorDiagnostics','seniorInvestigations','seniorPractices','seniorRubric','study'].map(x=>`src/data/${x}.ts`),
   'src/lib/state.ts','src/lib/instructorReview.mjs','src/data/seniorPlaybooks.ts','src/lib/seniorCheckpoint.mjs'];
 for(const rel of fileNames){

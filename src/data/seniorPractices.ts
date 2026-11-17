@@ -1,22 +1,230 @@
-import type {Provider} from './course';
-export type Practice = {goal:string;deliverables:string[];pitfall:string;commands:Record<Provider,string[]>};
-export const seniorPractices:Record<string,Practice> = {
- 's01': {"goal": "Identificar en un plan el recurso reemplazado, atributo desencadenante y dependencia afectada.", "deliverables": ["Plan JSON", "state redaccionado", "inventario de dependencias", "prueba de restauración"], "pitfall": "Separar atributos ForceNew, cambios intencionales y drift antes de aprobar.", "commands": {"aws": ["aws cloudtrail describe-trails", "aws cloudwatch list-metrics --namespace AWS/EC2"], "azure": ["az resource list --output table", "az monitor activity-log list --max-events 10"], "gcp": ["gcloud config list --format=json", "gcloud logging logs list --limit=10"]}},
- 's02': {"goal": "Reconstruir los permisos requeridos por el pipeline y contrastarlos con las acciones concedidas.", "deliverables": ["Matriz acción/recurso", "política propuesta", "pruebas de denegación"], "pitfall": "Credenciales efímeras, separación de funciones y autorización mínima.", "commands": {"aws": ["aws cloudwatch list-metrics --namespace AWS/EC2", "aws iam list-roles"], "azure": ["az monitor activity-log list --max-events 10", "az role assignment list --assignee-object-id OBJECT_ID"], "gcp": ["gcloud logging logs list --limit=10", "gcloud projects get-iam-policy PROJECT_ID --format=json"]}},
- 's03': {"goal": "Reconstruir la ventana de exposición, rotar secretos y evaluar acciones ejecutadas.", "deliverables": ["Timeline", "evidencia de revocación", "auditoría de uso"], "pitfall": "Preservar evidencia sin copiar el secreto a informes.", "commands": {"aws": ["aws iam list-roles", "aws ec2 describe-vpcs"], "azure": ["az role assignment list --assignee-object-id OBJECT_ID", "az network vnet list --output table"], "gcp": ["gcloud projects get-iam-policy PROJECT_ID --format=json", "gcloud compute networks list"]}},
- 's04': {"goal": "Correlacionar el cambio con readiness, tráfico y métricas antes de revertir.", "deliverables": ["Historial de releases", "métricas 5xx", "rollout verificado"], "pitfall": "La reversión debe ser controlada y observable.", "commands": {"aws": ["aws ec2 describe-vpcs", "aws elbv2 describe-target-groups"], "azure": ["az network vnet list --output table", "az group list --output table"], "gcp": ["gcloud compute networks list", "gcloud compute instances list"]}},
- 's05': {"goal": "Localizar el salto fallido entre origen privado y base de datos.", "deliverables": ["Tabla de rutas", "reglas de acceso", "pruebas DNS/TCP"], "pitfall": "No convertir bases privadas en públicas para corregir conectividad.", "commands": {"aws": ["aws elbv2 describe-target-groups", "aws sts get-caller-identity"], "azure": ["az group list --output table", "az account show --output json"], "gcp": ["gcloud compute instances list", "gcloud auth list"]}},
- 's06': {"goal": "Atribuir cargos por servicio, región, recurso y dueño.", "deliverables": ["Desglose de costos", "baseline y tendencia", "estimación de ahorro"], "pitfall": "Optimizar sin incumplir disponibilidad o seguridad.", "commands": {"aws": ["aws sts get-caller-identity", "aws cloudtrail describe-trails"], "azure": ["az account show --output json", "az resource list --output table"], "gcp": ["gcloud auth list", "gcloud config list --format=json"]}},
- 's07': {"goal": "Investigar eventos de pod, último estado y configuración de arranque.", "deliverables": ["describe", "logs anteriores", "resultado del rollout"], "pitfall": "Más réplicas no solucionan una configuración inválida.", "commands": {"aws": ["aws cloudtrail describe-trails", "aws cloudwatch list-metrics --namespace AWS/EC2"], "azure": ["az resource list --output table", "az monitor activity-log list --max-events 10"], "gcp": ["gcloud config list --format=json", "gcloud logging logs list --limit=10"]}},
- 's08': {"goal": "Comparar resultados de backups con RTO/RPO y efectuar una restauración aislada.", "deliverables": ["Bitácora de restore drill", "reloj RTO", "ventana de pérdida RPO"], "pitfall": "Backup exitoso no prueba recuperación exitosa.", "commands": {"aws": ["aws cloudwatch list-metrics --namespace AWS/EC2", "aws iam list-roles"], "azure": ["az monitor activity-log list --max-events 10", "az role assignment list --assignee-object-id OBJECT_ID"], "gcp": ["gcloud logging logs list --limit=10", "gcloud projects get-iam-policy PROJECT_ID --format=json"]}},
- 's09': {"goal": "Delimitar alcance de lectura anónima y evaluar acceso histórico.", "deliverables": ["Política efectiva", "access logs", "prueba de denegación"], "pitfall": "Contener primero, investigar exposición después.", "commands": {"aws": ["aws iam list-roles", "aws ec2 describe-vpcs"], "azure": ["az role assignment list --assignee-object-id OBJECT_ID", "az network vnet list --output table"], "gcp": ["gcloud projects get-iam-policy PROJECT_ID --format=json", "gcloud compute networks list"]}},
- 's10': {"goal": "Calcular el consumo del error budget y aplicar política de cambios.", "deliverables": ["Cálculo", "decisión registrada", "medidas correctivas"], "pitfall": "Un objetivo de servicio debe afectar decisiones de despliegue.", "commands": {"aws": ["aws ec2 describe-vpcs", "aws elbv2 describe-target-groups"], "azure": ["az network vnet list --output table", "az group list --output table"], "gcp": ["gcloud compute networks list", "gcloud compute instances list"]}},
- 's11': {"goal": "Descomponer la traza p99 y localizar reintentos o dependencias lentas.", "deliverables": ["Trazas", "mapa de dependencias", "prueba comparativa"], "pitfall": "Evitar multiplicación de timeouts por cascadas sincrónicas.", "commands": {"aws": ["aws elbv2 describe-target-groups", "aws sts get-caller-identity"], "azure": ["az group list --output table", "az account show --output json"], "gcp": ["gcloud compute instances list", "gcloud auth list"]}},
- 's12': {"goal": "Aislar el nodo sin borrar la evidencia y evaluar movimiento lateral.", "deliverables": ["Timeline", "identidad comprometida", "análisis de políticas"], "pitfall": "Contención reversible y preservación de evidencia.", "commands": {"aws": ["aws sts get-caller-identity", "aws cloudtrail describe-trails"], "azure": ["az account show --output json", "az resource list --output table"], "gcp": ["gcloud auth list", "gcloud config list --format=json"]}},
- 's13': {"goal": "Evaluar retraso de replicación y capacidad de región secundaria.", "deliverables": ["Lag", "RPO/RTO", "runbook", "acta de conmutación"], "pitfall": "Un failover sin comprobar consistencia puede ampliar el incidente.", "commands": {"aws": ["aws cloudtrail describe-trails", "aws cloudwatch list-metrics --namespace AWS/EC2"], "azure": ["az resource list --output table", "az monitor activity-log list --max-events 10"], "gcp": ["gcloud config list --format=json", "gcloud logging logs list --limit=10"]}},
- 's14': {"goal": "Demostrar que reentregas causan efectos duplicados y diseñar idempotencia.", "deliverables": ["IDs repetidos", "claves de negocio", "pruebas de redelivery"], "pitfall": "La entrega al menos una vez exige consumidores idempotentes.", "commands": {"aws": ["aws cloudwatch list-metrics --namespace AWS/EC2", "aws iam list-roles"], "azure": ["az monitor activity-log list --max-events 10", "az role assignment list --assignee-object-id OBJECT_ID"], "gcp": ["gcloud logging logs list --limit=10", "gcloud projects get-iam-policy PROJECT_ID --format=json"]}},
- 's15': {"goal": "Inspeccionar imágenes mutables, procedencia de artefactos y secretos del pipeline.", "deliverables": ["SBOM", "digest", "verificación de firma", "identidad OIDC"], "pitfall": "No confiar en latest o claves de larga duración.", "commands": {"aws": ["aws iam list-roles", "aws ec2 describe-vpcs"], "azure": ["az role assignment list --assignee-object-id OBJECT_ID", "az network vnet list --output table"], "gcp": ["gcloud projects get-iam-policy PROJECT_ID --format=json", "gcloud compute networks list"]}},
- 's16': {"goal": "Medir concurrencia efectiva y capacidad de conexiones de la base.", "deliverables": ["Pools", "réplicas", "test de carga y p99"], "pitfall": "Escalar una capa puede saturar una dependencia compartida.", "commands": {"aws": ["aws ec2 describe-vpcs", "aws elbv2 describe-target-groups"], "azure": ["az network vnet list --output table", "az group list --output table"], "gcp": ["gcloud compute networks list", "gcloud compute instances list"]}},
- 's17': {"goal": "Comparar complejidad operativa y beneficios verificados frente a requisitos.", "deliverables": ["ADR", "TCO", "matriz de riesgos", "salida de proveedor"], "pitfall": "Multicloud debe responder a un requisito, no a una preferencia estética.", "commands": {"aws": ["aws elbv2 describe-target-groups", "aws sts get-caller-identity"], "azure": ["az group list --output table", "az account show --output json"], "gcp": ["gcloud compute instances list", "gcloud auth list"]}},
- 's18': {"goal": "Vincular diseño y controles verificables con requisitos de negocio.", "deliverables": ["Diagrama", "amenaza", "estimación", "RTO/RPO", "SLO"], "pitfall": "Una arquitectura se defiende con evidencia y trade-offs.", "commands": {"aws": ["aws sts get-caller-identity", "aws cloudtrail describe-trails"], "azure": ["az account show --output json", "az resource list --output table"], "gcp": ["gcloud auth list", "gcloud config list --format=json"]}},
+import type { Provider } from './course';
+export type Practice = {
+  goal: string;
+  deliverables: string[];
+  pitfall: string;
+  commands: Record<Provider, string[]>;
+};
+export const seniorPractices: Record<string, Practice> = {
+  s01: {
+    goal: 'Identificar en un plan el recurso reemplazado, atributo desencadenante y dependencia afectada.',
+    deliverables: [
+      'Plan JSON',
+      'state redaccionado',
+      'inventario de dependencias',
+      'prueba de restauración',
+    ],
+    pitfall: 'Separar atributos ForceNew, cambios intencionales y drift antes de aprobar.',
+    commands: {
+      aws: ['aws cloudtrail describe-trails', 'aws cloudwatch list-metrics --namespace AWS/EC2'],
+      azure: ['az resource list --output table', 'az monitor activity-log list --max-events 10'],
+      gcp: ['gcloud config list --format=json', 'gcloud logging logs list --limit=10'],
+    },
+  },
+  s02: {
+    goal: 'Reconstruir los permisos requeridos por el pipeline y contrastarlos con las acciones concedidas.',
+    deliverables: ['Matriz acción/recurso', 'política propuesta', 'pruebas de denegación'],
+    pitfall: 'Credenciales efímeras, separación de funciones y autorización mínima.',
+    commands: {
+      aws: ['aws cloudwatch list-metrics --namespace AWS/EC2', 'aws iam list-roles'],
+      azure: [
+        'az monitor activity-log list --max-events 10',
+        'az role assignment list --assignee-object-id OBJECT_ID',
+      ],
+      gcp: [
+        'gcloud logging logs list --limit=10',
+        'gcloud projects get-iam-policy PROJECT_ID --format=json',
+      ],
+    },
+  },
+  s03: {
+    goal: 'Reconstruir la ventana de exposición, rotar secretos y evaluar acciones ejecutadas.',
+    deliverables: ['Timeline', 'evidencia de revocación', 'auditoría de uso'],
+    pitfall: 'Preservar evidencia sin copiar el secreto a informes.',
+    commands: {
+      aws: ['aws iam list-roles', 'aws ec2 describe-vpcs'],
+      azure: [
+        'az role assignment list --assignee-object-id OBJECT_ID',
+        'az network vnet list --output table',
+      ],
+      gcp: [
+        'gcloud projects get-iam-policy PROJECT_ID --format=json',
+        'gcloud compute networks list',
+      ],
+    },
+  },
+  s04: {
+    goal: 'Correlacionar el cambio con readiness, tráfico y métricas antes de revertir.',
+    deliverables: ['Historial de releases', 'métricas 5xx', 'rollout verificado'],
+    pitfall: 'La reversión debe ser controlada y observable.',
+    commands: {
+      aws: ['aws ec2 describe-vpcs', 'aws elbv2 describe-target-groups'],
+      azure: ['az network vnet list --output table', 'az group list --output table'],
+      gcp: ['gcloud compute networks list', 'gcloud compute instances list'],
+    },
+  },
+  s05: {
+    goal: 'Localizar el salto fallido entre origen privado y base de datos.',
+    deliverables: ['Tabla de rutas', 'reglas de acceso', 'pruebas DNS/TCP'],
+    pitfall: 'No convertir bases privadas en públicas para corregir conectividad.',
+    commands: {
+      aws: ['aws elbv2 describe-target-groups', 'aws sts get-caller-identity'],
+      azure: ['az group list --output table', 'az account show --output json'],
+      gcp: ['gcloud compute instances list', 'gcloud auth list'],
+    },
+  },
+  s06: {
+    goal: 'Atribuir cargos por servicio, región, recurso y dueño.',
+    deliverables: ['Desglose de costos', 'baseline y tendencia', 'estimación de ahorro'],
+    pitfall: 'Optimizar sin incumplir disponibilidad o seguridad.',
+    commands: {
+      aws: ['aws sts get-caller-identity', 'aws cloudtrail describe-trails'],
+      azure: ['az account show --output json', 'az resource list --output table'],
+      gcp: ['gcloud auth list', 'gcloud config list --format=json'],
+    },
+  },
+  s07: {
+    goal: 'Investigar eventos de pod, último estado y configuración de arranque.',
+    deliverables: ['describe', 'logs anteriores', 'resultado del rollout'],
+    pitfall: 'Más réplicas no solucionan una configuración inválida.',
+    commands: {
+      aws: ['aws cloudtrail describe-trails', 'aws cloudwatch list-metrics --namespace AWS/EC2'],
+      azure: ['az resource list --output table', 'az monitor activity-log list --max-events 10'],
+      gcp: ['gcloud config list --format=json', 'gcloud logging logs list --limit=10'],
+    },
+  },
+  s08: {
+    goal: 'Comparar resultados de backups con RTO/RPO y efectuar una restauración aislada.',
+    deliverables: ['Bitácora de restore drill', 'reloj RTO', 'ventana de pérdida RPO'],
+    pitfall: 'Backup exitoso no prueba recuperación exitosa.',
+    commands: {
+      aws: ['aws cloudwatch list-metrics --namespace AWS/EC2', 'aws iam list-roles'],
+      azure: [
+        'az monitor activity-log list --max-events 10',
+        'az role assignment list --assignee-object-id OBJECT_ID',
+      ],
+      gcp: [
+        'gcloud logging logs list --limit=10',
+        'gcloud projects get-iam-policy PROJECT_ID --format=json',
+      ],
+    },
+  },
+  s09: {
+    goal: 'Delimitar alcance de lectura anónima y evaluar acceso histórico.',
+    deliverables: ['Política efectiva', 'access logs', 'prueba de denegación'],
+    pitfall: 'Contener primero, investigar exposición después.',
+    commands: {
+      aws: ['aws iam list-roles', 'aws ec2 describe-vpcs'],
+      azure: [
+        'az role assignment list --assignee-object-id OBJECT_ID',
+        'az network vnet list --output table',
+      ],
+      gcp: [
+        'gcloud projects get-iam-policy PROJECT_ID --format=json',
+        'gcloud compute networks list',
+      ],
+    },
+  },
+  s10: {
+    goal: 'Calcular el consumo del error budget y aplicar política de cambios.',
+    deliverables: ['Cálculo', 'decisión registrada', 'medidas correctivas'],
+    pitfall: 'Un objetivo de servicio debe afectar decisiones de despliegue.',
+    commands: {
+      aws: ['aws ec2 describe-vpcs', 'aws elbv2 describe-target-groups'],
+      azure: ['az network vnet list --output table', 'az group list --output table'],
+      gcp: ['gcloud compute networks list', 'gcloud compute instances list'],
+    },
+  },
+  s11: {
+    goal: 'Descomponer la traza p99 y localizar reintentos o dependencias lentas.',
+    deliverables: ['Trazas', 'mapa de dependencias', 'prueba comparativa'],
+    pitfall: 'Evitar multiplicación de timeouts por cascadas sincrónicas.',
+    commands: {
+      aws: ['aws elbv2 describe-target-groups', 'aws sts get-caller-identity'],
+      azure: ['az group list --output table', 'az account show --output json'],
+      gcp: ['gcloud compute instances list', 'gcloud auth list'],
+    },
+  },
+  s12: {
+    goal: 'Aislar el nodo sin borrar la evidencia y evaluar movimiento lateral.',
+    deliverables: ['Timeline', 'identidad comprometida', 'análisis de políticas'],
+    pitfall: 'Contención reversible y preservación de evidencia.',
+    commands: {
+      aws: ['aws sts get-caller-identity', 'aws cloudtrail describe-trails'],
+      azure: ['az account show --output json', 'az resource list --output table'],
+      gcp: ['gcloud auth list', 'gcloud config list --format=json'],
+    },
+  },
+  s13: {
+    goal: 'Evaluar retraso de replicación y capacidad de región secundaria.',
+    deliverables: ['Lag', 'RPO/RTO', 'runbook', 'acta de conmutación'],
+    pitfall: 'Un failover sin comprobar consistencia puede ampliar el incidente.',
+    commands: {
+      aws: ['aws cloudtrail describe-trails', 'aws cloudwatch list-metrics --namespace AWS/EC2'],
+      azure: ['az resource list --output table', 'az monitor activity-log list --max-events 10'],
+      gcp: ['gcloud config list --format=json', 'gcloud logging logs list --limit=10'],
+    },
+  },
+  s14: {
+    goal: 'Demostrar que reentregas causan efectos duplicados y diseñar idempotencia.',
+    deliverables: ['IDs repetidos', 'claves de negocio', 'pruebas de redelivery'],
+    pitfall: 'La entrega al menos una vez exige consumidores idempotentes.',
+    commands: {
+      aws: ['aws cloudwatch list-metrics --namespace AWS/EC2', 'aws iam list-roles'],
+      azure: [
+        'az monitor activity-log list --max-events 10',
+        'az role assignment list --assignee-object-id OBJECT_ID',
+      ],
+      gcp: [
+        'gcloud logging logs list --limit=10',
+        'gcloud projects get-iam-policy PROJECT_ID --format=json',
+      ],
+    },
+  },
+  s15: {
+    goal: 'Inspeccionar imágenes mutables, procedencia de artefactos y secretos del pipeline.',
+    deliverables: ['SBOM', 'digest', 'verificación de firma', 'identidad OIDC'],
+    pitfall: 'No confiar en latest o claves de larga duración.',
+    commands: {
+      aws: ['aws iam list-roles', 'aws ec2 describe-vpcs'],
+      azure: [
+        'az role assignment list --assignee-object-id OBJECT_ID',
+        'az network vnet list --output table',
+      ],
+      gcp: [
+        'gcloud projects get-iam-policy PROJECT_ID --format=json',
+        'gcloud compute networks list',
+      ],
+    },
+  },
+  s16: {
+    goal: 'Medir concurrencia efectiva y capacidad de conexiones de la base.',
+    deliverables: ['Pools', 'réplicas', 'test de carga y p99'],
+    pitfall: 'Escalar una capa puede saturar una dependencia compartida.',
+    commands: {
+      aws: ['aws ec2 describe-vpcs', 'aws elbv2 describe-target-groups'],
+      azure: ['az network vnet list --output table', 'az group list --output table'],
+      gcp: ['gcloud compute networks list', 'gcloud compute instances list'],
+    },
+  },
+  s17: {
+    goal: 'Comparar complejidad operativa y beneficios verificados frente a requisitos.',
+    deliverables: ['ADR', 'TCO', 'matriz de riesgos', 'salida de proveedor'],
+    pitfall: 'Multicloud debe responder a un requisito, no a una preferencia estética.',
+    commands: {
+      aws: ['aws elbv2 describe-target-groups', 'aws sts get-caller-identity'],
+      azure: ['az group list --output table', 'az account show --output json'],
+      gcp: ['gcloud compute instances list', 'gcloud auth list'],
+    },
+  },
+  s18: {
+    goal: 'Vincular diseño y controles verificables con requisitos de negocio.',
+    deliverables: ['Diagrama', 'amenaza', 'estimación', 'RTO/RPO', 'SLO'],
+    pitfall: 'Una arquitectura se defiende con evidencia y trade-offs.',
+    commands: {
+      aws: ['aws sts get-caller-identity', 'aws cloudtrail describe-trails'],
+      azure: ['az account show --output json', 'az resource list --output table'],
+      gcp: ['gcloud auth list', 'gcloud config list --format=json'],
+    },
+  },
 };
