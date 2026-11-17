@@ -10,5 +10,9 @@ dist/
 *.tfvars
 *.tfvars.json
 coverage/
+playwright-report/
+test-results/
+sbom.cdx.json
+.tools/
 .DS_Store
 *.log

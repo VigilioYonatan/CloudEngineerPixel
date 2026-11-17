@@ -55,7 +55,7 @@ export function SeniorWorkbench(){
  const setCited=(change:(previous:string[])=>string[])=>setSession(previous=>normalizeSeniorSession({...previous,cited:change(previous.cited)}));
  const setAnswers=(change:(previous:SeniorReport)=>SeniorReport)=>setSession(previous=>normalizeSeniorSession({...previous,answers:change(previous.answers)}));
  const setAck=(value:boolean)=>update({acknowledged:value});
- const {choice,decisionLocked,diagnosisChoice,diagnosisLocked,inspected,cited,answers,ack,stage}=session;
+ const {choice,decisionLocked,diagnosisChoice,diagnosisLocked,inspected,cited,answers,acknowledged:ack,stage}=session;
  const diagnosisCorrect=!!diagnostic&&diagnosisLocked&&diagnosisChoice===diagnostic.correct;
  const inspectedPrimary=inspected.includes('primary')&&inspected.includes('secondary');
  const diagnosisReady=inspectedPrimary&&diagnosisCorrect;

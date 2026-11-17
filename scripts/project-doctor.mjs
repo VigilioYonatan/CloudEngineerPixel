@@ -8,7 +8,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const packageData=JSON.parse(readFileSync(path.join(root,'package.json'),'utf8'));
 const required=Object.keys({...packageData.dependencies,...packageData.devDependencies});
 const missing=[];
-for(const dep of required){try{require.resolve(dep,{paths:[root]});}catch{missing.push(dep);}}
+for(const dep of required){try{require.resolve(dep,{paths:[root]});}catch{try{require.resolve(`${dep}/package.json`,{paths:[root]});}catch{missing.push(dep);}}}
 const nodeMajor=Number.parseInt(process.versions.node,10);
 const hasLock=existsSync(path.join(root,'package-lock.json'));
 const report={

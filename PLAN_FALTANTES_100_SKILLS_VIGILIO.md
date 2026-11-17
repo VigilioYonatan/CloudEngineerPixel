@@ -88,32 +88,32 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ---
 
-### BLOQUE 0 — Entorno, Git, Dependencias, Bugs Bloqueantes y Manifiesto (8 Tareas)
+### BLOQUE 0 — Entorno, Git, Dependencias, Bugs Bloqueantes y Manifiesto (8 Tareas · 5/8 Completadas)
 
-- [ ] **F0-01 — Inicializar repositorio Git y configurar higiene base de ramas/commits**
+- [x] **F0-01 — Inicializar repositorio Git y configurar higiene base de ramas/commits (`PASS`)**
   - **Tarea:** Ejecutar `git init -b main`, verificar `.gitignore` (`node_modules`, `dist`, `playwright-report`, `test-results`, `coverage`, `sbom.cdx.json`) y crear commit inicial inmutable del estado V9 antes de tocar código fuente.
   - **Skills / Vigilio Docs:** `vigilio-auto-senior`, `commit-ai-change`, `platform-repository-workspace` · `vigilio-docs/platform/architecture/workspace-strategy.md`.
-  - **Resultado 100%:** `git status` limpio y línea base V9 rastreable por commit para diffs exactos en `review-code-change`.
+  - **Resultado 100%:** `git status` limpio, commit raíz inmutable `806da89` en `main` (`core.autocrlf=false`) y rama activa `feat/AI-0001/f0-foundation-gates`.
 
-- [ ] **F0-02 — Corregir bug multiplataforma Windows/Linux en `scripts/check-secrets.mjs`**
-  - **Tarea:** Sustituir `new URL('../', import.meta.url).pathname` por `fileURLToPath(new URL('../', import.meta.url))` en `scripts/check-secrets.mjs` y agregar prueba unitaria de regresión multiplataforma.
+- [x] **F0-02 — Corregir bug multiplataforma Windows/Linux en `scripts/check-secrets.mjs` (`PASS`)**
+  - **Tarea:** Sustituir `new URL('../', import.meta.url).pathname` por `fileURLToPath(new URL('../', import.meta.url))` en `scripts/check-secrets.mjs` y agregar prueba unitaria + BDD de regresión multiplataforma.
   - **Skills / Vigilio Docs:** `diagnosing-bugs`, `web-mfe-security-delivery` · `vigilio-docs/standards/security/secrets-and-privacy.md`.
-  - **Resultado 100%:** `npm run security:scan` termina con exit code `0` tanto en Windows PowerShell como en Linux CI (`PASS`).
+  - **Resultado 100%:** `npm run security:scan` termina con exit code `0` en Windows PowerShell y exporta `scanDirectoryForSecrets` cubierto por tests unitarios y BDD Gherkin.
 
-- [ ] **F0-03 — Actualizar sistema de manifiesto de integridad (`FILE_MANIFEST_V10.json`) sin borrar archivos V9**
+- [x] **F0-03 — Actualizar sistema de manifiesto de integridad (`FILE_MANIFEST_V10.json`) sin borrar archivos V9 (`PASS`)**
   - **Tarea:** Crear script reproducible `scripts/update-manifest.mjs` que verifique que los 291 archivos originales de V9 siguen presentes (`removed: []`), registre `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md`, `PLAN_FALTANTES_100_SKILLS_VIGILIO.md` y los cambios controlados en `docs/FILE_MANIFEST_V10.json`, y actualizar `scripts/verify-integrity.mjs` para validar contra el último manifiesto vigente.
   - **Skills / Vigilio Docs:** `complete-work-no-shortcuts` · `vigilio-docs/governance/complete-work-coverage-policy.md`.
-  - **Resultado 100%:** `npm run integrity` y los 89 tests de `npm test` pasan al 100% (`0 fail`, `0 removed`).
+  - **Resultado 100%:** `npm run integrity` y la suite completa `npm test` pasan al 100% (`0 fail`, `291/291` archivos V9 preservados, `0 removed`).
 
-- [ ] **F0-04 — Instalar dependencias reales y generar `package-lock.json` auténtico**
-  - **Tarea:** Ejecutar `npm install` contra registry oficial, auditar resoluciones, verificar compatibilidad Preact 10.27 + Signals 2.2 + Vite 7.1 + TS 5.9 + Biome 2.2 + Playwright 1.56 y versionar `package-lock.json`.
+- [x] **F0-04 — Instalar dependencias reales y generar `package-lock.json` auténtico (`PASS`)**
+  - **Tarea:** Ejecutar `npm install` contra registry oficial, auditar resoluciones, verificar compatibilidad Preact 10.27 + Signals 2.2 + Vite 7.1 + TS 5.9 + Biome 2.6 + Playwright 1.56 (corrigiendo resolución de paquetes CLI como `@biomejs/biome` en `scripts/project-doctor.mjs`) y versionar `package-lock.json`.
   - **Skills / Vigilio Docs:** `software-supply-chain-security`, `web-mfe-technologies` · `vigilio-docs/technology/versions.md`, `vigilio-docs/standards/devsecops/supply-chain.md`.
-  - **Resultado 100%:** `npm run doctor` reporta `8/8 dependencias resueltas` y `package-lock.json: presente`.
+  - **Resultado 100%:** `npm run doctor` reporta `8/8 dependencias resueltas`, `package-lock.json: presente` y `npm audit --audit-level=high` reporta `0 vulnerabilities`.
 
-- [ ] **F0-05 — Superar compilación estricta de tipos (`npm run typecheck`)**
-  - **Tarea:** Ejecutar `tsc --noEmit` incluyendo `src` y `tests/e2e`, corregir cualquier desajuste de tipos en `.tsx`, `.ts` y declaraciones `.d.mts` sin usar `any` ni `@ts-ignore`.
+- [x] **F0-05 — Superar compilación estricta de tipos (`npm run typecheck`) (`PASS`)**
+  - **Tarea:** Ejecutar `tsc --noEmit` sobre `src` y `tsc --noEmit -p tsconfig.e2e.json` sobre `tests/e2e`, `playwright.config.ts` y `vite.config.ts`, corrigiendo el bug real en `src/SeniorWorkbench.tsx` (`acknowledged: ack` en lugar de `session.ack` inexistente) sin usar `any` ni `@ts-ignore`.
   - **Skills / Vigilio Docs:** `web-mfe-build-feature` · `vigilio-docs/technology/catalog/typescript.md`.
-  - **Resultado 100%:** `npm run typecheck` en `PASS` con `0` errores y `strict: true`.
+  - **Resultado 100%:** `npm run typecheck` en `PASS` con `0` errores en código de navegador y tests E2E.
 
 - [ ] **F0-06 — Ejecutar y validar primer build productivo con Vite (`npm run build` + `npm run preview`)**
   - **Tarea:** Compilar bundle de producción en `dist/`, comprobar rutas estáticas (`base: './'`), carga de imágenes de mascota y descarga de cuadernos Senior.
