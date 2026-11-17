@@ -1,8 +1,8 @@
 import { ArrowLeft } from 'lucide-preact';
 import { CloudMentor } from '../../../components/mascot/CloudMentor';
 import { getProviderMeta } from '../../../domain/providers';
-import type { SeniorStage } from '../../../lib/seniorSession.mjs';
-import { notify } from '../../../lib/state';
+import type { SeniorPostmortemExtras, SeniorStage } from '../../../lib/seniorSession.mjs';
+import { navigate, notify } from '../../../lib/state';
 import { CloudProviderLogo } from '../../../shared/ui/CloudProviderLogo';
 import { DecisionStage } from '../components/DecisionStage';
 import { DiagnosisStage } from '../components/DiagnosisStage';
@@ -13,6 +13,10 @@ import { SeniorCatalog } from '../components/SeniorCatalog';
 import { SeniorSidebar } from '../components/SeniorSidebar';
 import { SENIOR_STAGE_ITEMS } from '../constants/senior.constants';
 import { useSeniorCaseSession } from '../hooks/use-senior-case-session';
+import {
+  buildSeniorPostmortemMarkdown,
+  downloadMarkdownFile,
+} from '../libs/buildSeniorPostmortemMarkdown';
 import { downloadReport } from '../libs/downloadJsonFile';
 
 export function SeniorWorkbench() {
@@ -82,6 +86,7 @@ export function SeniorWorkbench() {
               )}
               {state.stage === 'diagnosticar' && diagnostic && (
                 <DiagnosisStage
+                  caseId={current.id}
                   diagnostic={diagnostic}
                   diagnosisChoice={session.diagnosisChoice}
                   diagnosisLocked={session.diagnosisLocked}
@@ -94,6 +99,9 @@ export function SeniorWorkbench() {
                     state.update({ diagnosisChoice: null, diagnosisLocked: false })
                   }
                   onAdvanceToDecision={() => state.update({ stage: 'decidir' })}
+                  onOpenLesson={(resourceId, unitIndex) =>
+                    navigate('lesson', { resourceId, unitIndex })
+                  }
                 />
               )}
               {state.stage === 'decidir' && (
@@ -107,6 +115,9 @@ export function SeniorWorkbench() {
                   onConfirmDecision={state.confirmDecision}
                   onResetDecision={() => state.update({ choice: null, decisionLocked: false })}
                   onAdvanceToReport={() => state.update({ stage: 'informe' })}
+                  onOpenLesson={(resourceId, unitIndex) =>
+                    navigate('lesson', { resourceId, unitIndex })
+                  }
                 />
               )}
               {state.stage === 'informe' && (
@@ -114,6 +125,7 @@ export function SeniorWorkbench() {
                   details={details}
                   providerShort={cloud_meta.short}
                   answers={session.answers}
+                  postmortemExtras={session.postmortemExtras}
                   inspected={session.inspected}
                   cited={session.cited}
                   acknowledged={state.ack}
@@ -121,6 +133,11 @@ export function SeniorWorkbench() {
                   score={state.assessment.score}
                   isCompleted={state.isCompleted}
                   onUpdateSection={state.updateReportSection}
+                  onUpdatePostmortemExtra={(key: keyof SeniorPostmortemExtras, val: string) =>
+                    state.update({
+                      postmortemExtras: { ...session.postmortemExtras, [key]: val },
+                    })
+                  }
                   onToggleCitation={state.toggleCitation}
                   onChangeAcknowledged={(checked) => state.update({ acknowledged: checked })}
                   onSaveDraft={() => {
@@ -139,6 +156,7 @@ export function SeniorWorkbench() {
                         cited: session.cited,
                         decisionLocked: session.decisionLocked,
                         report: session.answers,
+                        postmortemExtras: session.postmortemExtras,
                         checklistAcknowledged: state.ack,
                         diagnosis: {
                           selected: session.diagnosisChoice,
@@ -151,6 +169,23 @@ export function SeniorWorkbench() {
                       `informe-${p}-${current.id}.json`,
                     )
                   }
+                  onExportPostmortemMd={() => {
+                    const md = buildSeniorPostmortemMarkdown({
+                      caseId: current.id,
+                      caseTitle: current.title,
+                      providerShort: cloud_meta.short,
+                      severity: current.severity,
+                      service: details.service[p],
+                      score: state.assessment.score,
+                      decisionLabel:
+                        session.choice === null ? 'Sin confirmar' : current.choices[session.choice],
+                      inspected: session.inspected,
+                      cited: session.cited,
+                      answers: session.answers,
+                      extras: session.postmortemExtras,
+                    });
+                    downloadMarkdownFile(md, `postmortem-adr-${p}-${current.id}.md`);
+                  }}
                   onFinalizeSimulation={state.finalize}
                 />
               )}

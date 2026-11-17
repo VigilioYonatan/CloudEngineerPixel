@@ -8,6 +8,12 @@ export const SESSION_MAX_LENGTH = 16000;
 const stageSet = new Set(['investigar', 'diagnosticar', 'decidir', 'informe']);
 const artifactSet = new Set(['primary', 'secondary', 'distractor', 'procedure']);
 const answerFields = /** @type {const} */ (['cause', 'mitigation', 'rollback', 'validation']);
+const extraFields = /** @type {const} */ ([
+  'impact',
+  'discardedHypotheses',
+  'communicationPlan',
+  'preventiveActions',
+]);
 const asText = (value) => (typeof value === 'string' ? value.slice(0, REPORT_MAX_CHARS) : '');
 const uniqueArtifacts = (value) =>
   Array.isArray(value) ? [...new Set(value.filter((x) => artifactSet.has(x)))] : [];
@@ -42,7 +48,14 @@ export function normalizeSeniorSession(value) {
   const cited = uniqueArtifacts(value.cited).filter((id) => inspected.includes(id));
   const choice = safeIndex(value.choice);
   const diagnosisChoice = safeIndex(value.diagnosisChoice);
-  return {
+  const rawExtras = value.postmortemExtras;
+  const extrasEntries =
+    rawExtras && typeof rawExtras === 'object' && !Array.isArray(rawExtras)
+      ? extraFields
+          .map((field) => [field, asText(rawExtras[field])])
+          .filter(([, text]) => text.length > 0)
+      : [];
+  const normalized = {
     ...fallback,
     stage: stageSet.has(value.stage) ? value.stage : fallback.stage,
     choice,
@@ -54,6 +67,10 @@ export function normalizeSeniorSession(value) {
     answers,
     acknowledged: value.acknowledged === true,
   };
+  if (extrasEntries.length > 0) {
+    normalized.postmortemExtras = Object.fromEntries(extrasEntries);
+  }
+  return normalized;
 }
 
 export function parseSeniorSession(raw) {

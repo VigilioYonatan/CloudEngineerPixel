@@ -1,5 +1,7 @@
-import { ArrowRight, ShieldAlert } from 'lucide-preact';
+import { ArrowRight, BookOpen, Scale, ShieldAlert } from 'lucide-preact';
 import type { Challenge } from '../../../data/senior';
+import { seniorCurriculumLinks } from '../../../data/seniorCurriculumLinks';
+import { seniorTradeoffs } from '../../../data/seniorTradeoffs';
 
 type DecisionStageProps = {
   challenge: Challenge;
@@ -11,6 +13,7 @@ type DecisionStageProps = {
   onConfirmDecision: () => void;
   onResetDecision: () => void;
   onAdvanceToReport: () => void;
+  onOpenLesson: (moduleId: string, unitIndex: number) => void;
 };
 
 export function DecisionStage({
@@ -23,7 +26,13 @@ export function DecisionStage({
   onConfirmDecision,
   onResetDecision,
   onAdvanceToReport,
+  onOpenLesson,
 }: DecisionStageProps) {
+  const tradeoff = seniorTradeoffs[current.id];
+  const link = seniorCurriculumLinks[current.id];
+  const selectedFeedback =
+    decisionLocked && choice !== null && tradeoff ? tradeoff.optionFeedback[choice] : null;
+
   return (
     <section class="info-card">
       <div class="card-heading">
@@ -37,6 +46,26 @@ export function DecisionStage({
         Selecciona la primera respuesta que puedes defender con los datos observados.{' '}
         {diagnosisReady ? 'Diagnóstico verificado.' : 'Debes completar primero el diagnóstico.'}
       </p>
+      {tradeoff && (
+        <div class="sr-tradeoff-grid" aria-label="Matriz de trade-offs de ingeniería">
+          <div class="sr-tradeoff-item">
+            <strong>
+              <Scale size={14} /> Mitigación inmediata
+            </strong>
+            <p>{tradeoff.immediateMitigation}</p>
+          </div>
+          <div class="sr-tradeoff-item">
+            <strong>Solución permanente</strong>
+            <p>{tradeoff.permanentFix}</p>
+          </div>
+          <div class="sr-tradeoff-item">
+            <strong>Impacto y reversibilidad</strong>
+            <p>
+              {tradeoff.userImpact} ({tradeoff.reversibility})
+            </p>
+          </div>
+        </div>
+      )}
       <div class="decision-options">
         {current.choices.map((c, i) => (
           <button
@@ -58,7 +87,17 @@ export function DecisionStage({
           <strong>
             {decisionCorrect ? 'Decisión inicial defendible' : 'Esta opción introduce riesgos'}
           </strong>
+          {selectedFeedback && <p>{selectedFeedback}</p>}
           <p>{current.reason}</p>
+          {!decisionCorrect && link && (
+            <button
+              type="button"
+              class="btn btn-secondary btn-compact"
+              onClick={() => onOpenLesson(link.moduleId, link.unitIndex)}
+            >
+              <BookOpen size={15} /> Refuerza este tema en el Aula: {link.moduleTitle}
+            </button>
+          )}
         </div>
       )}
       <p class="sr-hint">

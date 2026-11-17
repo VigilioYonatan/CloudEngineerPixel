@@ -306,27 +306,27 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `terraform-iac-delivery`, `kubernetes-policy-runtime-security`, `software-supply-chain-security` · `vigilio-docs/platform/security/supply-chain.md`.
   - **Resultado 100%:** Revisión práctica de código de infraestructura determinista e interactiva dentro del expediente Senior.
 
-- [ ] **F4-05 — Separar Mitigación Inmediata vs Reparación Permanente y aleatorizar/variar posición de respuestas**
+- [x] **F4-05 — Separar Mitigación Inmediata vs Reparación Permanente y aleatorizar/variar posición de respuestas**
   - **Tarea:** Verificar que en `seniorDiagnostics.ts` y `senior.ts` la opción correcta no siga un patrón predecible, detallar en cada opción de decisión el **trade-off** (impacto en usuarios, tiempo, reversibilidad y riesgo de seguridad) y explicar por qué cada distractor empeora el incidente.
   - **Skills / Vigilio Docs:** `platform-resilience-disaster-recovery`, `complete-work-no-shortcuts` · `vigilio-docs/platform/sre/backup-disaster-recovery.md`.
   - **Resultado 100%:** Feedback específico por opción elegida (no un único texto genérico) en los 18 casos.
 
-- [ ] **F4-06 — Ampliar el Informe Senior a estándar Postmortem / ADR profesional y exportar a Markdown + JSON**
+- [x] **F4-06 — Ampliar el Informe Senior a estándar Postmortem / ADR profesional y exportar a Markdown + JSON**
   - **Tarea:** Mantener compatibilidad con los 4 campos obligatorios de V9 (`cause`, `mitigation`, `rollback`, `validation`) y añadir secciones estructuradas opcionales/profesionales (`impact`, `discardedHypotheses`, `communicationPlan`, `preventiveActions`), más botón **Descargar Postmortem / ADR (.md)** listo para portfolio además del JSON actual.
   - **Skills / Vigilio Docs:** `platform-observability-sre` · `vigilio-docs/platform/sre/adr-threat-modeling.md`.
   - **Resultado 100%:** El estudiante puede exportar un documento Markdown limpio de ingeniería además del respaldo JSON portable.
 
-- [ ] **F4-07 — Visor integrado del Cuaderno Práctico del proveedor dentro de Senior Mode**
+- [x] **F4-07 — Visor integrado del Cuaderno Práctico del proveedor dentro de Senior Mode**
   - **Tarea:** Además del link de descarga `/senior-guides/${p}/${id}.md`, permitir previsualizar el cuaderno específico del proveedor directamente en un panel/modal con `MarkdownViewer` sin salir del expediente.
   - **Skills / Vigilio Docs:** `ux-web-experience`, `web-mfe-build-feature` · `vigilio-docs/standards/experience/information-architecture-and-user-flows.md`.
   - **Resultado 100%:** Consulta inmediata de los 54 cuadernos Senior en desktop y móvil.
 
-- [ ] **F4-08 — Filtros completos en el catálogo Senior y normalización de búsqueda en español**
+- [x] **F4-08 — Filtros completos en el catálogo Senior y normalización de búsqueda en español**
   - **Tarea:** Añadir al catálogo Senior filtro por **Dominio/Categoría** (`IaC`, `Security`, `FinOps`, `Kubernetes`, `SRE`, `Resilience/DR`, `Architecture`), filtro por **Estado del alumno** (`Todos`, `Sin iniciar`, `En curso`, `Registrado`) y búsqueda insensible a tildes/mayúsculas (`filtración` == `filtracion`).
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `ux-web-experience` · `vigilio-docs/standards/experience/content-forms-localization-and-trust.md`.
   - **Resultado 100%:** Descubribilidad instantánea de los 18 casos con contador exacto de resultados filtrados.
 
-- [ ] **F4-09 — Motor de recomendación de refuerzo post-intento y comparador de historial**
+- [x] **F4-09 — Motor de recomendación de refuerzo post-intento y comparador de historial**
   - **Tarea:** Vincular cada caso `S01–S18` con los módulos y unidades curriculares relacionados (ej. `S01 → Módulo 11 Terraform unidades 11.03 y 11.05`; `S14 → Módulo 09 Serverless unidad 09.04` y `Módulo 16 Datos`), mostrando enlaces directos de repaso tras un intento fallido y permitiendo inspeccionar intentos previos en la Bitácora.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `complete-work-no-shortcuts` · `vigilio-docs/standards/engineering/use-case-traceability.md`.
   - **Resultado 100%:** Ciclo pedagógico cerrado entre Senior Mode y las 90 unidades del Aula.

@@ -1,4 +1,5 @@
-import { Download, ExternalLink, Upload } from 'lucide-preact';
+import { BookOpen, Download, ExternalLink, Upload } from 'lucide-preact';
+import { useState } from 'preact/hooks';
 import { CodeBlock } from '../../../components/ui/CodeBlock';
 import type { Provider } from '../../../data/course';
 import type { Challenge } from '../../../data/senior';
@@ -8,7 +9,8 @@ import { seniorPractices } from '../../../data/seniorPractices';
 import { seniorRubric } from '../../../data/seniorRubric';
 import { getProviderMeta } from '../../../domain/providers';
 import type { SeniorReport } from '../../../lib/seniorSession.mjs';
-import { downloadReport } from '../libs/downloadJsonFile';
+import { downloadRubricTemplate } from '../libs/downloadJsonFile';
+import { WorkbookModal } from './WorkbookModal';
 
 type InvestigationDetails = ReturnType<typeof investigationFor>;
 
@@ -51,6 +53,7 @@ export function SeniorSidebar({
 }: SeniorSidebarProps) {
   const cloud_meta = getProviderMeta(p);
   const practice = seniorPractices[current.id] || null;
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   return (
     <aside class="sr-aside">
@@ -140,24 +143,7 @@ export function SeniorSidebar({
         </ul>
         <button
           class="btn btn-secondary"
-          onClick={() =>
-            downloadReport(
-              {
-                caseId: current.id,
-                provider: p,
-                studentReport: answers,
-                automaticCompletionScore: score,
-                review: {
-                  status: 'pending-human-review',
-                  rubric: seniorRubric,
-                  notes: '',
-                  reviewer: '',
-                  reviewedAt: null,
-                },
-              },
-              `revision-docente-${p}-${current.id}.json`,
-            )
-          }
+          onClick={() => downloadRubricTemplate(p, current.id, answers, score)}
         >
           <Download size={16} /> Plantilla de revisión
         </button>
@@ -217,13 +203,28 @@ export function SeniorSidebar({
           <p class="sr-hint">
             <strong>Riesgo frecuente:</strong> {practice.pitfall}
           </p>
-          <a
-            class="official-link"
-            href={`/senior-guides/${p}/${current.id}.md`}
-            download={`${current.id}-${p}-cuaderno.md`}
-          >
-            Descargar cuaderno del caso <Download size={15} />
-          </a>
+          <div class="sr-report-actions">
+            <button
+              type="button"
+              class="btn btn-secondary btn-compact"
+              onClick={() => setPreviewOpen(true)}
+            >
+              <BookOpen size={15} /> Previsualizar cuaderno aquí
+            </button>
+            <a
+              class="official-link"
+              href={`/senior-guides/${p}/${current.id}.md`}
+              download={`${current.id}-${p}-cuaderno.md`}
+            >
+              Descargar cuaderno del caso <Download size={15} />
+            </a>
+          </div>
+          <WorkbookModal
+            open={previewOpen}
+            cloudId={p}
+            caseId={current.id}
+            onClose={() => setPreviewOpen(false)}
+          />
         </section>
       )}
     </aside>

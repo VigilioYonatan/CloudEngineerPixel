@@ -5,6 +5,12 @@ export type SeniorReport = {
   rollback: string;
   validation: string;
 };
+export type SeniorPostmortemExtras = {
+  impact?: string;
+  discardedHypotheses?: string;
+  communicationPlan?: string;
+  preventiveActions?: string;
+};
 export type SeniorSession = {
   version: number;
   stage: SeniorStage;
@@ -16,6 +22,7 @@ export type SeniorSession = {
   cited: string[];
   answers: SeniorReport;
   acknowledged: boolean;
+  postmortemExtras?: SeniorPostmortemExtras;
 };
 export const SENIOR_SESSION_VERSION: number;
 export const REPORT_MAX_CHARS: number;

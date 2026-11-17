@@ -1,9 +1,12 @@
-import { ArrowRight, Search } from 'lucide-preact';
+import { ArrowRight, BookOpen, Search } from 'lucide-preact';
+import { seniorCurriculumLinks } from '../../../data/seniorCurriculumLinks';
 import type { seniorDiagnostics } from '../../../data/seniorDiagnostics';
+import { seniorTradeoffs } from '../../../data/seniorTradeoffs';
 
 type DiagnosticEntry = (typeof seniorDiagnostics)[string];
 
 type DiagnosisStageProps = {
+  caseId: string;
   diagnostic: DiagnosticEntry;
   diagnosisChoice: number | null;
   diagnosisLocked: boolean;
@@ -14,9 +17,11 @@ type DiagnosisStageProps = {
   onConfirmDiagnosis: () => void;
   onResetDiagnosis: () => void;
   onAdvanceToDecision: () => void;
+  onOpenLesson: (moduleId: string, unitIndex: number) => void;
 };
 
 export function DiagnosisStage({
+  caseId,
   diagnostic,
   diagnosisChoice,
   diagnosisLocked,
@@ -27,7 +32,11 @@ export function DiagnosisStage({
   onConfirmDiagnosis,
   onResetDiagnosis,
   onAdvanceToDecision,
+  onOpenLesson,
 }: DiagnosisStageProps) {
+  const link = seniorCurriculumLinks[caseId];
+  const tradeoff = seniorTradeoffs[caseId];
+
   return (
     <section class="info-card sr-diagnostic">
       <div class="card-heading">
@@ -65,6 +74,20 @@ export function DiagnosisStage({
               : 'La hipótesis necesita revisión'}
           </strong>
           <p>{diagnostic.explanation}</p>
+          {tradeoff && (
+            <p class="sr-hint">
+              <strong>Riesgo de seguridad / operación:</strong> {tradeoff.securityRisk}
+            </p>
+          )}
+          {!diagnosisCorrect && link && (
+            <button
+              type="button"
+              class="btn btn-secondary btn-compact"
+              onClick={() => onOpenLesson(link.moduleId, link.unitIndex)}
+            >
+              <BookOpen size={15} /> Refuerza este tema en el Aula: {link.moduleTitle}
+            </button>
+          )}
         </div>
       )}
       <p class="sr-hint">

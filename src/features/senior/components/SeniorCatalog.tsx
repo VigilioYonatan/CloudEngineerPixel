@@ -1,13 +1,21 @@
-import { ArrowRight, CloudCog, Search, TriangleAlert } from 'lucide-preact';
-import { useState } from 'preact/hooks';
+import { ArrowRight, BookOpen, CheckCircle2, Eye, Search } from 'lucide-preact';
+import { useMemo, useState } from 'preact/hooks';
 import { CloudMentor } from '../../../components/mascot/CloudMentor';
-import { EmptyState } from '../../../components/ui/EmptyState';
 import type { Provider } from '../../../data/course';
 import { challenges, type Challenge } from '../../../data/senior';
+import { seniorCurriculumLinks } from '../../../data/seniorCurriculumLinks';
 import { getProviderMeta } from '../../../domain/providers';
-import { progress } from '../../../lib/state';
+import { navigate, progress } from '../../../lib/state';
 import { CloudProviderLogo } from '../../../shared/ui/CloudProviderLogo';
-import { MAX_RECENT_ATTEMPTS } from '../constants/senior.constants';
+import {
+  filterSeniorCatalog,
+  getChallengeDomain,
+  getChallengeStatus,
+  SENIOR_DOMAIN_OPTIONS,
+  SENIOR_STATUS_OPTIONS,
+  type SeniorDomainFilter,
+  type SeniorStatusFilter,
+} from '../libs/filterSeniorCatalog';
 
 type SeniorCatalogProps = {
   cloudId: Provider;
@@ -15,153 +23,220 @@ type SeniorCatalogProps = {
 };
 
 export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
-  const [severity, setSeverity] = useState('todos');
   const [query, setQuery] = useState('');
+  const [severity, setSeverity] = useState('Todas');
+  const [domain, setDomain] = useState<SeniorDomainFilter>('Todos');
+  const [status, setStatus] = useState<SeniorStatusFilter>('Todos');
+  const [expandedAttempt, setExpandedAttempt] = useState<number | null>(null);
   const cloud_meta = getProviderMeta(p);
 
-  const filtered = challenges.filter(
-    (c) =>
-      (severity === 'todos' || c.severity === severity) &&
-      `${c.id} ${c.title} ${c.category} ${c.skills.join(' ')}`
-        .toLowerCase()
-        .includes(query.toLowerCase()),
+  const completedIds = useMemo(
+    () =>
+      new Set(
+        progress.value.senior
+          .filter((entry) => entry.startsWith(`${p}:`))
+          .map((entry) => entry.split(':')[1]),
+      ),
+    [p, progress.value.senior],
   );
-  const completed = progress.value.senior.filter((id) => id.startsWith(`${p}:`)).length;
-  const attempts = (progress.value.seniorAttempts || [])
-    .filter((a) => a.provider === p)
-    .slice(-MAX_RECENT_ATTEMPTS)
-    .reverse();
+
+  const inProgressIds = useMemo(() => {
+    const notes = progress.value.notes || {};
+    const active = new Set<string>();
+    for (const c of challenges) {
+      if (!completedIds.has(c.id) && notes[`senior-session:${p}:${c.id}`]) {
+        active.add(c.id);
+      }
+    }
+    return active;
+  }, [p, completedIds, progress.value.notes]);
+
+  const filtered = filterSeniorCatalog({
+    items: challenges,
+    query,
+    severity,
+    domain,
+    status,
+    completedIds,
+    inProgressIds,
+  });
+
+  const attempts = [...(progress.value.seniorAttempts || [])].reverse();
 
   return (
     <>
-      <div class="sr-banner">
+      <header class="page-head page-head-with-mascot">
         <div>
-          <span class="sr-kicker sr-kicker-with-logo">
+          <span class="kicker kicker-with-logo">
             <CloudProviderLogo providerId={p} size={18} />
-            CLOUD ENGINEERING / SIMULADOR DE PRODUCCIÓN · {cloud_meta.short}
+            CENTRO DE OPERACIONES / {cloud_meta.short}
           </span>
-          <h1>
-            Senior Mode<span>_</span>
-          </h1>
+          <h1>Senior Mode: simulaciones de ingeniería</h1>
           <p>
-            18 escenarios por proveedor. Inspecciona señales, decide con criterio y documenta tu
-            respuesta. No se ejecuta infraestructura real.
+            Casos de estudio con logs, arquitectura y comandos ficticios de solo lectura para
+            practicar investigación técnica, hipótesis y contención. No ejecuta acciones reales ni
+            acredita experiencia en producción.
           </p>
-          <div class="sr-inline">
-            <span>{challenges.length} casos</span>
-            <span>
-              {completed} registrados en {cloud_meta.short}
-            </span>
-            <span>4 etapas por escenario</span>
-          </div>
         </div>
         <CloudMentor
           providerId={p}
           variant="pose"
-          pose="senior"
+          pose="incident"
           size="banner"
-          alt={`Mascota ${cloud_meta.short} en Senior Mode`}
+          alt={`Mentor ${cloud_meta.short} listo para incidentes`}
         />
-      </div>
+      </header>
 
-      <div class="sr-filters">
-        <label>
-          <Search size={17} />
+      <div class="sr-filters" role="search" aria-label="Filtrar casos Senior">
+        <div class="sr-search">
+          <Search size={16} />
           <input
-            aria-label="Buscar casos"
-            placeholder="Buscar por incidente o competencia"
+            type="search"
             value={query}
             onInput={(event) => setQuery((event.currentTarget as HTMLInputElement).value)}
+            placeholder="Buscar caso, skill o tecnología (ej. filtracion, k8s)..."
+            aria-label="Buscar casos Senior"
           />
-        </label>
+        </div>
         <select
-          aria-label="Filtrar severidad"
+          aria-label="Filtrar por dominio"
+          value={domain}
+          onChange={(event) =>
+            setDomain((event.currentTarget as HTMLSelectElement).value as SeniorDomainFilter)
+          }
+        >
+          {SENIOR_DOMAIN_OPTIONS.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt === 'Todos' ? 'Todos los dominios' : opt}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label="Filtrar por estado"
+          value={status}
+          onChange={(event) =>
+            setStatus((event.currentTarget as HTMLSelectElement).value as SeniorStatusFilter)
+          }
+        >
+          {SENIOR_STATUS_OPTIONS.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt === 'Todos' ? 'Todos los estados' : opt}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label="Filtrar por severidad"
           value={severity}
           onChange={(event) => setSeverity((event.currentTarget as HTMLSelectElement).value)}
         >
-          <option value="todos">Todas las severidades</option>
-          <option>Crítica</option>
-          <option>Alta</option>
-          <option>Media</option>
+          <option value="Todas">Todas las severidades</option>
+          <option value="Crítica">Crítica</option>
+          <option value="Alta">Alta</option>
+          <option value="Media">Media</option>
         </select>
       </div>
 
+      <p class="sr-catalog-count" role="status">
+        Mostrando {filtered.length} de {challenges.length} casos en {cloud_meta.short}
+      </p>
+
       <div class="senior-grid">
-        {filtered.map((c) => (
-          <button class="senior-card" key={c.id} onClick={() => onOpenCase(c)}>
-            <div class="senior-card-head">
-              <span class="senior-id">{c.id.toUpperCase()}</span>
-              <span class="sr-severity">{c.severity}</span>
-            </div>
-            <div class="senior-card-icon">
-              <CloudCog size={23} />
-            </div>
-            <small class="sr-category">{c.category}</small>
-            <h3>{c.title}</h3>
-            <p>{c.brief}</p>
-            <div class="senior-card-footer">
-              <span>
-                {progress.value.senior.includes(`${p}:${c.id}`)
-                  ? '✓ Registrado'
-                  : progress.value.notes[`senior-session:${p}:${c.id}`]
-                    ? '↻ Reanudar expediente'
-                    : 'Abrir expediente'}
-              </span>
-              <ArrowRight size={17} />
-            </div>
-          </button>
-        ))}
+        {filtered.map((item) => {
+          const itemStatus = getChallengeStatus(item.id, completedIds, inProgressIds);
+          const itemDomain = getChallengeDomain(item);
+          return (
+            <button key={item.id} class="senior-card" onClick={() => onOpenCase(item)}>
+              <div class="senior-card-top">
+                <span class="badge-sev">{item.severity}</span>
+                <span>
+                  {item.category} · {itemDomain}
+                </span>
+              </div>
+              <h3>
+                {item.id.toUpperCase()} · {item.title}
+              </h3>
+              <p>{item.brief}</p>
+              <div class="senior-card-foot">
+                <span>
+                  {itemStatus === 'Registrado' ? (
+                    <>
+                      <CheckCircle2 size={15} /> Registrado
+                    </>
+                  ) : itemStatus === 'En curso' ? (
+                    'En curso'
+                  ) : (
+                    'Sin iniciar'
+                  )}
+                </span>
+                <span class="open-case">
+                  Abrir incidente <ArrowRight size={15} />
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
-      {filtered.length === 0 && (
-        <EmptyState
-          providerId={p}
-          title="No encontramos casos con ese filtro"
-          description="Prueba buscando por otra competencia (IAM, Terraform, EKS, SLO) o restablece los filtros."
-          actionLabel="Mostrar todos los casos"
-          onAction={() => {
-            setQuery('');
-            setSeverity('todos');
-          }}
-        />
-      )}
-
       {attempts.length > 0 && (
-        <section class="sr-history info-card">
-          <h2>Bitácora personal · {cloud_meta.short}</h2>
-          <p>
-            Resultados registrados en este dispositivo; no equivalen a una acreditación técnica.
+        <section class="info-card sr-history">
+          <h3>Bitácora personal</h3>
+          <p class="sr-hint">
+            Registro local de decisiones y puntajes en este navegador. Inspecciona cada intento para
+            comparar decisiones y reforzar temas pendientes.
           </p>
-          <div class="sr-history-table" role="list">
-            {attempts.map((a, index) => (
-              <div class="sr-history-row" role="listitem" key={`${a.caseId}-${a.at}-${index}`}>
-                <strong>{a.caseId.toUpperCase()}</strong>
-                <span>{new Date(a.at).toLocaleString('es-PE')}</span>
-                <span>
-                  {a.correct ? '✓ Decisión defendible' : '✕ Decisión de riesgo'} · {a.score}/100
-                </span>
-                <button
-                  class="btn btn-secondary"
-                  onClick={() => {
-                    const matched = challenges.find((item) => item.id === a.caseId);
-                    if (matched) onOpenCase(matched);
-                  }}
-                >
-                  Reabrir caso
-                </button>
-              </div>
-            ))}
-          </div>
+          <ul>
+            {attempts.slice(0, 8).map((attempt, index) => {
+              const target = challenges.find((item) => item.id === attempt.caseId);
+              const link = seniorCurriculumLinks[attempt.caseId];
+              const isOpen = expandedAttempt === index;
+              return (
+                <li key={`${attempt.at}-${attempt.caseId}`} class="sr-attempt-item">
+                  <div class="sr-attempt-row">
+                    <span>
+                      <strong>{attempt.caseId.toUpperCase()}</strong> · {target?.title}
+                    </span>
+                    <div class="sr-attempt-meta">
+                      <span>
+                        {attempt.provider.toUpperCase()} · {attempt.score}/100 ·{' '}
+                        {attempt.correct ? 'Acertado' : 'Requiere revisión'}
+                      </span>
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-compact"
+                        onClick={() => setExpandedAttempt(isOpen ? null : index)}
+                      >
+                        <Eye size={14} /> {isOpen ? 'Ocultar' : 'Inspeccionar'}
+                      </button>
+                    </div>
+                  </div>
+                  {isOpen && (
+                    <div class="sr-attempt-detail">
+                      <p class="sr-hint">
+                        Fecha: {new Date(attempt.at).toLocaleString('es-ES')} · Señales examinadas:{' '}
+                        {attempt.examined?.length || 0}
+                      </p>
+                      {!attempt.correct && link && (
+                        <button
+                          type="button"
+                          class="btn btn-secondary btn-compact"
+                          onClick={() =>
+                            navigate('lesson', {
+                              resourceId: link.moduleId,
+                              unitIndex: link.unitIndex,
+                            })
+                          }
+                        >
+                          <BookOpen size={14} /> Refuerza: {link.moduleTitle} ({link.unitHint})
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </section>
       )}
-
-      <section class="sr-disclaimer">
-        <TriangleAlert size={20} />
-        <p>
-          Todos los casos, logs y evaluaciones son sintéticos. Esta plataforma registra respuestas y
-          completitud; no certifica competencia sin revisión externa.
-        </p>
-      </section>
     </>
   );
 }

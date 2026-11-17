@@ -1,14 +1,42 @@
 import { AlertTriangle, CheckCircle2, ClipboardCheck, Download, FileText } from 'lucide-preact';
 import type { investigationFor } from '../../../data/seniorInvestigations';
 import { REPORT_MIN_CHARS } from '../../../lib/seniorEvaluation.mjs';
-import { REPORT_MAX_CHARS, type SeniorReport } from '../../../lib/seniorSession.mjs';
+import {
+  REPORT_MAX_CHARS,
+  type SeniorPostmortemExtras,
+  type SeniorReport,
+} from '../../../lib/seniorSession.mjs';
 
 type InvestigationDetails = ReturnType<typeof investigationFor>;
+
+const adr_extra_fields: readonly [keyof SeniorPostmortemExtras, string, string][] = [
+  [
+    'impact',
+    'Impacto en usuarios / SLO (opcional)',
+    'Duración, usuarios afectados o error budget consumido.',
+  ],
+  [
+    'discardedHypotheses',
+    'Hipótesis descartadas (opcional)',
+    'Qué señales analizaste y descartaste con evidencia.',
+  ],
+  [
+    'communicationPlan',
+    'Comunicación y responsables (opcional)',
+    'Canales internos, statuspage y propietario del seguimiento.',
+  ],
+  [
+    'preventiveActions',
+    'Acciones preventivas (opcional)',
+    'Reglas CI/CD, alertas o GameDays para evitar recurrencia.',
+  ],
+];
 
 type ReportStageProps = {
   details: InvestigationDetails;
   providerShort: string;
   answers: SeniorReport;
+  postmortemExtras?: SeniorPostmortemExtras;
   inspected: readonly string[];
   cited: readonly string[];
   acknowledged: boolean;
@@ -16,10 +44,12 @@ type ReportStageProps = {
   score: number;
   isCompleted: boolean;
   onUpdateSection: (section_key: keyof SeniorReport, value: string) => void;
+  onUpdatePostmortemExtra: (key: keyof SeniorPostmortemExtras, value: string) => void;
   onToggleCitation: (exhibit_id: string, checked: boolean) => void;
   onChangeAcknowledged: (checked: boolean) => void;
   onSaveDraft: () => void;
   onExportReport: () => void;
+  onExportPostmortemMd: () => void;
   onFinalizeSimulation: () => void;
 };
 
@@ -27,6 +57,7 @@ export function ReportStage({
   details,
   providerShort,
   answers,
+  postmortemExtras,
   inspected,
   cited,
   acknowledged,
@@ -34,10 +65,12 @@ export function ReportStage({
   score,
   isCompleted,
   onUpdateSection,
+  onUpdatePostmortemExtra,
   onToggleCitation,
   onChangeAcknowledged,
   onSaveDraft,
   onExportReport,
+  onExportPostmortemMd,
   onFinalizeSimulation,
 }: ReportStageProps) {
   const report_sections: readonly [keyof SeniorReport, string, string][] = [
@@ -121,12 +154,35 @@ export function ReportStage({
         </div>
       )}
 
+      <details class="sr-adr-extras">
+        <summary>Ampliación profesional Postmortem / ADR (opcional)</summary>
+        <div class="sr-adr-grid">
+          {adr_extra_fields.map(([key, label, placeholder]) => (
+            <label class="sr-adr-field" key={key}>
+              <span>{label}</span>
+              <textarea
+                rows={2}
+                maxLength={REPORT_MAX_CHARS}
+                value={postmortemExtras?.[key] || ''}
+                placeholder={placeholder}
+                onInput={(event) =>
+                  onUpdatePostmortemExtra(key, (event.currentTarget as HTMLTextAreaElement).value)
+                }
+              />
+            </label>
+          ))}
+        </div>
+      </details>
+
       <div class="sr-report-actions">
         <button class="btn btn-secondary" onClick={onSaveDraft}>
           Guardar expediente
         </button>
         <button class="btn btn-secondary" onClick={onExportReport}>
           <Download size={17} /> Exportar informe JSON
+        </button>
+        <button class="btn btn-secondary" onClick={onExportPostmortemMd}>
+          <FileText size={17} /> Descargar Postmortem / ADR (.md)
         </button>
       </div>
 
