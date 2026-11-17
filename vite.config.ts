@@ -1,3 +1,15 @@
-import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
-export default defineConfig({plugins:[preact()], build:{target:'es2022'},base:'./'});
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [preact()],
+  build: {
+    target: 'es2022',
+    rollupOptions: {
+      output: {
+        experimentalMinChunkSize: 4096,
+      },
+    },
+  },
+  base: './',
+});

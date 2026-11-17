@@ -58,7 +58,7 @@ function collectSourceFiles(abs_dir) {
 // Validate local source references across all modules in src/ without needing a bundler installed.
 const source_files = collectSourceFiles(join(root, 'src'));
 for (const rel of source_files) {
-  for (const match of read(rel).matchAll(/from\s+['"](\.[^'"\n]+)['"]/g)) {
+  for (const match of read(rel).matchAll(/(?:from\s+|import\s*\(\s*)['"](\.[^'"\n]+)['"]/g)) {
     const target = resolve(root, dirname(rel), match[1]);
     const candidates = [
       target,

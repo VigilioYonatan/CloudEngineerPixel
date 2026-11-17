@@ -222,8 +222,7 @@ export function LessonPage() {
               class="btn btn-ghost"
               onClick={() => {
                 if (topic_idx < mod.topics.length - 1) {
-                  currentTopic.value = topic_idx + 1;
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  navigate('lesson', { resourceId: mod.id, unitIndex: topic_idx + 1 });
                 } else {
                   navigate('lab', mod.id);
                 }

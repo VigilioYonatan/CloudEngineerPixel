@@ -46,7 +46,7 @@ test('Senior case stores inspected evidence and diagnosis independently per clou
     return progress.notes?.['senior-session:aws:s01']?.includes('"diagnosisLocked":true');
   });
   await page.reload();
-  await page.locator('.senior-card').first().click();
+  await expect(page).toHaveURL(/#\/senior\/s01$/);
   await page.getByRole('button',{name:/Diagnosticar/}).click();
   await expect(page.getByText('Hipótesis respaldada por las pistas')).toBeVisible();
   const chooser=page.getByRole('combobox',{name:'Seleccionar proveedor cloud'});

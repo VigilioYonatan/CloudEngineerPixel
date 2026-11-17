@@ -106,7 +106,7 @@ export function CurriculumPage() {
                 key={mod.id}
                 onClick={() => {
                   currentTopic.value = 0;
-                  navigate('lesson', mod.id);
+                  navigate('lesson', { resourceId: mod.id, unitIndex: 0 });
                 }}
               >
                 <div class="module-header">

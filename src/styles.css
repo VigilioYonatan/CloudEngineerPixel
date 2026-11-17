@@ -3366,3 +3366,296 @@ p {
     flex-direction: column;
   }
 }
+
+/* F1-08, F1-09, F2-02 & F2-03 · Lazy loading skeleton, corrupt storage guard, Curriculum Map & Global Labs Catalog */
+.top-nav button {
+  padding: 10px 11px;
+}
+.route-loading {
+  min-height: 62vh;
+  display: grid;
+  place-items: center;
+}
+.route-loading-card {
+  max-width: 440px;
+  text-align: center;
+  padding: 2.2rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+}
+.route-loading-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--soft);
+  color: var(--accent);
+}
+.corrupt-storage-banner {
+  max-width: 1360px;
+  margin: 1rem auto 0;
+  padding: 1rem 1.4rem;
+  border-radius: 14px;
+  border: 1px solid var(--red);
+  background: color-mix(in srgb, var(--red) 10%, var(--surface));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.corrupt-storage-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  max-width: 760px;
+}
+.corrupt-storage-copy strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.corrupt-storage-copy span {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.corrupt-storage-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.map-progression-banner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.map-stage-pill {
+  padding: 1.15rem 1.25rem;
+  border-radius: 15px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 0.3rem;
+}
+.map-stage-senior {
+  border-color: color-mix(in srgb, var(--gold) 50%, var(--border));
+}
+.map-stage-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.map-stage-pill small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.map-level-section {
+  margin-top: 2.5rem;
+}
+.map-level-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.map-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.map-module-card {
+  display: grid;
+  gap: 1.1rem;
+}
+.map-module-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.map-module-titles h3 {
+  margin-bottom: 0.3rem;
+}
+.map-module-titles p {
+  margin-bottom: 0;
+  font-size: 0.92rem;
+}
+.map-module-kicker {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+.map-meta-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.map-meta-label {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+}
+.map-units-box {
+  padding: 0.95rem;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 0.75rem;
+}
+.map-units-header {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+}
+.map-unit-links {
+  display: grid;
+  gap: 0.45rem;
+}
+.map-unit-btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+.map-unit-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.map-unit-done {
+  border-color: color-mix(in srgb, var(--green) 45%, var(--border));
+}
+.map-unit-index {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  background: var(--surface2);
+}
+.map-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.labs-filter-panel {
+  margin-bottom: 1.75rem;
+  display: grid;
+  gap: 1rem;
+}
+.labs-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.labs-filter-grid label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+.labs-filter-grid select {
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+}
+.labs-search-row {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.labs-search-row .search-field {
+  flex: 1;
+  min-width: 240px;
+}
+.labs-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+.lab-catalog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.lab-catalog-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.lab-catalog-level {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.lab-catalog-path {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.76rem;
+  color: var(--muted);
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  background: var(--surface2);
+}
+.lab-catalog-footer {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.lab-catalog-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+@media (max-width: 1024px) {
+  .map-progression-banner,
+  .labs-filter-grid,
+  .labs-catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .map-modules-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .map-progression-banner,
+  .map-meta-row,
+  .labs-filter-grid,
+  .labs-catalog-grid {
+    grid-template-columns: 1fr;
+  }
+}

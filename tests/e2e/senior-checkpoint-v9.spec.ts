@@ -25,7 +25,7 @@ test('Senior V9 imports a backup only into its original cloud and case',async({p
   return typeof entry==='string' && entry.includes('Análisis completo');
  });
  await page.reload();
- await page.locator('.senior-card').first().click();
+ await expect(page).toHaveURL(/#\/senior\/s01$/);
  await expect(page.getByText('Informe técnico estructurado')).toBeVisible();
 });
 

@@ -39,9 +39,11 @@ function resolveImportPath(from_rel, spec) {
 }
 
 function extractRelativeImports(source) {
-  return [...source.matchAll(/(?:import|export)\s+(?:type\s+)?(?:[\s\S]*?\s+from\s+)?['"](\.[^'"]+)['"]/g)].map(
-    (m) => m[1],
-  );
+  return [
+    ...source.matchAll(
+      /(?:(?:import|export)\s+(?:type\s+)?(?:[\s\S]*?\s+from\s+)?|import\s*\(\s*)['"](\.[^'"]+)['"]/g,
+    ),
+  ].map((m) => m[1]);
 }
 
 function detectCycles(graph) {

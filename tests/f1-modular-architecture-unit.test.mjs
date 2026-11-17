@@ -57,8 +57,8 @@ test('F1-04 unit: router parses and formats canonical and legacy V9 hash routes 
   });
   assert.equal(router.parseHashRoute('#invalid-route/xyz'), null);
 
-  assert.equal(router.formatHashRoute('home'), 'home');
-  assert.equal(router.formatHashRoute('lesson', 'networks'), 'lesson/networks');
+  assert.equal(router.formatHashRoute('home'), '#/');
+  assert.equal(router.formatHashRoute('lesson', 'networks'), '#/aula/networks');
 });
 
 test('F1-05 unit: progressMetrics and buildTopicExplanation compute deterministic multicloud outputs', async () => {

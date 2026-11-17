@@ -3,12 +3,14 @@ import {
   BrainCircuit,
   ChartNoAxesCombined,
   CloudCog,
+  Compass,
   FlaskConical,
   LayoutDashboard,
   Menu,
   Moon,
   Settings,
   Sun,
+  Terminal,
   X,
 } from 'lucide-preact';
 import { mobileMenu, navigate, theme, view } from '../lib/state';
@@ -40,12 +42,23 @@ export function AppHeader() {
             <LayoutDashboard size={16} />
             Inicio
           </button>
+          <button class={view.value === 'map' ? 'nav-current' : ''} onClick={() => navigate('map')}>
+            <Compass size={16} />
+            Mapa
+          </button>
           <button
-            class={['learn', 'lesson', 'lab'].includes(view.value) ? 'nav-current' : ''}
+            class={['learn', 'lesson'].includes(view.value) ? 'nav-current' : ''}
             onClick={() => navigate('learn')}
           >
             <BookOpen size={16} />
             Aprender
+          </button>
+          <button
+            class={['labs', 'lab'].includes(view.value) ? 'nav-current' : ''}
+            onClick={() => navigate('labs')}
+          >
+            <Terminal size={16} />
+            Laboratorios
           </button>
           <button
             class={view.value === 'simulator' ? 'nav-current' : ''}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Provider } from '../../../data/course';
-import type { Challenge } from '../../../data/senior';
+import { challenges, type Challenge } from '../../../data/senior';
 import { seniorDiagnostics } from '../../../data/seniorDiagnostics';
 import { investigationFor } from '../../../data/seniorInvestigations';
 import { seniorPlaybooks } from '../../../data/seniorPlaybooks';
@@ -16,6 +16,8 @@ import {
 } from '../../../lib/seniorSession.mjs';
 import {
   completeSenior,
+  currentSeniorCaseId,
+  navigate,
   notify,
   progress,
   provider,
@@ -30,13 +32,15 @@ const getLegacyKey = (cloud_id: Provider, challenge: Challenge) =>
   `senior:${cloud_id}:${challenge.id}`;
 
 export function useSeniorCaseSession() {
-  const [selected, setSelected] = useState<Challenge | null>(null);
   const [session, setSession] = useState<SeniorSession>(emptySeniorSession());
   const [hydratedKey, setHydratedKey] = useState('');
   const [checkpointError, setCheckpointError] = useState('');
 
   const p = provider.value;
-  const current = selected;
+  const active_case_id = currentSeniorCaseId.value;
+  const current = active_case_id
+    ? challenges.find((item) => item.id === active_case_id) || null
+    : null;
   const liveScope = useRef({ provider: p, caseId: current?.id });
   liveScope.current = { provider: p, caseId: current?.id };
 
@@ -107,8 +111,8 @@ export function useSeniorCaseSession() {
 
   const openCase = (next_case: Challenge | null) => {
     saveNow();
-    setSelected(next_case);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setCheckpointError('');
+    navigate('senior', next_case ? { caseId: next_case.id } : undefined);
   };
 
   const exportCheckpoint = () => {

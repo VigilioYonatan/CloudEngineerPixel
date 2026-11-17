@@ -132,7 +132,7 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
 
 ---
 
-### BLOQUE 1 — Arquitectura Modular, Ownership de Símbolos y Desacople de `App.tsx` (9 Tareas · 7/9 Completadas)
+### BLOQUE 1 — Arquitectura Modular, Ownership de Símbolos y Desacople de `App.tsx` (9 Tareas · 9/9 Completadas — 100%)
 
 - [x] **F1-01 — Tests de caracterización antes de dividir `src/App.tsx` (`PASS`)**
   - **Tarea:** Crear pruebas de integración/E2E (`tests/e2e/characterization-f1.spec.ts` + BDD `build-and-version.feature`) que congelen el comportamiento actual de las 8 vistas: navegación, filtros/búsqueda en catálogo, lecciones, quiz, `ProviderCheck`, checklist y notas de laboratorio, los 5 simuladores, resolución completa `100/100` en Senior Mode, exportación de progreso y cambio de tema/versión en Ajustes antes de extraer archivos.
@@ -169,34 +169,34 @@ Conforme a `vigilio-auto-senior` y `complete-work-no-shortcuts`, este plan se co
   - **Skills / Vigilio Docs:** `refactor-existing-code`, `web-mfe-build-feature` · `vigilio-docs/technology/libraries/preact-signals.md`.
   - **Resultado 100%:** Sesiones guardadas en V7, V8 y V9 (y migración de notas V3–V6) se hidratan sin pérdida de datos y todos los tests `senior-*.test.mjs` + E2E pasan al 100%.
 
-- [ ] **F1-08 — Implementar Code-Splitting / Lazy Loading por ruta pesada**
-  - **Tarea:** Cargar bajo demanda (`lazy` / dynamic `import()`) las vistas pesadas (`SeniorWorkbench`, `Simulators`, banco completo de las 90 unidades y guías de `Labs`) con estado `loading` accesible sin salto de layout.
+- [x] **F1-08 — Implementar Code-Splitting / Lazy Loading por ruta pesada (`PASS`)**
+  - **Tarea:** Cargar bajo demanda (`lazy` / dynamic `import()`) las vistas pesadas (`CurriculumMapPage`, `CurriculumPage`, `LessonPage`, `LabsCatalogPage`, `LabPage`, `SimulatorsPage`, `SeniorWorkbench`, `ProgressPage`, `SettingsPage`) con `RouteLoadingState` accesible (`aria-busy="true"`, `aria-live="polite"`) sin salto de layout.
   - **Skills / Vigilio Docs:** `web-mfe-quality` · `vigilio-docs/technology/libraries/preact.md`, `vigilio-docs/stacks/frontend/web-mfe/quality/8-calidad-seo-accesibilidad-rendimiento.md`.
-  - **Resultado 100%:** Chunk inicial JS ligero (`< 60 KB` gzipped) y transiciones instantáneas medidas en `vite build`.
+  - **Resultado 100%:** Chunk inicial JS reducido drásticamente muy por debajo de `< 60 KB` gzipped con múltiples chunks dedicados verificados en `vite build` y BDD.
 
-- [ ] **F1-09 — Migrar y versionar el esquema de almacenamiento local (`schemaVersion: 2`) con retrocompatibilidad V1–V9**
-  - **Tarea:** Añadir `schemaVersion` explícito, timestamps ISO UTC y función pura de migración V1→V2 en `importValidation.mjs` y `state.ts`, ofreciendo descarga de respaldo crudo si algún JSON local estuviera corrupto antes de reiniciar estado (prohibido `localStorage.clear()` silencioso).
+- [x] **F1-09 — Migrar y versionar el esquema de almacenamiento local (`schemaVersion: 2`) con retrocompatibilidad V1–V9 (`PASS`)**
+  - **Tarea:** Añadir `schemaVersion: 2`, timestamps ISO UTC (`updatedAt`), `migrateProgressSnapshot` (V1–V9 → V2) e `inspectStoredProgressRaw` en `importValidation.mjs` y `state.ts`, aislando `localStorage` corrupto con alerta `role="alert"` y descarga de respaldo crudo (`downloadCorruptedBackup`) sin ejecutar jamás `localStorage.clear()` silencioso.
   - **Skills / Vigilio Docs:** `web-mfe-security-delivery`, `refactor-existing-code` · `vigilio-docs/standards/engineering/refactoring-existing-code.md`.
-  - **Resultado 100%:** Importar JSONs antiguos V1–V9 migra limpiamente al nuevo modelo sin perder notas, intentos Senior ni progreso por proveedor.
+  - **Resultado 100%:** Importar JSONs antiguos V1–V9 migra limpiamente a `schemaVersion: 2` sin perder notas ni intentos Senior, y la cuarentena de JSON corrupto está probada en Unit, BDD y Playwright E2E.
 
 ---
 
-### BLOQUE 2 — Páginas, Rutas y Navegación Faltantes (8 Tareas)
+### BLOQUE 2 — Páginas, Rutas y Navegación Faltantes (8 Tareas · 3/8 Completadas)
 
-- [ ] **F2-01 — Router Hash completo con Deep-Linking y Query Params estables**
-  - **Tarea:** Soportar rutas profundas canónicas: `#/` (Home), `#/mapa` (Mapa Curricular), `#/aprender` (Catálogo), `#/aula/:moduleId/:unitIndex` (Lección exacta), `#/labs` (Catálogo Labs), `#/labs/:moduleId` (Lab específico), `#/simuladores/:simId` (Simulador específico), `#/senior` (Catálogo Senior), `#/senior/:caseId` (Expediente Senior), `#/proyectos` (3 Proyectos Portfolio), `#/progreso`, `#/ajustes`, `#/acerca`, manteniendo `?cloud=aws|azure|gcp` y compatibilidad hacia atrás con hashes cortos V9 (`#learn`, `#lesson/networks`, `#senior`).
+- [x] **F2-01 — Router Hash completo con Deep-Linking y Query Params estables (`PASS`)**
+  - **Tarea:** Soportar rutas profundas canónicas: `#/` (Home), `#/mapa` (Mapa Curricular), `#/aprender` (Catálogo), `#/aula/:moduleId/:unitIndex` (Lección exacta), `#/labs` (Catálogo Labs), `#/labs/:moduleId` (Lab específico), `#/simuladores/:simId` (Simulador específico), `#/senior` (Catálogo Senior), `#/senior/:caseId` (Expediente Senior), `#/proyectos`, `#/progreso`, `#/ajustes`, `#/acerca`, manteniendo `?cloud=aws|azure|gcp` y compatibilidad hacia atrás con hashes cortos V9 (`#learn`, `#lesson/networks`, `#senior`).
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `web-mfe-build-feature` · `vigilio-docs/standards/experience/information-architecture-and-user-flows.md`.
-  - **Resultado 100%:** Recargar el navegador o compartir cualquier URL abre exactamente el módulo, unidad, simulador o caso Senior y proveedor indicados.
+  - **Resultado 100%:** Recargar el navegador o compartir cualquier URL abre exactamente el módulo, unidad, simulador o caso Senior y proveedor indicados, verificado en Chromium E2E.
 
-- [ ] **F2-02 — Nueva página `/#/mapa` (Mapa Curricular Interactivo y Matriz de Competencias)**
-  - **Tarea:** Construir vista visual del recorrido `Nivel 1 Fundamentos (60h) → Nivel 2 Ingeniería (80h) → Nivel 3 Arquitectura (100h) → Senior Mode (18 incidentes)` mostrando prerrequisitos recomendados, competencias desbloqueadas por módulo, modalidades disponibles (`Concepto`, `Simulador`, `Local`, `Cloud Real`) y enlace directo a cada unidad.
+- [x] **F2-02 — Nueva página `/#/mapa` (Mapa Curricular Interactivo y Matriz de Competencias) (`PASS`)**
+  - **Tarea:** Construir `CurriculumMapPage` con recorrido `Nivel 1 Fundamentos (60h) → Nivel 2 Ingeniería (80h) → Nivel 3 Arquitectura (100h) → Senior Mode (18 incidentes)` mostrando prerrequisitos recomendados, competencias desbloqueadas por módulo, modalidades disponibles (`Concepto`, `Simulador`, `Local`, `Cloud Real`) y enlace directo a las 90 unidades.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `ux-web-experience` · `vigilio-docs/standards/experience/product-originality-and-platform-blueprints.md`.
-  - **Resultado 100%:** Pantalla `/#/mapa` navegable por teclado y móvil, conectada a datos reales de `course.ts` y progreso del alumno.
+  - **Resultado 100%:** Pantalla `/#/mapa` accesible desde el menú principal, navegable por teclado y móvil, conectada a `course.ts`, `senior.ts` y progreso real del alumno.
 
-- [ ] **F2-03 — Nueva página `/#/labs` (Catálogo Global de los 54 Laboratorios + 3 DevSecOps OIDC + 3 Proyectos)**
-  - **Tarea:** Crear página dedicada de exploración de laboratorios con filtros por **Proveedor** (`AWS / Azure / GCP`), **Nivel**, **Modalidad** (`Simulado / Local Docker-Kind / Cuenta Propia`) y **Advertencia de Costo** (`Gratis local / Free-tier elegible / Genera cargos`).
+- [x] **F2-03 — Nueva página `/#/labs` (Catálogo Global de los 54 Laboratorios + 3 DevSecOps OIDC + 3 Proyectos) (`PASS`)**
+  - **Tarea:** Crear `LabsCatalogPage` con las `60` prácticas (`54` labs de módulo + `3` guías OIDC + `3` proyectos integradores) y filtros combinables por **Proveedor** (`AWS / Azure / GCP`), **Nivel**, **Modalidad** (`Simulado / Local Docker-Kind / Cuenta Propia`), **Advertencia de Costo** (`Gratis local / Free-tier elegible / Genera cargos`) y búsqueda textual.
   - **Skills / Vigilio Docs:** `ux-information-architecture`, `ux-web-experience` · `vigilio-docs/standards/experience/information-architecture-and-user-flows.md`.
-  - **Resultado 100%:** Acceso directo a todas las prácticas desde el menú principal y filtros combinables con estado vacío recuperable.
+  - **Resultado 100%:** Acceso directo desde el menú principal (`Laboratorios`), 4 filtros combinables, búsqueda y recuperación de estado vacío probados en Unit, BDD y Playwright E2E.
 
 - [ ] **F2-04 — Nueva página `/#/proyectos` (3 Proyectos Integradores y Portfolio Defendible)**
   - **Tarea:** Implementar vista dedicada para el **Proyecto 1 (Sitio Estático Seguro + Costos)**, **Proyecto 2 (API Contenedores/Serverless + IaC + CI/CD OIDC + Observabilidad)** y **Proyecto 3 (Capstone Arquitecto Multicloud con C4, Threat Model, RTO/RPO, SLO y TCO)**, con checklist de entregables, rúbrica ponderada y exportador de plantilla ADR/Portfolio en Markdown.

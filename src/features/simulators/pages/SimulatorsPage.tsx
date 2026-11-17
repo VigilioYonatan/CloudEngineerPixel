@@ -8,7 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-preact';
 import { useState } from 'preact/hooks';
-import { notify, progress, provider } from '../../../lib/state';
+import { currentSimMode, navigate, notify, progress, provider } from '../../../lib/state';
 import { SimulatorControls } from '../components/SimulatorControls';
 import { SimulatorResults } from '../components/SimulatorResults';
 import {
@@ -48,7 +48,7 @@ const SIMULATOR_TABS: readonly SimulatorTab[] = [
 ];
 
 export function SimulatorsPage() {
-  const [mode, setMode] = useState<SimulatorMode>('cidr');
+  const mode = currentSimMode.value;
   const [cidr, setCidr] = useState(DEFAULT_CIDR_INPUT);
   const [action, setAction] = useState<IamAction>('read');
   const [scope, setScope] = useState<IamScope>('single');
@@ -96,7 +96,7 @@ export function SimulatorsPage() {
             <button
               key={tab.id}
               class={mode === tab.id ? 'sim-active' : ''}
-              onClick={() => setMode(tab.id)}
+              onClick={() => navigate('simulator', { simId: tab.id })}
             >
               <TabIcon size={20} />
               {tab.title}

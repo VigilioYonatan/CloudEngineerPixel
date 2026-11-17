@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, Check, FlaskConical } from 'lucide-preact';
 import { modules, type Module, type Provider } from '../../../data/course';
 import { completedTopicsCount } from '../../../domain/progressMetrics';
-import { currentTopic, navigate, progress } from '../../../lib/state';
+import { navigate, progress } from '../../../lib/state';
 import { ProgressBar } from '../../../shared/ui/ProgressBar';
 
 type LessonSidebarProps = {
@@ -35,8 +35,7 @@ export function LessonSidebar({ module: mod, cloudId, activeTopicIndex }: Lesson
               key={topic}
               class={index === activeTopicIndex ? 'sidebar-selected' : ''}
               onClick={() => {
-                currentTopic.value = index;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                navigate('lesson', { resourceId: mod.id, unitIndex: index });
               }}
             >
               <span class={`lesson-status ${is_done ? 'done' : ''}`}>
