@@ -13,15 +13,16 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout (read-only)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-      # No fabricated lockfile: publish the real package-lock.json after an online install.
-      # Until then CI uses npm install; switch both jobs to npm ci once it is committed.
-      - name: Install dependencies
-        run: npm install --no-fund --no-audit
+          cache: 'npm'
+      - name: Install dependencies deterministically
+        run: npm ci
       - name: Static source and multicloud coverage (no cloud credentials)
         run: npm run verify:source
       - name: Strict TypeScript
@@ -32,18 +33,20 @@ jobs:
         run: npm run lint
       - name: Production compilation
         run: npm run build
+      - name: Bundle performance budget gate
+        run: npm run bundle:budget
       - name: Local secret pattern scan
         run: npm run security:scan
       - name: DevSecOps browser source controls
         run: npm run security:audit
       - name: Verify preserved files
         run: npm run integrity
-      - name: Dependency vulnerability audit
-        run: npm audit --audit-level=high
-      - name: Generate CycloneDX SBOM
-        run: npm sbom --sbom-format cyclonedx > sbom.cdx.json
+      - name: Dependency vulnerability audit (0 prod vulns + OpenVEX dev gate)
+        run: npm audit --omit=dev --audit-level=high && npm run security:sca
+      - name: Generate and validate CycloneDX SBOM
+        run: npm sbom --sbom-format cyclonedx > sbom.cdx.json && npm run sbom:check
       - name: Archive SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: sbom-cyclonedx
           path: sbom.cdx.json
@@ -52,18 +55,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-      - run: npm install --no-fund --no-audit
+          cache: 'npm'
+      - run: npm ci
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium
       - name: End-to-end smoke (AWS / Azure / GCP / Senior Mode)
         run: npm run test:e2e
       - name: Attach browser traces on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: playwright-test-results
           path: test-results/

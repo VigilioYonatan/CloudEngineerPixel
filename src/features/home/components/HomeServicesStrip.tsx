@@ -28,7 +28,7 @@ export function HomeServicesStrip({ providerId, providerName }: HomeServicesStri
   const activeServices = CLOUD_ESSENTIAL_SERVICES_2026[providerId];
 
   return (
-    <div class="home-services-strip" aria-label={`Servicios esenciales de ${providerName}`}>
+    <section class="home-services-strip" aria-label={`Servicios esenciales de ${providerName}`}>
       <div class="home-services-strip-head">
         <div>
           <strong>Servicios clave actualizados · {providerName}</strong>
@@ -51,6 +51,6 @@ export function HomeServicesStrip({ providerId, providerName }: HomeServicesStri
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

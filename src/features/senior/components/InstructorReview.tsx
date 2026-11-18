@@ -117,7 +117,7 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
         </p>
       )}
       {studentSubmission && (
-        <div class="sr-attempt-detail" aria-label="Entrega importada de solo lectura">
+        <section class="sr-attempt-detail" aria-label="Entrega importada de solo lectura">
           <strong>
             Entrega del alumno: {studentSubmission.caseId.toUpperCase()} ·{' '}
             {studentSubmission.provider.toUpperCase()}
@@ -129,7 +129,7 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
           <p class="sr-hint">
             <strong>Mitigación:</strong> {studentSubmission.report.mitigation || 'Sin contenido'}
           </p>
-        </div>
+        </section>
       )}
       <label class="sr-field">
         <strong>Alias del revisor (sin información sensible)</strong>
@@ -193,10 +193,15 @@ export function InstructorReview({ cloud, caseId }: InstructorReviewProps) {
         </span>
       </div>
       <div class="sr-report-actions">
-        <button class="btn btn-secondary" onClick={save}>
+        <button type="button" class="btn btn-secondary" onClick={save}>
           <Save size={16} /> Guardar borrador
         </button>
-        <button class="btn btn-primary" disabled={!grade.complete} onClick={handle_export}>
+        <button
+          type="button"
+          class="btn btn-primary"
+          disabled={!grade.complete}
+          onClick={handle_export}
+        >
           <Download size={16} /> Exportar revisión JSON
         </button>
       </div>

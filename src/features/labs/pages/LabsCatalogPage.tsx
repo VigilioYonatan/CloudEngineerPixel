@@ -149,7 +149,11 @@ export function LabsCatalogPage() {
               }
             />
           </label>
-          <button class="btn btn-secondary" onClick={() => setCriteria(INITIAL_FILTERS)}>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onClick={() => setCriteria(INITIAL_FILTERS)}
+          >
             Limpiar filtros
           </button>
         </div>

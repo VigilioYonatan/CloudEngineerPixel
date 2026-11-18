@@ -88,6 +88,7 @@ export function SeniorSidebar({
         </p>
         <div class="sr-report-actions">
           <button
+            type="button"
             class="btn btn-secondary"
             onClick={onExportCheckpoint}
             disabled={!checkpointReady}
@@ -142,6 +143,7 @@ export function SeniorSidebar({
           ))}
         </ul>
         <button
+          type="button"
           class="btn btn-secondary"
           onClick={() => downloadRubricTemplate(p, current.id, answers, score)}
         >

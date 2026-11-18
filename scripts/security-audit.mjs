@@ -37,6 +37,6 @@ export function auditRepository(){
 const invoked=process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url);
 if(invoked){
  const findings=auditRepository();
- if(findings.length){findings.forEach(f=>console.error(`${f.severity}: ${f.path}:${f.line} (${f.id}) ${f.reason}`));process.exitCode=1;}
+ if(findings.length){for(const f of findings){console.error(`${f.severity}: ${f.path}:${f.line} (${f.id}) ${f.reason}`);}process.exitCode=1;}
  else console.log('Static DevSecOps rules: no unsafe code or client credential patterns in src. Not a vulnerability certification.');
 }

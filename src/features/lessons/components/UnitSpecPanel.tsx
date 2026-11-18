@@ -1,7 +1,8 @@
-import { AlertTriangle, BookOpen, Brain, CheckCircle2 } from 'lucide-preact';
+import { AlertTriangle, BookOpen, Brain, CheckCircle2, Search } from 'lucide-preact';
 import { CodeBlock } from '../../../components/ui/CodeBlock';
 import type { Provider } from '../../../data/course';
 import type { UnitContentSpec } from '../../../domain/curriculum';
+import { openGlossary } from '../../../lib/glossaryState';
 
 type UnitSpecPanelProps = {
   spec: UnitContentSpec;
@@ -41,14 +42,28 @@ export function UnitSpecPanel({ spec, cloudId }: UnitSpecPanelProps) {
 
       {spec.glossary.length > 0 && (
         <div class="unit-spec-glossary">
-          <strong>
-            <BookOpen size={15} /> Glosario rápido
-          </strong>
+          <div class="unit-spec-adapter-head">
+            <strong>
+              <BookOpen size={15} /> Glosario contextual de la unidad
+            </strong>
+            <button
+              type="button"
+              class="btn btn-secondary btn-compact"
+              onClick={() => openGlossary('')}
+            >
+              <Search size={13} /> Buscador global de siglas
+            </button>
+          </div>
           <div class="unit-glossary-chips">
             {spec.glossary.map((g) => (
-              <span key={g.term} class="unit-glossary-chip">
+              <button
+                key={g.term}
+                type="button"
+                class="unit-glossary-chip unit-glossary-chip-btn"
+                onClick={() => openGlossary(g.term)}
+              >
                 <b>{g.term}:</b> {g.definition}
-              </span>
+              </button>
             ))}
           </div>
         </div>

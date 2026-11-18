@@ -1,6 +1,8 @@
-import { Check, ClipboardCheck, Target, Terminal } from 'lucide-preact';
+import { Check, ClipboardCheck, Play, Target, Terminal } from 'lucide-preact';
+import type { SimulatorRouteId } from '../../../app/router';
 import { CodeBlock } from '../../../components/ui/CodeBlock';
 import type { Module } from '../../../data/course';
+import { navigate } from '../../../lib/state';
 import { ProgressBar } from '../../../shared/ui/ProgressBar';
 import { Tag } from '../../../shared/ui/Tag';
 import { LAB_VERIFICATION_TASKS } from '../constants/labs.constants';
@@ -10,6 +12,7 @@ type LabGuidedChecklistProps = {
   providerShort: string;
   serviceLabel: string;
   serviceCli: string;
+  linkedSimulator: SimulatorRouteId;
   checks: readonly boolean[];
   onToggleCheck: (index: number, checked: boolean) => void;
 };
@@ -19,6 +22,7 @@ export function LabGuidedChecklist({
   providerShort,
   serviceLabel,
   serviceCli,
+  linkedSimulator,
   checks,
   onToggleCheck,
 }: LabGuidedChecklistProps) {
@@ -27,29 +31,36 @@ export function LabGuidedChecklist({
   return (
     <>
       <section class="info-card">
-        <div class="card-heading">
-          <Target size={19} />
-          <h3>Objetivo de la práctica</h3>
+        <div class="lab-guide-toolbar">
+          <div class="card-heading" style={{ marginBottom: 0 }}>
+            <Target size={19} />
+            <h3>Modalidad A · Simulador en navegador y Objetivo</h3>
+          </div>
+          <button
+            type="button"
+            class="btn btn-secondary btn-compact"
+            onClick={() => navigate('simulator', { simId: linkedSimulator })}
+          >
+            <Play size={14} /> Abrir simulador vinculado
+          </button>
         </div>
-        <p>
-          {mod.outcome} En tu ruta actual utilizaremos <strong>{serviceLabel}</strong>.
+        <p style={{ marginTop: '12px' }}>
+          {mod.outcome} En tu ruta actual trabajamos con <strong>{serviceLabel}</strong> sobre datos
+          sintéticos en navegador (cero cargos y cero credenciales).
         </p>
         <div class="lab-meta">
-          <Tag>Sin ejecución automática</Tag>
-          <Tag kind="accent">{providerShort}</Tag>
-          <Tag>20–45 min</Tag>
+          <Tag kind="accent">Modalidad A · Sin cuenta cloud</Tag>
+          <Tag>{providerShort}</Tag>
+          <Tag>Datos sintéticos reproducibles</Tag>
         </div>
       </section>
 
       <section class="info-card">
         <div class="card-heading">
           <Terminal size={19} />
-          <h3>Comando inicial</h3>
+          <h3>Comando de referencia ({providerShort})</h3>
         </div>
-        <p>
-          Consulta los recursos disponibles. Antes de iniciar sesión, verifica que el contexto
-          corresponda a una cuenta de laboratorio.
-        </p>
+        <p>Consulta de solo lectura equivalente en una cuenta aislada de laboratorio:</p>
         <CodeBlock
           code={serviceCli}
           language="bash"
@@ -58,16 +69,12 @@ export function LabGuidedChecklist({
           contextLabel="terminal"
           prefixDollar
         />
-        <p class="helper-text">
-          Si no cuentas con credenciales, estudia la salida esperada en la documentación oficial y
-          completa la modalidad conceptual.
-        </p>
       </section>
 
       <section class="info-card">
         <div class="card-heading">
           <ClipboardCheck size={19} />
-          <h3>Checklist de verificación</h3>
+          <h3>Checklist persistente de verificación</h3>
         </div>
         <div class="task-list">
           {LAB_VERIFICATION_TASKS.map((task, index) => (
@@ -86,7 +93,8 @@ export function LabGuidedChecklist({
         </div>
         <ProgressBar value={checked_count} max={LAB_VERIFICATION_TASKS.length} />
         <small>
-          {checked_count} de {LAB_VERIFICATION_TASKS.length} pasos verificados
+          {checked_count} de {LAB_VERIFICATION_TASKS.length} pasos verificados (guardados en este
+          navegador por nube y módulo)
         </small>
       </section>
     </>

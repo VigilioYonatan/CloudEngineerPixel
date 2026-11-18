@@ -31,6 +31,7 @@ export function FirstVisitOnboardingCard() {
           </div>
         </div>
         <button
+          type="button"
           class="btn btn-ghost"
           onClick={markOnboardingCompleted}
           aria-label="Explorar libremente sin fijar ruta ahora"
@@ -44,6 +45,7 @@ export function FirstVisitOnboardingCard() {
           const meta = getProviderMeta(cloud_id);
           return (
             <button
+              type="button"
               key={cloud_id}
               class="onboarding-choice"
               onClick={() => {

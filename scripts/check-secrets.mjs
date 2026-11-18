@@ -14,6 +14,7 @@ export const SECRET_SCAN_IGNORE = new Set([
   'test-results',
   'playwright-report',
   '.tools',
+  'sbom.cdx.json',
 ]);
 
 export const SECRET_SCAN_EXTENSIONS = new Set([

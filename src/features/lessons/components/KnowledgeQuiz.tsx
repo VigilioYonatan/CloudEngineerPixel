@@ -38,6 +38,7 @@ export function Quiz({ module: mod }: QuizProps) {
       <div class="quiz-options">
         {question.choices.map((choice, index) => (
           <button
+            type="button"
             key={choice}
             class={`${selected === index ? 'quiz-selected' : ''} ${selected !== null && index === question.correct ? 'quiz-correct' : ''} ${selected === index && index !== question.correct ? 'quiz-wrong' : ''}`}
             onClick={() => {

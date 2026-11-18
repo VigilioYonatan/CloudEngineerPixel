@@ -82,6 +82,7 @@ export function CurriculumMapPage() {
         <div class="tabs" role="toolbar" aria-label="Filtrar etapa del mapa curricular">
           {STAGE_FILTERS.map((filter_opt) => (
             <button
+              type="button"
               key={filter_opt.id}
               class={stage_filter === filter_opt.id ? 'tab-active' : ''}
               onClick={() => setStageFilter(filter_opt.id)}
@@ -127,13 +128,14 @@ export function CurriculumMapPage() {
                 estructurado con rúbrica defendible.
               </p>
             </div>
-            <button class="btn btn-gold" onClick={() => navigate('senior')}>
+            <button type="button" class="btn btn-gold" onClick={() => navigate('senior')}>
               <BrainCircuit size={16} /> Ir al catálogo Senior
             </button>
           </div>
           <div class="senior-grid">
             {map_model.seniorCases.map((incident) => (
               <button
+                type="button"
                 key={incident.id}
                 class="senior-card"
                 onClick={() => navigate('senior', { caseId: incident.id })}

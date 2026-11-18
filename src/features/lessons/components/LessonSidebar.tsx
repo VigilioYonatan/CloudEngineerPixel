@@ -32,6 +32,7 @@ export function LessonSidebar({ module: mod, cloudId, activeTopicIndex }: Lesson
           const is_done = progress.value.completed.includes(`${cloudId}:${mod.id}:${index}`);
           return (
             <button
+              type="button"
               key={topic}
               class={index === activeTopicIndex ? 'sidebar-selected' : ''}
               onClick={() => {
@@ -46,10 +47,10 @@ export function LessonSidebar({ module: mod, cloudId, activeTopicIndex }: Lesson
           );
         })}
       </div>
-      <button class="sidebar-lab" onClick={() => navigate('lab', mod.id)}>
+      <button type="button" class="sidebar-lab" onClick={() => navigate('lab', mod.id)}>
         <FlaskConical size={18} /> Laboratorio práctico <ArrowRight size={16} />
       </button>
-      <button class="sidebar-back" onClick={() => navigate('learn')}>
+      <button type="button" class="sidebar-back" onClick={() => navigate('learn')}>
         <ArrowLeft size={16} /> Todos los módulos
       </button>
     </aside>

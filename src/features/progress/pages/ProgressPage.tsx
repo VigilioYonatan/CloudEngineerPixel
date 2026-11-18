@@ -145,6 +145,7 @@ export function ProgressPage() {
             ).length;
             return (
               <button
+                type="button"
                 key={cloud_id}
                 onClick={() => setProvider(cloud_id)}
                 class={active_cloud === cloud_id ? 'cloud-progress-current' : ''}
@@ -169,7 +170,7 @@ export function ProgressPage() {
           posteriormente.
         </p>
         <div class="action-row">
-          <button class="btn btn-secondary" onClick={exportProgress}>
+          <button type="button" class="btn btn-secondary" onClick={exportProgress}>
             <Download size={17} /> Exportar progreso
           </button>
           <label class="btn btn-secondary file-label">
@@ -190,7 +191,7 @@ export function ProgressPage() {
               }}
             />
           </label>
-          <button class="btn btn-danger" onClick={() => void clearProgress()}>
+          <button type="button" class="btn btn-danger" onClick={() => void clearProgress()}>
             <Trash2 size={16} /> Reiniciar progreso
           </button>
         </div>

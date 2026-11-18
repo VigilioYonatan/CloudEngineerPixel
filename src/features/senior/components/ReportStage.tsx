@@ -1,36 +1,15 @@
 import { AlertTriangle, CheckCircle2, ClipboardCheck, Download, FileText } from 'lucide-preact';
 import type { investigationFor } from '../../../data/seniorInvestigations';
+import { detectAccidentalSecrets } from '../../../lib/secretGuard.mjs';
 import { REPORT_MIN_CHARS } from '../../../lib/seniorEvaluation.mjs';
 import {
   REPORT_MAX_CHARS,
   type SeniorPostmortemExtras,
   type SeniorReport,
 } from '../../../lib/seniorSession.mjs';
+import { SENIOR_ADR_EXTRA_FIELDS } from '../constants/senior.constants';
 
 type InvestigationDetails = ReturnType<typeof investigationFor>;
-
-const adr_extra_fields: readonly [keyof SeniorPostmortemExtras, string, string][] = [
-  [
-    'impact',
-    'Impacto en usuarios / SLO (opcional)',
-    'Duración, usuarios afectados o error budget consumido.',
-  ],
-  [
-    'discardedHypotheses',
-    'Hipótesis descartadas (opcional)',
-    'Qué señales analizaste y descartaste con evidencia.',
-  ],
-  [
-    'communicationPlan',
-    'Comunicación y responsables (opcional)',
-    'Canales internos, statuspage y propietario del seguimiento.',
-  ],
-  [
-    'preventiveActions',
-    'Acciones preventivas (opcional)',
-    'Reglas CI/CD, alertas o GameDays para evitar recurrencia.',
-  ],
-];
 
 type ReportStageProps = {
   details: InvestigationDetails;
@@ -87,6 +66,9 @@ export function ReportStage({
   const citableExhibits = details.exhibits.filter((exhibit) => exhibit.id !== 'procedure');
   const citedDistractor = details.exhibits.find(
     (exhibit) => exhibit.isDistractor && cited.includes(exhibit.id),
+  );
+  const reportSecrets = detectAccidentalSecrets(
+    `${answers.cause} ${answers.mitigation} ${answers.rollback} ${answers.validation} ${JSON.stringify(postmortemExtras || {})}`,
   );
 
   return (
@@ -157,7 +139,7 @@ export function ReportStage({
       <details class="sr-adr-extras">
         <summary>Ampliación profesional Postmortem / ADR (opcional)</summary>
         <div class="sr-adr-grid">
-          {adr_extra_fields.map(([key, label, placeholder]) => (
+          {SENIOR_ADR_EXTRA_FIELDS.map(([key, label, placeholder]) => (
             <label class="sr-adr-field" key={key}>
               <span>{label}</span>
               <textarea
@@ -174,14 +156,39 @@ export function ReportStage({
         </div>
       </details>
 
+      {reportSecrets.length > 0 && (
+        <div role="alert" class="sr-distractor-warning">
+          <AlertTriangle size={18} />
+          <div>
+            <strong>Credencial potencial detectada ({reportSecrets[0].label})</strong>
+            <p>Elimina claves o tokens reales antes de guardar o exportar este informe.</p>
+          </div>
+        </div>
+      )}
+
       <div class="sr-report-actions">
-        <button class="btn btn-secondary" onClick={onSaveDraft}>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          disabled={reportSecrets.length > 0}
+          onClick={onSaveDraft}
+        >
           Guardar expediente
         </button>
-        <button class="btn btn-secondary" onClick={onExportReport}>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          disabled={reportSecrets.length > 0}
+          onClick={onExportReport}
+        >
           <Download size={17} /> Exportar informe JSON
         </button>
-        <button class="btn btn-secondary" onClick={onExportPostmortemMd}>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          disabled={reportSecrets.length > 0}
+          onClick={onExportPostmortemMd}
+        >
           <FileText size={17} /> Descargar Postmortem / ADR (.md)
         </button>
       </div>
@@ -200,7 +207,12 @@ export function ReportStage({
         </span>
       </label>
 
-      <button class="btn btn-gold" disabled={!allReady} onClick={onFinalizeSimulation}>
+      <button
+        type="button"
+        class="btn btn-gold"
+        disabled={!allReady}
+        onClick={onFinalizeSimulation}
+      >
         <ClipboardCheck size={17} /> Registrar simulación ({score}/100)
       </button>
 

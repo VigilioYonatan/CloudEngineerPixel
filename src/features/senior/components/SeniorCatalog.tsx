@@ -80,7 +80,7 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
             practicar investigación técnica, hipótesis y contención. No ejecuta acciones reales ni
             acredita experiencia en producción.
           </p>
-          <div class="sr-hero-metrics" aria-label="Resumen de incidentes">
+          <section class="sr-hero-metrics" aria-label="Resumen de incidentes">
             <span>
               <strong>{challenges.length}</strong> escenarios reales
             </span>
@@ -90,7 +90,7 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
             <span>
               <strong>{inProgressIds.size}</strong> en investigación
             </span>
-          </div>
+          </section>
         </div>
         <SeniorMascotStage
           providerId={p}
@@ -100,7 +100,7 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
         />
       </header>
 
-      <div class="sr-filters" role="search" aria-label="Filtrar casos Senior">
+      <search class="sr-filters" aria-label="Filtrar casos Senior">
         <div class="sr-search">
           <Search size={16} />
           <input
@@ -147,7 +147,7 @@ export function SeniorCatalog({ cloudId: p, onOpenCase }: SeniorCatalogProps) {
           <option value="Alta">Alta</option>
           <option value="Media">Media</option>
         </select>
-      </div>
+      </search>
 
       <p class="sr-catalog-count" role="status">
         Mostrando {filtered.length} de {challenges.length} casos en {cloud_meta.short}

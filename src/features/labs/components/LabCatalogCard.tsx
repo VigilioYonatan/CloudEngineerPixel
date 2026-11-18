@@ -54,7 +54,7 @@ export function LabCatalogCard({ item, onOpenLab }: LabCatalogCardProps) {
             item.serviceLabel
           )}
         </span>
-        <button class="btn btn-secondary" onClick={() => onOpenLab(item)}>
+        <button type="button" class="btn btn-secondary" onClick={() => onOpenLab(item)}>
           Abrir laboratorio <ArrowRight size={15} />
         </button>
       </div>

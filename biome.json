@@ -23,18 +23,44 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "none",
+      "preset": "recommended",
       "suspicious": {
         "noDebugger": "error",
-        "noExplicitAny": "off",
+        "noExplicitAny": "error",
         "noDoubleEquals": "error"
       },
       "correctness": {
-        "noUnusedVariables": "off",
+        "noUnusedVariables": "error",
         "noUnreachable": "error"
       }
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "src/lib/instructorReview.mjs",
+        "src/domain/markdownParser.ts",
+        "tests/senior-v4.test.mjs"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noControlCharactersInRegex": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tests/senior-v4.test.mjs"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "actions": {
       "source": {

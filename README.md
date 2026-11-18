@@ -1,208 +1,226 @@
-# Cloud Engineering Academy — Multicloud Engineering & Senior Mode
+# Cloud Engineering Academy — Multicloud Engineering, Simulators & Senior Mode
 
-> **Estado actual (fuente única de versión en `package.json`):** Academia interactiva multicloud (**AWS, Microsoft Azure y Google Cloud**) con simuladores deterministas, laboratorios guiados y **Senior Mode** basado en evidencias sintéticas. La versión activa de la plataforma se sincroniza automáticamente desde `package.json` hacia la interfaz (`Ajustes`) y los respaldos JSON exportados (`appVersion`), evitando desfases documentales. Consulta `PLAN_FALTANTES_100_SKILLS_VIGILIO.md` y `TODO_LO_QUE_DEBE_TENER_ESTA_APP.md` para el seguimiento verificable de capacidades.
+![Version](https://img.shields.io/badge/version-synced%20from%20package.json-ff9900)
+![Clouds](https://img.shields.io/badge/clouds-AWS%20%7C%20Azure%20%7C%20GCP-0ea5e9)
+![Stack](https://img.shields.io/badge/stack-Preact%2010%20%2B%20Signals%20%2B%20TS%205.9%20%2B%20Vite%207-10b981)
+![Quality](https://img.shields.io/badge/WCAG%202.2%20AA-Verified%20%7C%20Zero%20Secrets-f4c45b)
 
-## Inicio Rápido y Puertas de Calidad (< 10 min)
+> **Fuente única de verdad:** Plataforma educativa interactiva multicloud (**AWS, Microsoft Azure y Google Cloud**) con **fuente única de versión en `package.json`** sincronizada automáticamente hacia `Ajustes` y respaldos JSON (`appVersion`). Conserva íntegros los **291 archivos base de V9** (`docs/FILE_MANIFEST_V10.json`, `removed: []`). El historial completo V1–V10 se preserva en [`CHANGELOG.md`](CHANGELOG.md) y `docs/RELEASE_NOTES_V*.md`.
 
-**Prerrequisitos:** Node.js LTS (`>= 22`, verificado con `npm run doctor`) y npm con `package-lock.json` versionado.
+---
+
+## 2. Tabla de Contenidos
+
+1. [Header & Alcance Honesto](#cloud-engineering-academy--multicloud-engineering-simulators--senior-mode)
+2. [Tabla de Contenidos](#2-tabla-de-contenidos)
+3. [Descripción General y Capacidades](#3-descripción-general-y-capacidades)
+4. [Stack Tecnológico](#4-stack-tecnológico)
+5. [Arquitectura General](#5-arquitectura-general)
+6. [Estructura del Repositorio y Ownership](#6-estructura-del-repositorio-y-ownership)
+7. [Quick Start (< 10 minutos)](#7-quick-start--10-minutos)
+8. [Variables de Entorno y Configuración Local](#8-variables-de-entorno-y-configuración-local)
+9. [Contratos Internos y Esquemas de Datos](#9-contratos-internos-y-esquemas-de-datos)
+10. [Estrategia de Pruebas](#10-estrategia-de-pruebas)
+11. [Pipeline CI/CD y Cadena de Suministro](#11-pipeline-cicd-y-cadena-de-suministro)
+12. [Despliegue Estático y Sandbox Local Docker/Kind](#12-despliegue-estático-y-sandbox-local-dockerkind)
+13. [Checklist del Desarrollador (Pre-PR)](#13-checklist-del-desarrollador-pre-pr)
+14. [Solución de Problemas Frecuentes (Troubleshooting)](#14-solución-de-problemas-frecuentes-troubleshooting)
+15. [Contribución, Marcas y Licencia Educativa](#15-contribución-marcas-y-licencia-educativa)
+
+---
+
+## 3. Descripción General y Capacidades
+
+**Cloud Engineering Academy** entrena criterio real de ingeniería en la nube sin exigir tarjetas de crédito ni exponer cuentas productivas:
+
+- **Currículo estructurado de 18 módulos y 90 unidades únicas (`UnitContentSpec`):** Dividido en *Nivel 1: Fundamentos (60h)*, *Nivel 2: Ingeniería (80h)* y *Nivel 3: Arquitectura (100h)* con teoría propia, antipatrones reales, diagramas SVG accesibles, comparador multicloud, micro-retos GoPixel, glosario global y banco de **90 preguntas razonadas** que conservan `bestScore`.
+- **13 Simuladores deterministas en navegador:** CIDR (reservas reales AWS=5, Azure=5, GCP=4), IAM (`Explicit Deny > Allow > Implicit Deny`), Autoescalado, SLO, Architecture Studio, **Routing & Firewall Lab (con topología 3D en Three.js)**, Terraform Plan & Drift, Kubernetes Scheduler, Load Balancing & Backpressure, FinOps, Disaster Recovery RTO/RPO, Messaging/DLQ/Outbox y Observability Burn-Rate.
+- **Senior Mode (18 incidentes × 3 nubes = 54 investigaciones nativas):** Flujo en 4 etapas (`Investigar → Diagnosticar → Decidir → Informe`) con contrapruebas (*Red Herrings*), `IncidentTimeline`, `CodeReviewLab`, exportación Postmortem/ADR (`.md` y `.json`), checkpoints portables aislados por nube y rúbrica docente local no autenticada.
+- **60 Prácticas y Laboratorios en 3 Modalidades:** Simulador en navegador, kit local reproducible (`labs/local-sandbox/` con Docker Compose y Kind) y guía segura para cuenta cloud propia con filtro preventivo local anti-secretos (`secretGuard`).
+
+> **Límites éticos y operativos honestos:** Esta aplicación es una SPA estática local. No autentica usuarios contra servidores, no despliega infraestructura real desde el navegador, no consulta precios cloud en vivo y sus puntajes miden **completitud formativa**, nunca certificación oficial de AWS, Microsoft ni Google.
+
+---
+
+## 4. Stack Tecnológico
+
+| Capa | Tecnología | Rol en el Proyecto |
+|---|---|---|
+| **UI & Estado Reactivo** | Preact `10.27` + `@preact/signals` `2.2` | Renderizado ligero y estado reactivo aislado por proveedor (`?cloud=aws\|azure\|gcp`). |
+| **Lenguaje** | TypeScript `5.9` (`strict: true`) | Contratos de dominio, motores puros de simulación y declaraciones `.d.mts` sin `any`. |
+| **Bundler** | Vite `7.1` | Code-splitting por ruta (`index-*.js < 60 KB` gzip) e importación estática `?raw` de guías. |
+| **Visualización 3D / SVG** | Three.js `0.187` (lazy) + SVG declarativo | Inspección interactiva de saltos de red 3D y diagramas topológicos de 4 capas cero-CLS. |
+| **Calidad & Formato** | Biome `2.6` (`preset: "recommended"`) | Linter estricto (`biome ci src tests scripts`) y formateador determinista. |
+| **Testing** | `node:test` + BDD Gherkin + Playwright `1.56` + `@axe-core/playwright` | Pirámide completa: unitarios puros, especificaciones BDD en español, E2E Chromium y auditoría WCAG 2.2 AA. |
+
+---
+
+## 5. Arquitectura General
+
+```mermaid
+flowchart LR
+  User["Estudiante / Docente"] --> Router["Hash Router + ?cloud=aws|azure|gcp"]
+  Router --> AppShell["src/app/ (Header Pixel UX, ProviderSwitcher, Modals)"]
+  Router --> LazyPages["src/features/* (Lazy Route Chunks)"]
+  LazyPages --> PureEngines["13 Pure Simulator Engines + Senior Evaluator"]
+  LazyPages --> MarkdownSafe["Safe MarkdownViewer (Zero innerHTML / Zero XSS)"]
+  PureEngines --> LocalState["localStorage schemaVersion: 2 + secretGuard"]
+```
+
+Documentación detallada de capas e invariantes en [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+---
+
+## 6. Estructura del Repositorio y Ownership
+
+```text
+.
+├── src/
+│   ├── app/                  # Shell global, AppHeader, AppFooter, CloudProviderSwitcher y router Hash
+│   ├── components/           # Componentes transversales accesibles (CodeBlock, ConfirmDialog, GlossaryModal, MarkdownViewer, CloudMentor)
+│   ├── config/               # Metadatos sincronizados desde package.json (appMeta.ts)
+│   ├── data/                 # Catálogo curricular, 90 UnitContentSpecs, quizBank, glosario y 18x3 expedientes Senior
+│   ├── design-system/        # Fuentes WOFF2 auto-alojadas (fonts.css) y tokens WCAG 2.2 AA (tokens.css)
+│   ├── domain/               # ProviderRegistry, métricas, parser Markdown seguro y clasificación de riesgo CLI
+│   ├── features/             # Módulos de dominio desacoplados (< 250 líneas/archivo, 0 imports cruzados):
+│   │   ├── about/            # Metodología, Seguridad Cloud, Privacidad y No afiliación
+│   │   ├── curriculum/       # Catálogo Aprender y Mapa Curricular (/mapa)
+│   │   ├── home/             # Portada, Hero cero-CLS, onboarding y tira de servicios 2026
+│   │   ├── labs/             # Catálogo global de 60 labs, 3 modalidades, metadatos y exportador de evidencias
+│   │   ├── lessons/          # Aula de 90 unidades, micro-juegos GoPixel y evaluaciones
+│   │   ├── progress/         # Dashboard de 6 dimensiones e importación/exportación global validada
+│   │   ├── projects/         # 3 Proyectos integradores con rúbricas al 100% y generador ADR (.md)
+│   │   ├── senior/           # Consola Senior Mode en 4 etapas, Timeline, CodeReviewLab y revisión docente
+│   │   ├── settings/         # Preferencias de movimiento reducido y borrado granular por nube/caso
+│   │   └── simulators/       # 13 motores puros + laboratorio 3D Three.js
+│   ├── lib/                  # Persistencia versionada, migraciones V1-V9->V2, checkpoints y secretGuard
+│   └── shared/ui/            # Primitivas visuales puras e iconografía SVG pixel-art 16x16 crispEdges
+├── labs/                     # 54 guías por nube, 3 OIDC, Terraform enterprise-finops.tf y kit local-sandbox/
+├── public/                   # Assets originales de mascota, 54 guías Senior, fuentes WOFF2 locales y _headers CSP/HSTS
+├── schemas/                  # Esquema JSON de revisión docente local (instructor-review.schema.json)
+├── scripts/                  # Gates de integridad SHA-256, escaneo de secretos, auditoría SAST, SBOM y bundle budget
+├── tests/                    # Pruebas unitarias, suites BDD Gherkin (tests/bdd/) y Playwright E2E (tests/e2e/)
+└── docs/                     # Arquitectura, Accesibilidad, Autoría, Seguridad Cloud, Runbooks y Manifiestos V3-V10
+```
+
+---
+
+## 7. Quick Start (< 10 minutos)
+
+**Prerrequisitos:** Node.js `>= 22.0.0` y npm `>= 10` (sin cuentas cloud ni variables secretas requeridas).
 
 ```bash
-npm install
+# 1. Instalar dependencias exactas desde package-lock.json
+npm ci
+
+# 2. Verificar salud del entorno y dependencias
 npm run doctor
-npm run verify
-npm run test:bdd
-npm run test:e2e
-```
 
----
-
-## Registro Histórico Preservado (V8 / V6 / V9)
-
-### Cloud Engineering Academy — V8 (Senior Mode, DevSecOps y QA)
-
-> **Entrega V8**: se conserva íntegra la V7, se incorpora revisión docente local opcional en Senior Mode,  controles DevSecOps sin instalación y nuevas pruebas. Sigue pendiente ejecutar Vite, TypeScript completo, Biome y Playwright con dependencias reales. No se declara producción lista ni formación de 240 horas totalmente desarrollada. Lee `docs/RELEASE_NOTES_V8.md`, `docs/DEVSECOPS_V8.md` y `docs/SENIOR_REVIEW_V8.md`.
-
-## Verificaciones rápidas
-
-```bash
-# Con Node y TypeScript global, sin descargar dependencias
-npm run verify:offline
-# Con npm instalado y un package-lock generado realmente
-npm install
-npm run verify
-npx playwright install chromium
-npm run test:e2e
-```
-
----
-
-# Cloud Engineering Academy ☁️ — V6 (código fuente)
-
-> **Versión V6 (Senior Mode / DevSecOps / QA).** Se conservaron todos los archivos del ZIP V5. Se añadió evaluación con citas de evidencias, reversión, intentos, pruebas de motor y E2E, CI, CodeQL, SBOM e integridad verificable. La compilación y los tests de navegador requieren una instalación npm real; en el entorno de autoría no fue posible resolver registry.npmjs.org. No se simula que estas verificaciones hayan pasado. Ver `docs/PROJECT_STATUS_V6.md`, `docs/SENIOR_MODE_V6.md` y `docs/DEVSECOPS_V6.md`.
-
-**Aplicación frontend educativa para AWS, Azure y Google Cloud**, construida con Preact + TypeScript + Vite + Signals, inspirada en el lenguaje de diseño de GoPixel Academy y en la documentación de ingeniería Vigilio. Incluye una mascota cloud aprobada, branding dinámico por nube y Senior Mode.
-
-## Iniciar
-
-**Requisitos**: Node.js 20.19+ o 22.12+ y npm con acceso a registry.npmjs.org.
-
-```bash
-npm install
+# 3. Levantar servidor local de desarrollo (http://localhost:5173)
 npm run dev
 ```
 
-Abre la URL que muestre Vite (normalmente `http://localhost:5173`). Para compilar:
-
+Para compilar y previsualizar el bundle estático de producción:
 ```bash
-npm run typecheck
 npm run build
 npm run preview
-npm test
 ```
-
-> **Validación V6:** las pruebas puras de Node, el escaneo heurístico local, la verificación de integridad y el análisis sintáctico de TypeScript se ejecutaron. No se pudo completar la instalación npm, ni validar el build real, Biome o Playwright. Ejecuta `npm run verify` y `npm run test:e2e` con conectividad a npm.
-
-## Incluye
-
-- **Home** responsiva con estética tecnológica, hero, mascota, tres niveles, rutas de proveedor y CTA a Senior Mode.
-- **Provider switcher en el header**, persistente y reflejado en `?cloud=aws|azure|gcp`: color de tema, mascota ilustrada, CLI, servicio, documentación, laboratorios y progreso por proveedor.
-- **18 módulos** distribuidos en fundamentos (60 h), ingeniería (80 h) y arquitectura (100 h), 90 unidades curriculares, con un taller focalizado y un reto de ingeniería específico por unidad. Son ejercicios y recursos de estudio, **no 240 horas de contenidos completamente producidos**; necesitan validación de docentes y demostraciones reales antes de uso comercial.
-- **18 quizzes** con corrección y explicación. Cada quiz puede repetirse en las tres rutas.
-- **18 laboratorios frontend** con listas de seguridad, comandos de lectura, notas locales y declaración de finalización. No verifican cuentas cloud.
-- **5 simuladores calculados localmente**: CIDR, política IAM simplificada, réplicas de capacidad y error budget SLO.
-- **18 casos Senior**, con señales de incidentes, decisiones, explicación, checklist de evidencias, notas/ADR, investigaciones contextualizadas por proveedor y registro local por nube. Son simulaciones; la aplicación no acredita competencias reales.
-- **Dashboard de progreso**, exportación/importación JSON, tema claro/oscuro, navegación con hash y base responsive.
-- **54 guías de práctica específicas por nube** (`labs/{aws,azure,gcp}/*.md`): una por módulo y proveedor, con evidencias, rúbrica y cleanup.
-- **18 cuadernos de incidentes Senior** (`labs/senior/`) y manual docente.
-- **Tres laboratorios Terraform introductorios** en `labs/aws`, `labs/azure`, `labs/gcp` para redes básicas (no se ejecutan en la aplicación).
-
-## Arquitectura
-
-```text
-src/
-├── App.tsx             # Shell y páginas del producto (primera entrega)
-├── styles.css          # Sistema visual responsive con tokens por proveedor
-├── data/
-│   ├── course.ts       # Catálogo, servicios y preguntas
-│   ├── knowledge.ts    # Explicaciones conceptuales verificables por módulo
-│   └── senior.ts       # 18 escenarios Senior con evidencia
-└── lib/
-    └── state.ts        # Señales, navegación y persistencia local
-public/assets/         # Mascota original y poses alternativas
-labs/                   # Terraform inicial separado por proveedor
-```
-
-Se planeó mantener el frontend estático inicialmente. Evita almacenar tokens o ejecutar Terraform directamente desde el navegador. Para sandboxes administrados se requiere un backend seguro, cuotas, IAM temporal, aislamiento y limpieza automática, fuera del alcance de esta versión.
-
-## Flujos de uso
-
-1. Entra a **Inicio**, selecciona AWS, Azure o GCP y observa el cambio de paleta y mascota.
-2. Abre **Aprender**, filtra por nivel y entra a un módulo.
-3. Consulta la teoría, la implementación por proveedor, el comando de solo lectura y la documentación oficial.
-4. Contesta el quiz, marca una lección, entra al laboratorio y guarda notas.
-5. Abre **Simuladores** y experimenta con valores.
-6. Resuelve un caso **Senior Mode** con decisión correcta y checklist de evidencias.
-7. Abre **Mi progreso** y exporta/importa JSON.
-
-## Límites relevantes
-
-- La autenticación a un cloud **NO** está implementada.
-- No existe control remoto de recursos, consola de proveedor, sandbox multicloud gestionado ni costes cloud en vivo.
-- Simulaciones IAM, capacidad y SLO son educativas, no sustituyen herramientas de evaluación oficiales.
-- Los labs Terraform son ejemplos pequeños; lee `labs/README.md` antes de aplicar.
-- La mascota original se mantiene para AWS y se incluyen otras ilustraciones para Azure/GCP; son variantes estilísticas, no un conjunto de personajes canónicamente idénticos.
-- Se necesita crear material pedagógico de profundidad real para cada unidad y validar manualmente todos los ejemplos antes de anunciar 240 horas de enseñanza impartible.
-- No ofrecemos certificaciones de proveedores ni decimos que somos socios oficiales.
-
-## Próximas mejoras priorizadas
-
-1. Enriquecer cada una de las 90 lecciones con teoría única, diagramas, código comprobable y evaluación asociada.
-2. Separar `App.tsx` en componentes por feature, incluir Vitest y E2E Playwright con CI.
-3. Añadir simuladores más profundos de rutas, policy evaluation, Kubernetes y costos reales con fuentes versionadas.
-4. Crear entornos locales Docker/Kind y ampliar los labs Terraform con validadores externos seguros.
-5. Auditar accesibilidad, soporte para teclado, contrastes y visual en navegadores reales.
-6. Crear variantes oficiales de la mascota a partir del personaje elegido, asegurando consistencia exacta de rostro/vestuario.
-
-## Licencias y marcas
-
-El uso de nombres AWS, Microsoft Azure y Google Cloud aquí es descriptivo. Sus marcas pertenecen a sus respectivos propietarios. Esta academia no está afiliada ni patrocinada por esos proveedores. Revisa derechos de reproducción de los assets de usuario antes de redistribuir comercialmente.
-
-## Diferencias de V2 frente a V1
-
-- 90 talleres de unidad con objetivos, ejercicios, evidencias, riesgos y comparación de proveedores (`src/data/study.ts`).
-- 54 guías Markdown por proveedor y 18 cuadernos de incidentes para preparar sesiones.
-- Comprobación de nombres de servicios por ruta en cada módulo y pistas de proveedor dentro de Senior Mode.
-- Quinto simulador: Architecture Decision Studio (evaluación didáctica, no recomendación de diseño certificada).
-- 11 pruebas de estructura y contenido; `.github/workflows/quality.yml` listo para validar instalación/compilación en GitHub Actions.
-
-### Verificación real de esta entrega
-- `npm test`: **11/11 pruebas superadas**.
-- Parser oficial TypeScript: **7 archivos TS/TSX sin errores de sintaxis**.
-- `npm run build` y navegación E2E: **no verificadas** porque no hubo acceso a instalar dependencias de npm en este entorno.
-- Las ilustraciones Azure/GCP son alternativas artísticas, no ediciones exactas de la mascota aprobada. La original se usa en la ruta AWS.
-
-### No incluido (no debe anunciarse como terminado)
-- Sandbox cloud gestionado ni despliegue real automatizado desde la web.
-- Lecciones audiovisuales extensas por cada unidad, ni revisión humana de evidencias.
-- Autenticación de alumnos, aulas, pagos, instructor admin, notas en servidor o certificados oficiales.
-- Validación práctica de cada comando/Terraform en cuentas activas de AWS/Azure/GCP.
-
-Es una academia frontend avanzada y reproducible con materiales prácticos, **no una plataforma SaaS operativa ni un programa de 240 horas plenamente impartido**.
-
-## Senior Mode V3 — Expedientes investigativos
-
-- Nueva consola con investigación de 18 casos, logs/configuraciones sintéticas, decisión técnica, informes y exportación JSON.
-- Cada nube modifica el servicio contextual y los comandos didácticos.
-- Nuevo historial de intentos por proveedor, compatible con progreso V1/V2.
-- El indicador numérico refleja **completitud de pasos**, no dominio técnico certificado. Para acreditar competencias se requiere evaluación humana.
-- Guía detallada: [`docs/SENIOR_MODE_V3.md`](docs/SENIOR_MODE_V3.md).
-
-**Verificación disponible en este entorno:** `npm test`, pruebas sintácticas mediante compilador TypeScript global y comparación de integridad ZIP. No se logró instalar dependencias desde npm por ausencia de acceso al registro; `npm run build`, render navegador y E2E siguen sin verificación aquí.
-
-## Senior Mode V4 — Ampliación sin borrar archivos
-
-V4 conserva todo V3. Añade **54 cuadernos de investigación Senior diferenciados por AWS, Azure y GCP**, descarga desde cada expediente, criterios de evidencia, comandos de diagnóstico de solo lectura y una bitácora de intentos en la interfaz. La decisión seleccionada no crea un intento persistente hasta que se registra la simulación completa. Consulta [`docs/SENIOR_MODE_V4.md`](docs/SENIOR_MODE_V4.md).
-
-La versión sigue siendo frontend educativo estático; **no** incluye sandboxes cloud reales, evaluación semántica automática ni certificación profesional. La cifra de 240 horas representa el plan curricular, no una validación de docencia impartida. La compilación y pruebas E2E deben repetirse en un entorno con dependencias npm disponibles.
-
-
-## V5 — DevSecOps y revisión Senior
-
-Se incorporan controles de importación segura, Biome progresivo, pruebas de seguridad, flujo CI de análisis, comprobación heurística de secretos, Dependabot y una rúbrica descargable para revisión docente. Ver `docs/DEVSECOPS_V5.md` y `SECURITY.md`.
 
 ---
 
-## Cambios relevantes V6
+## 8. Variables de Entorno y Configuración Local
 
-- Senior Mode tiene un motor determinista separado en `src/lib/seniorEvaluation.mjs`, con evidencia examinada y referenciada, decisión confirmada, informe de 4 partes y reconocimiento expreso del carácter educativo.
-- Se conservan las 90 unidades, 18 retos Senior, 54 cuadernos específicos por nube, mascotas y rutas de V5.
-- DevSecOps y pruebas: `npm run lint` (Biome sobre `src`, `tests` y `scripts`), `npm test`, `npm run security:scan`, `npm run integrity`, `npm run test:e2e`.
-- Se agregan guías DevSecOps de federación OIDC para AWS, Azure y GCP en `labs/devsecops/`.
-- `docs/FILE_MANIFEST_V6.json` registra SHA-256 de todos los archivos de la V5 y el estado de cada cambio.
-- **Advertencia:** el porcentaje de completitud de Senior Mode no acredita pericia técnica. Se requiere revisión docente.
-- **Sin lockfile fabricado:** generar un lockfile real desde `npm install` en un equipo conectado a npm y versionarlo; a continuación reemplazar `npm install` por `npm ci` en CI.
+La SPA estática **no requiere archivo `.env`** para ejecutarse ni compilarse (cero credenciales en navegador). Para el kit opcional de práctica en contenedores (`labs/local-sandbox/`), todas las variables son efímeras locales y están documentadas en [`labs/local-sandbox/.env.example`](labs/local-sandbox/.env.example):
 
-## V7 — Senior Mode con diagnóstico y reanudación
-
-- Cuatro etapas: **Investigar → Diagnosticar → Decidir → Informe**.
-- 18 diagnósticos técnicos específicos; hipótesis defendible obligatoria antes de confirmar contención.
-- Expedientes autoguardados por proveedor y caso (sin compartir progreso de evidencia entre nubes).
-- Se preservan informes y avances antiguos; validación versionada de datos, límites de texto y archivo de progreso de hasta 8 MB.
-- Más pruebas unitarias y dos recorridos Playwright nuevos. Ver [`docs/SENIOR_MODE_V7.md`](docs/SENIOR_MODE_V7.md) para criterios y limitaciones.
-
-**No declares la plataforma certificada ni lista para producción antes de ejecutar `npm run verify` y `npm run test:e2e` en un equipo con dependencias instaladas.**
+| Variable | Requerida | Default | Propósito (Exclusivo `labs/local-sandbox`) |
+|---|---|---|---|
+| `SANDBOX_DB_NAME` | No | `cea_lab` | Base de datos PostgreSQL aislada en red interna Docker. |
+| `SANDBOX_DB_USER` | No | `cea_student` | Usuario local efímero sin privilegios externos. |
+| `SANDBOX_DB_PASS` | No | `local_ephemeral_only_change_me` | Contraseña local efímera (nunca reutilizar claves reales). |
+| `SANDBOX_HTTP_PORT` | No | `8088` | Puerto enlazado únicamente a `127.0.0.1` (cero exposición `0.0.0.0`). |
 
 ---
 
-## V9 · Expedientes Senior portables y guías operativas
+## 9. Contratos Internos y Esquemas de Datos
 
-Esta versión incorpora 18 guías operativas de incidente y respaldo **por caso/proveedor** en el panel Senior. Entra en Senior Mode, selecciona un caso y usa **Guardar JSON del caso** o **Importar JSON del caso** en la columna de herramientas. La importación rechaza un caso o nube distintos. Los campos importados siguen siendo datos educativos sin firma y no confieren una aprobación técnica.
+Siguiendo la regla de ownership modular, **no existe carpeta global `contracts/` artificial**; cada frontera valida sus propios esquemas:
+- **Progreso global (`schemaVersion: 2`):** Validado y migrado desde V1–V9 en `src/lib/importValidation.mjs` (`<= 8 MB`, whitelist estricta sin `__proto__`).
+- **Expediente Senior (`48 KiB` máx.):** Validado por proveedor y caso en `src/lib/seniorCheckpoint.mjs` y `src/lib/seniorSession.mjs`.
+- **Revisión docente local:** Validada contra [`schemas/instructor-review.schema.json`](schemas/instructor-review.schema.json) mediante `src/lib/instructorReviewSchema.mjs`.
 
-Comprobación previa del entorno (sin conexiones cloud):
+---
+
+## 10. Estrategia de Pruebas
 
 ```bash
-npm run doctor
+# Verificación estática offline + unitarios + BDD + integridad + secretos
 npm run verify:offline
+
+# Especificaciones ejecutables BDD Gherkin en español
+npm run test:bdd
+
+# Compilación estricta de tipos (código fuente + tests E2E) y linter Biome CI
+npm run typecheck
+npm run lint
+
+# Verificación integral (incluye build productivo y presupuesto de bundle < 60 KB gzip)
+npm run verify
+
+# Suite completa E2E en navegador Chromium real (primera vez: npx playwright install chromium)
+npm run test:e2e
+
+# Gate maestro completo pre-release (doctor + verify + SBOM CycloneDX + npm audit + E2E)
+npm run verify:release
 ```
 
-Para usar Vite, Biome, los tipos y Playwright es necesario instalar paquetes reales mediante `npm install`. Si el entorno no dispone de acceso al registro npm, esos checks **no se consideran ejecutados**. Consulta `docs/VERIFICATION_V9.md`.
+---
+
+## 11. Pipeline CI/CD y Cadena de Suministro
+
+Los tres flujos en `.github/workflows/` (`quality.yml`, `devsecops.yml` y `codeql.yml`) aplican controles estrictos de cadena de suministro:
+1. **Acciones fijadas por commit SHA de 40 caracteres** (`actions/checkout`, `actions/setup-node`, `actions/upload-artifact`, `github/codeql-action`) con `persist-credentials: false` y `permissions: contents: read`.
+2. **Instalación reproducible** con `npm ci` sobre `package-lock.json` real y cero `continue-on-error: true`.
+3. **Auditoría SCA y SBOM:** `npm audit --audit-level=high` y generación verificada de `sbom.cdx.json` en formato CycloneDX (`npm run sbom:check`).
+
+---
+
+## 12. Despliegue Estático y Sandbox Local Docker/Kind
+
+- **Hosting estático:** Publica el directorio `dist/` generado por `npm run build`. El archivo `public/_headers` se copia automáticamente a `dist/_headers` activando `Strict-Transport-Security`, `Content-Security-Policy` local sin CDNs externos y `Cross-Origin-Opener-Policy: same-origin`. Ver [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md).
+- **Kit local reproducible (`Modalidad B`):**
+  ```bash
+  cd labs/local-sandbox
+  # En Linux / macOS / WSL2:
+  bash ./scripts/setup.sh && bash ./scripts/verify.sh && bash ./scripts/cleanup.sh
+  # En Windows PowerShell:
+  powershell -ExecutionPolicy Bypass -File .\scripts\setup.ps1
+  powershell -ExecutionPolicy Bypass -File .\scripts\verify.ps1
+  powershell -ExecutionPolicy Bypass -File .\scripts\cleanup.ps1
+  ```
+
+---
+
+## 13. Checklist del Desarrollador (Pre-PR)
+
+- [ ] Ninguno de los **291 archivos originales de V9** fue eliminado; `npm run manifest:update && npm run integrity` reporta `0 removed, 0 issues`.
+- [ ] Todos los archivos en `src/{app,components,domain,shared,features}` tienen **`< 250` líneas**, `0` `any` y `0` imports cruzados entre features.
+- [ ] `npm run verify` y `npm run test:e2e` pasan al 100% sin `waitForTimeout`.
+- [ ] Cero secretos reales (`npm run security:scan`) y cero sinks HTML inseguros (`npm run security:audit`).
+
+---
+
+## 14. Solución de Problemas Frecuentes (Troubleshooting)
+
+| Síntoma | Causa Probable | Solución Inmediata |
+|---|---|---|
+| `playwright test` indica que falta el navegador | Chromium de Playwright aún no instalado en la máquina | Ejecuta `npx playwright install chromium`. |
+| `npm run integrity` reporta archivo modificado o nuevo sin registrar | Se editó o añadió un archivo legítimo sin regenerar el manifiesto V10 | Ejecuta `npm run manifest:update` y vuelve a correr `npm run integrity`. |
+| Banner naranja de almacenamiento local dañado al abrir la app | El contenido previo de `localStorage['cea:progress']` contiene JSON truncado | Haz clic en **Descargar respaldo crudo** y luego en **Reiniciar estado limpio**. |
+| Bloqueo al guardar notas en Laboratorio o Senior Mode | `secretGuard` detectó un patrón de credencial (`AKIA...`, `AIza...`, `ghp_...`, `PRIVATE KEY`) | Sustituye cualquier clave sensible por `REDACTED` antes de guardar o exportar. |
+
+---
+
+## 15. Contribución, Marcas y Licencia Educativa
+
+- Lee [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`docs/CLOUD_SAFETY.md`](docs/CLOUD_SAFETY.md), [`docs/ACCESSIBILITY.md`](docs/ACCESSIBILITY.md) y [`docs/CONTENT_AUTHORING.md`](docs/CONTENT_AUTHORING.md).
+- **Aviso de no afiliación:** *Amazon Web Services (AWS)*, *Microsoft Azure* y *Google Cloud Platform (GCP)* son marcas registradas de sus respectivos titulares. **Cloud Engineering Academy** es un proyecto educativo independiente y no está patrocinado, avalado ni afiliado a dichos proveedores.

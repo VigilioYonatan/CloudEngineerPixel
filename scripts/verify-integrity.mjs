@@ -22,6 +22,7 @@ const EXCLUDES = new Set([
   'playwright-report',
   'coverage',
   '.tools',
+  'sbom.cdx.json',
 ]);
 
 const sha256 = (buffer) => createHash('sha256').update(buffer).digest('hex');

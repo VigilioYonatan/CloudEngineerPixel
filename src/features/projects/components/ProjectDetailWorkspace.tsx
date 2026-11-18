@@ -151,6 +151,7 @@ export function ProjectDetailWorkspace({ project, cloudId }: ProjectDetailWorksp
           </label>
           <div class="action-row">
             <button
+              type="button"
               class="btn btn-secondary"
               onClick={() => {
                 setNotes(adr_key, adr_notes);
@@ -160,7 +161,7 @@ export function ProjectDetailWorkspace({ project, cloudId }: ProjectDetailWorksp
             >
               <CheckCircle2 size={16} /> Guardar borrador ADR
             </button>
-            <button class="btn btn-primary" onClick={exportMarkdown}>
+            <button type="button" class="btn btn-primary" onClick={exportMarkdown}>
               <Download size={16} /> Exportar plantilla ADR / Portfolio (.md)
             </button>
           </div>
@@ -184,6 +185,7 @@ export function ProjectDetailWorkspace({ project, cloudId }: ProjectDetailWorksp
             ))}
           </ul>
           <button
+            type="button"
             class="btn btn-secondary full-width"
             onClick={() => navigate('lab', project.targetModuleId)}
           >

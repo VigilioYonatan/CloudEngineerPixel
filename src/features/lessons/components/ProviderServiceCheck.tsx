@@ -33,6 +33,7 @@ export function ProviderCheck({ module: mod }: ProviderCheckProps) {
       <div class="quiz-options">
         {all_options.map((option_label, index) => (
           <button
+            type="button"
             key={`${active_cloud}:${option_label}`}
             class={`${answer === option_label ? 'quiz-selected' : ''} ${answer !== null && option_label === expected_label ? 'quiz-correct' : ''} ${answer === option_label && option_label !== expected_label ? 'quiz-wrong' : ''}`}
             onClick={() => setAnswer(option_label)}

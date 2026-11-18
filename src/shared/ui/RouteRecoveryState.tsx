@@ -24,13 +24,14 @@ export function RouteRecoveryState({ diagnostic }: RouteRecoveryStateProps) {
         </p>
         <div class="action-row">
           <button
+            type="button"
             class="btn btn-primary"
             onClick={() => navigate(diagnostic.suggestedView, diagnostic.suggestedResourceId)}
           >
             {diagnostic.suggestedLabel} <ArrowRight size={16} />
           </button>
           {diagnostic.suggestedView !== 'home' && (
-            <button class="btn btn-secondary" onClick={() => navigate('home')}>
+            <button type="button" class="btn btn-secondary" onClick={() => navigate('home')}>
               <Home size={16} /> Volver al inicio
             </button>
           )}

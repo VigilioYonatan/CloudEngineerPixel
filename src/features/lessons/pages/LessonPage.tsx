@@ -58,7 +58,9 @@ export function LessonPage() {
   return (
     <main class="page-container lesson-page">
       <div class="breadcrumb">
-        <button onClick={() => navigate('learn')}>Aprender</button>
+        <button type="button" onClick={() => navigate('learn')}>
+          Aprender
+        </button>
         <ChevronRight size={14} />
         <span>{levelInfo[mod.level].name}</span>
         <ChevronRight size={14} />
@@ -204,6 +206,7 @@ export function LessonPage() {
 
           <div class="lesson-end">
             <button
+              type="button"
               class={`btn ${is_complete ? 'btn-complete' : 'btn-primary'}`}
               onClick={() => completeTopic(`${mod.id}:${topic_idx}`, active_cloud)}
             >
@@ -218,6 +221,7 @@ export function LessonPage() {
               )}
             </button>
             <button
+              type="button"
               class="btn btn-ghost"
               onClick={() => {
                 if (topic_idx < mod.topics.length - 1) {

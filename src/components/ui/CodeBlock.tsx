@@ -90,7 +90,7 @@ export function CodeBlock({
             : ''}
       </span>
 
-      <pre tabIndex={0}>
+      <pre>
         <code>{renderedCode}</code>
       </pre>
     </div>

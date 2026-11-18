@@ -56,6 +56,7 @@ export function CurriculumModuleNode({ item }: CurriculumModuleNodeProps) {
         <div class="map-unit-links">
           {item.units.map((unit) => (
             <button
+              type="button"
               key={unit.href}
               class={`map-unit-btn ${unit.completed ? 'map-unit-done' : ''}`}
               onClick={() => navigate('lesson', { resourceId: item.id, unitIndex: unit.index })}
@@ -73,12 +74,13 @@ export function CurriculumModuleNode({ item }: CurriculumModuleNodeProps) {
       </div>
 
       <div class="map-card-actions">
-        <button class="btn btn-secondary" onClick={() => navigate('lab', item.id)}>
+        <button type="button" class="btn btn-secondary" onClick={() => navigate('lab', item.id)}>
           <FlaskConical size={15} />{' '}
           {item.labCompleted ? 'Lab registrado' : 'Laboratorio del módulo'}
         </button>
         {item.linkedSimulator && (
           <button
+            type="button"
             class="btn btn-ghost"
             onClick={() => navigate('simulator', { simId: item.linkedSimulator })}
           >

@@ -56,6 +56,7 @@ export function WorkbookModal({ open, cloudId, caseId, onClose }: WorkbookModalP
   if (!open) return null;
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: Escape key dismissal is handled via window listener
     <div
       class="sr-modal-backdrop"
       role="presentation"

@@ -47,7 +47,7 @@ export function DecisionStage({
         {diagnosisReady ? 'Diagnóstico verificado.' : 'Debes completar primero el diagnóstico.'}
       </p>
       {tradeoff && (
-        <div class="sr-tradeoff-grid" aria-label="Matriz de trade-offs de ingeniería">
+        <section class="sr-tradeoff-grid" aria-label="Matriz de trade-offs de ingeniería">
           <div class="sr-tradeoff-item">
             <strong>
               <Scale size={14} /> Mitigación inmediata
@@ -64,11 +64,12 @@ export function DecisionStage({
               {tradeoff.userImpact} ({tradeoff.reversibility})
             </p>
           </div>
-        </div>
+        </section>
       )}
       <div class="decision-options">
         {current.choices.map((c, i) => (
           <button
+            type="button"
             class={choice === i ? 'decision-selected' : ''}
             key={c}
             onClick={() => setChoice(i)}
@@ -106,6 +107,7 @@ export function DecisionStage({
       </p>
       <div class="sr-report-actions">
         <button
+          type="button"
           class="btn btn-secondary"
           disabled={choice === null || decisionLocked || !diagnosisReady}
           onClick={onConfirmDecision}
@@ -113,11 +115,16 @@ export function DecisionStage({
           Confirmar decisión
         </button>
         {decisionLocked && !decisionCorrect && (
-          <button class="btn btn-secondary" onClick={onResetDecision}>
+          <button type="button" class="btn btn-secondary" onClick={onResetDecision}>
             Reevaluar decisión
           </button>
         )}
-        <button class="btn btn-primary" disabled={!decisionLocked} onClick={onAdvanceToReport}>
+        <button
+          type="button"
+          class="btn btn-primary"
+          disabled={!decisionLocked}
+          onClick={onAdvanceToReport}
+        >
           Preparar informe <ArrowRight size={16} />
         </button>
       </div>

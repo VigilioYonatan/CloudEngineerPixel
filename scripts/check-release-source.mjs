@@ -75,7 +75,9 @@ for (const rel of source_files) {
 }
 
 if (errors.length) {
-  errors.forEach((x) => console.error(x));
+  for (const err of errors) {
+    console.error(err);
+  }
   process.exit(1);
 }
 console.log(

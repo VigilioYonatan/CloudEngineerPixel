@@ -49,6 +49,7 @@ export function HomeHero() {
         </p>
         <div class="hero-actions">
           <button
+            type="button"
             class="btn btn-primary btn-lg"
             title={
               resume_target
@@ -69,7 +70,7 @@ export function HomeHero() {
             {resume_target ? 'Continuar donde me quedé' : 'Empezar a aprender'}
             <ArrowRight size={19} />
           </button>
-          <button class="btn btn-ghost btn-lg" onClick={() => navigate('senior')}>
+          <button type="button" class="btn btn-ghost btn-lg" onClick={() => navigate('senior')}>
             <BrainCircuit size={18} />
             Explorar Senior Mode
           </button>
@@ -86,7 +87,10 @@ export function HomeHero() {
         </div>
       </div>
 
-      <div class="hero-art" aria-label={`Servicios clave de ${active_meta.name} sobre la mascota`}>
+      <section
+        class="hero-art"
+        aria-label={`Servicios clave de ${active_meta.name} sobre la mascota`}
+      >
         <div class="art-ring ring-one" />
         <div class="art-ring ring-two" />
         <span class="orbit-chip chip-top hero-orbit-a">
@@ -103,7 +107,7 @@ export function HomeHero() {
         </span>
         <CloudMascot />
         <div class="mascot-floor" />
-      </div>
+      </section>
       <div class="hero-side-label">INGENIERÍA CLOUD / EDICIÓN 2026</div>
     </section>
   );

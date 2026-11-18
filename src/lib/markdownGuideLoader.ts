@@ -1,6 +1,6 @@
 import type { Provider } from '../data/course';
 
-const RAW_LAB_MARKDOWN_LOADERS = import.meta.glob('../../labs/**/*.md', {
+const RAW_LAB_MARKDOWN_LOADERS = import.meta.glob('../../labs/**/*.{md,tf,yaml}', {
   query: '?raw',
   import: 'default',
 }) as Record<string, () => Promise<string>>;
@@ -28,4 +28,14 @@ export async function loadSeniorWorkbookMarkdown(
 
 export async function loadOidcGuideMarkdown(provider: Provider): Promise<string | null> {
   return loadByRelativeLabsPath(`devsecops/${provider}-oidc.md`);
+}
+
+export async function loadEnterpriseTerraformSource(provider: Provider): Promise<string | null> {
+  return loadByRelativeLabsPath(`${provider}/enterprise-finops.tf`);
+}
+
+export async function loadLocalSandboxFile(
+  fileName: 'compose.yaml' | 'k8s-kind-manifest.yaml' | 'README.md',
+): Promise<string | null> {
+  return loadByRelativeLabsPath(`local-sandbox/${fileName}`);
 }

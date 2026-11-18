@@ -30,6 +30,7 @@ export function SeniorWorkbench() {
         <>
           <div class="breadcrumb">
             <button
+              type="button"
               onClick={() => {
                 state.openCase(null);
                 window.scrollTo(0, 0);
@@ -63,6 +64,7 @@ export function SeniorWorkbench() {
           <nav class="sr-stage-tabs" aria-label="Etapas del incidente">
             {SENIOR_STAGE_ITEMS.map(({ id: s, label }, idx) => (
               <button
+                type="button"
                 key={s}
                 aria-current={stage === s ? 'step' : undefined}
                 class={stage === s ? 'active' : ''}

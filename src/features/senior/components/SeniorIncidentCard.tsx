@@ -25,7 +25,11 @@ export function SeniorIncidentCard({
   const ghostNum = item.id.replace(/\D/g, '').padStart(2, '0');
 
   return (
-    <button class={`senior-card senior-card-${sevSlug}`} onClick={() => onOpenCase(item)}>
+    <button
+      type="button"
+      class={`senior-card senior-card-${sevSlug}`}
+      onClick={() => onOpenCase(item)}
+    >
       <span class="senior-card-ghost" aria-hidden="true">
         {ghostNum}
       </span>

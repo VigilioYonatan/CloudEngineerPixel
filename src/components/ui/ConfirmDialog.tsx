@@ -71,6 +71,7 @@ export function ConfirmDialog() {
     request.tone === 'danger' ? 'btn btn-danger confirm-dialog-danger-solid' : 'btn btn-primary';
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: Escape key dismissal is handled via window listener
     <div
       class="confirm-dialog-backdrop"
       role="presentation"

@@ -25,6 +25,7 @@ import {
   showOnboarding,
 } from './onboardingState';
 import './preferencesState';
+import { detectAccidentalSecrets } from './secretGuard.mjs';
 
 export type View = AppView;
 
@@ -299,14 +300,22 @@ export function completeSenior(id: string) {
   }
 }
 
-export function setNotes(key: string, value: string) {
+export function setNotes(key: string, value: string): boolean {
   if (!/^[a-z0-9:_-]{1,140}$/.test(key) || ['__proto__', 'constructor', 'prototype'].includes(key))
-    return;
+    return false;
+  const detectedSecrets = detectAccidentalSecrets(value);
+  if (detectedSecrets.length > 0) {
+    notify(
+      `Bloqueado por seguridad: se detectó posible credencial (${detectedSecrets[0].label}). No pegues claves reales.`,
+    );
+    return false;
+  }
   progress.value = {
     ...progress.value,
     updatedAt: stampNow(),
     notes: { ...progress.value.notes, [key]: value.slice(0, 12000) },
   };
+  return true;
 }
 
 export async function clearProgress() {
@@ -375,7 +384,14 @@ export async function dismissCorruptedBackupAndReset() {
   }
 }
 
-export function exportProgress() {
+export function exportProgress(): boolean {
+  const secretFindings = detectAccidentalSecrets(JSON.stringify(progress.value.notes));
+  if (secretFindings.length > 0) {
+    notify(
+      `Exportación bloqueada: elimina posibles secretos (${secretFindings[0].label}) de tus notas antes de exportar.`,
+    );
+    return false;
+  }
   const exported_at = stampNow();
   const blob = new Blob(
     [
@@ -403,6 +419,7 @@ export function exportProgress() {
   a.download = 'cloud-academy-progreso.json';
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return true;
 }
 
 export async function importProgress(file: File) {

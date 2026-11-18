@@ -39,10 +39,11 @@ export function AboutPage() {
       </section>
 
       <div class="learn-toolbar">
-        <div class="tabs" role="navigation" aria-label="Secciones informativas de Acerca">
+        <nav class="tabs" aria-label="Secciones informativas de Acerca">
           {ABOUT_SECTIONS.map((sec) => (
             <button
               key={sec.id}
+              type="button"
               aria-current={active_section === sec.id ? 'true' : undefined}
               class={active_section === sec.id ? 'tab-active' : ''}
               onClick={() => navigate('about', { aboutSection: sec.id })}
@@ -50,7 +51,7 @@ export function AboutPage() {
               {sec.shortLabel}
             </button>
           ))}
-        </div>
+        </nav>
       </div>
 
       <div class="about-sections-stack">
@@ -106,7 +107,7 @@ export function AboutPage() {
           >
             Calculadora de precios <ExternalLink size={15} />
           </a>
-          <button class="btn btn-primary" onClick={() => navigate('map')}>
+          <button type="button" class="btn btn-primary" onClick={() => navigate('map')}>
             Ver Mapa Curricular <ArrowRight size={16} />
           </button>
         </div>

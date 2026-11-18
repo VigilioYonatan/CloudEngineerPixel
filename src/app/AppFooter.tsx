@@ -20,6 +20,7 @@ export function AppFooter() {
         <nav class="footer-links" aria-label="Información institucional y seguridad">
           {FOOTER_LINKS.map((link) => (
             <button
+              type="button"
               key={link.id}
               class="footer-link-btn"
               onClick={() => navigate('about', { aboutSection: link.id })}

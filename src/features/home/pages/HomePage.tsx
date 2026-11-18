@@ -71,7 +71,7 @@ export function HomePage() {
           title="De principiante a arquitecto cloud"
           description="Tres niveles conectados. Una única metodología que se adapta a tu proveedor."
           side={
-            <button class="text-action" onClick={() => navigate('learn')}>
+            <button type="button" class="text-action" onClick={() => navigate('learn')}>
               Ver todos los módulos <ArrowRight size={16} />
             </button>
           }
@@ -82,6 +82,7 @@ export function HomePage() {
             const info = levelInfo[level_id];
             return (
               <button
+                type="button"
                 key={level_id}
                 class={`level-card level-${level_id}`}
                 onClick={() => {
@@ -125,6 +126,7 @@ export function HomePage() {
             const is_active = provider.value === provider_id;
             return (
               <button
+                type="button"
                 key={provider_id}
                 class={`provider-card provider-card-${provider_id} ${is_active ? 'selected' : ''}`}
                 onClick={() => setProvider(provider_id)}
@@ -177,7 +179,7 @@ export function HomePage() {
               <CheckCircle2 size={16} /> Sin credenciales ni riesgos
             </span>
           </div>
-          <button class="btn btn-gold" onClick={() => navigate('senior')}>
+          <button type="button" class="btn btn-gold" onClick={() => navigate('senior')}>
             Entrar a Senior Mode <ArrowRight size={18} />
           </button>
         </div>
@@ -230,7 +232,7 @@ export function HomePage() {
           <h2>Tu viaje cloud empieza hoy.</h2>
           <p>Elige una nube. Aprende los fundamentos. Construye con criterio.</p>
         </div>
-        <button class="btn btn-primary" onClick={() => navigate('learn')}>
+        <button type="button" class="btn btn-primary" onClick={() => navigate('learn')}>
           Explorar la academia <ArrowRight size={17} />
         </button>
       </section>

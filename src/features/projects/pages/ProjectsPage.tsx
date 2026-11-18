@@ -41,6 +41,7 @@ export function ProjectsPage() {
         <div class="tabs" role="toolbar" aria-label="Seleccionar proyecto integrador">
           {PORTFOLIO_PROJECTS.map((proj) => (
             <button
+              type="button"
               key={proj.id}
               class={active_project.id === proj.id ? 'tab-active' : ''}
               onClick={() => setSelectedId(proj.id)}

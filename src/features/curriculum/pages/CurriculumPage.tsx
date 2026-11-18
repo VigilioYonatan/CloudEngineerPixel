@@ -98,6 +98,7 @@ export function CurriculumPage() {
             const done = completedTopicsCount(mod, active_cloud, progress.value.completed);
             return (
               <button
+                type="button"
                 class="module-card"
                 key={mod.id}
                 onClick={() => {

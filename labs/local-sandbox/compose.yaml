@@ -1,0 +1,53 @@
+# Cloud Engineering Academy · Kit prod-local (Perfil compose-vps aislado)
+# Regla Vigilio: Cero puertos de datos expuestos en 0.0.0.0; redes segmentadas y contenedores non-root.
+name: cea-local-sandbox
+
+services:
+  edge-api:
+    image: hashicorp/http-echo:1.0.0
+    command:
+      - "-listen=:8080"
+      - "-text={\"service\":\"cea-sandbox-api\",\"status\":\"healthy\",\"mode\":\"prod-local\"}"
+    user: "65532:65532"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "127.0.0.1:8088:8080"
+    networks:
+      - public_edge
+      - private_data
+    healthcheck:
+      test: ["CMD", "/http-echo", "-version"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  postgres-lab:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_DB: ${SANDBOX_DB_NAME:-cea_lab}
+      POSTGRES_USER: ${SANDBOX_DB_USER:-cea_student}
+      POSTGRES_PASSWORD: ${SANDBOX_DB_PASS:-local_ephemeral_only_change_me}
+    security_opt:
+      - no-new-privileges:true
+    # Sin exposición a 0.0.0.0; accesible solo desde red interna private_data
+    networks:
+      - private_data
+    volumes:
+      - pg_sandbox_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 4s
+      retries: 5
+
+networks:
+  public_edge:
+    driver: bridge
+  private_data:
+    driver: bridge
+    internal: true
+
+volumes:
+  pg_sandbox_data:

@@ -1,10 +1,16 @@
 import { AlertTriangle, CheckCircle2, Download, RotateCcw, X } from 'lucide-preact';
 import type { ComponentChildren } from 'preact';
+import { lazy, Suspense } from 'preact/compat';
 import { useEffect } from 'preact/hooks';
 import { BannerStorageError } from '../components/ui/BannerStorageError';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { OfflineIndicator } from '../components/ui/OfflineIndicator';
 import { activeConfirmRequest } from '../lib/confirmDialogState';
+import { glossaryOpen } from '../lib/glossaryState';
+
+const LazyGlossaryModal = lazy(() =>
+  import('../components/ui/GlossaryModal').then((m) => ({ default: m.GlossaryModal })),
+);
 import {
   applyParsedRoute,
   corruptedStorageRaw,
@@ -59,10 +65,14 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           </div>
           <div class="corrupt-storage-actions">
-            <button class="btn btn-secondary" onClick={downloadCorruptedBackup}>
+            <button type="button" class="btn btn-secondary" onClick={downloadCorruptedBackup}>
               <Download size={16} /> Descargar respaldo crudo
             </button>
-            <button class="btn btn-danger" onClick={() => void dismissCorruptedBackupAndReset()}>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onClick={() => void dismissCorruptedBackupAndReset()}
+            >
               <RotateCcw size={16} /> Reiniciar estado limpio
             </button>
           </div>
@@ -75,6 +85,7 @@ export function AppShell({ children }: AppShellProps) {
           <CheckCircle2 size={17} />
           {toast.value}
           <button
+            type="button"
             aria-label="Cerrar notificación"
             onClick={() => {
               toast.value = '';
@@ -85,6 +96,11 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       )}
       <ConfirmDialog />
+      {glossaryOpen.value && (
+        <Suspense fallback={null}>
+          <LazyGlossaryModal />
+        </Suspense>
+      )}
     </div>
   );
 }

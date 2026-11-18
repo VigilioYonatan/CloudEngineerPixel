@@ -1,6 +1,6 @@
 import type { CloudProviderId } from './providers';
 
-export type CodeLanguage = 'bash' | 'hcl' | 'yaml' | 'json' | 'log';
+export type CodeLanguage = 'bash' | 'powershell' | 'hcl' | 'yaml' | 'json' | 'log';
 
 export type CommandRiskLevel = 'read-only' | 'creates-cost' | 'destructive';
 

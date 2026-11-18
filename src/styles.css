@@ -518,12 +518,14 @@ p {
   color: var(--accent);
 }
 .stats-strip strong {
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", sans-serif;
   font-size: 26px;
   letter-spacing: -0.04em;
 }
 .stats-strip small {
-  font: 9px "JetBrains Mono";
+  font:
+    9px "JetBrains Mono",
+    monospace;
   letter-spacing: 1px;
   color: var(--muted);
 }
@@ -634,10 +636,14 @@ p {
   background: color-mix(in srgb, var(--level-color) 12%, transparent);
   display: grid;
   place-items: center;
-  font: 700 17px "JetBrains Mono";
+  font:
+    700 17px "JetBrains Mono",
+    monospace;
 }
 .level-hours {
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
   letter-spacing: 1px;
   color: var(--muted);
 }
@@ -645,13 +651,17 @@ p {
   position: absolute;
   right: 24px;
   top: 72px;
-  font: 700 93px "Space Grotesk";
+  font:
+    700 93px "Space Grotesk",
+    sans-serif;
   color: var(--level-color);
   opacity: 0.05;
   line-height: 1;
 }
 .level-step {
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
   letter-spacing: 1.5px;
   color: var(--level-text);
 }
@@ -714,7 +724,9 @@ p {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  font: 800 19px "Space Grotesk";
+  font:
+    800 19px "Space Grotesk",
+    sans-serif;
   background: var(--surface3);
   color: var(--text);
 }
@@ -733,7 +745,9 @@ p {
   align-items: center;
   gap: 5px;
   color: var(--accent);
-  font: 700 9px "JetBrains Mono";
+  font:
+    700 9px "JetBrains Mono",
+    monospace;
 }
 .provider-card h3 {
   font-size: 18px;
@@ -903,7 +917,9 @@ p {
   align-items: center;
   gap: 9px;
   color: var(--accent);
-  font: 700 11px "JetBrains Mono";
+  font:
+    700 11px "JetBrains Mono",
+    monospace;
   letter-spacing: 1.3px;
   margin-bottom: 17px;
 }
@@ -937,11 +953,15 @@ p {
   gap: 3px;
 }
 .intro-stat span {
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
   color: var(--muted);
 }
 .intro-stat strong {
-  font: 700 38px "Space Grotesk";
+  font:
+    700 38px "Space Grotesk",
+    sans-serif;
   color: var(--accent);
 }
 .intro-stat small {
@@ -1038,7 +1058,9 @@ p {
   color: var(--accent);
 }
 .module-num {
-  font: 11px "JetBrains Mono";
+  font:
+    11px "JetBrains Mono",
+    monospace;
   color: var(--muted);
 }
 .module-level {
@@ -1046,7 +1068,9 @@ p {
   align-items: center;
   gap: 7px;
   color: var(--muted);
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
   letter-spacing: 0.6px;
   margin-top: 18px;
 }
@@ -1086,7 +1110,9 @@ p {
   border-radius: 5px;
   padding: 5px 8px;
   color: var(--muted);
-  font: 700 9px "JetBrains Mono";
+  font:
+    700 9px "JetBrains Mono",
+    monospace;
   white-space: nowrap;
   letter-spacing: 0.1px;
 }
@@ -1187,7 +1213,9 @@ p {
 }
 .sidebar-eyebrow {
   color: var(--accent);
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
 }
 .sidebar-course-head h3 {
   font-size: 21px;
@@ -1206,7 +1234,9 @@ p {
   padding: 18px 11px;
 }
 .sidebar-list > strong {
-  font: 700 9px "JetBrains Mono";
+  font:
+    700 9px "JetBrains Mono",
+    monospace;
   letter-spacing: 1px;
   color: var(--muted);
   padding: 0 12px;
@@ -1240,7 +1270,9 @@ p {
   height: 24px;
   border: 1px solid var(--border);
   border-radius: 7px;
-  font: 9px "JetBrains Mono";
+  font:
+    9px "JetBrains Mono",
+    monospace;
 }
 .lesson-status.done {
   background: rgba(77, 216, 161, 0.14);
@@ -1383,12 +1415,16 @@ p {
   gap: 6px;
 }
 .service-panel-caption {
-  font: 9px "JetBrains Mono";
+  font:
+    9px "JetBrains Mono",
+    monospace;
   color: var(--muted);
   letter-spacing: 1px;
 }
 .service-panel-top strong {
-  font: 700 20px "Space Grotesk";
+  font:
+    700 20px "Space Grotesk",
+    sans-serif;
 }
 .service-panel > p {
   font-size: 12px;
@@ -1409,7 +1445,9 @@ p {
   gap: 12px;
   padding: 0 13px;
   color: #91a6bc;
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
   letter-spacing: 0.5px;
 }
 .terminal-lights {
@@ -1475,7 +1513,9 @@ p {
 }
 .steps-list li > span {
   color: var(--accent);
-  font: 700 12px "JetBrains Mono";
+  font:
+    700 12px "JetBrains Mono",
+    monospace;
 }
 .steps-list p {
   margin: 0;
@@ -1563,7 +1603,9 @@ p {
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--muted);
-  font: 700 12px "JetBrains Mono";
+  font:
+    700 12px "JetBrains Mono",
+    monospace;
 }
 .quiz-options button > svg {
   margin-left: auto;
@@ -1756,7 +1798,9 @@ p {
   border: 8px solid var(--surface3);
   border-top-color: var(--accent);
   border-radius: 50%;
-  font: 700 24px "Space Grotesk";
+  font:
+    700 24px "Space Grotesk",
+    sans-serif;
   margin: 22px auto;
 }
 .lab-sidecard > p {
@@ -1840,14 +1884,18 @@ p {
   margin: 0;
 }
 .result-big {
-  font: 700 62px "Space Grotesk";
+  font:
+    700 62px "Space Grotesk",
+    sans-serif;
   color: var(--accent);
   line-height: 1.15;
   margin: 25px 0;
 }
 .result-big small {
   display: block;
-  font: 500 13px "DM Sans";
+  font:
+    500 13px "DM Sans",
+    sans-serif;
   color: var(--muted);
   margin-top: 11px;
 }
@@ -1870,7 +1918,9 @@ p {
   font-size: 10px;
 }
 .result-stats strong {
-  font: 700 16px "JetBrains Mono";
+  font:
+    700 16px "JetBrains Mono",
+    monospace;
   overflow-wrap: anywhere;
 }
 .result-note {
@@ -1934,7 +1984,9 @@ p {
   align-items: center;
   gap: 9px;
   color: var(--on-dark-gold);
-  font: 700 10px "JetBrains Mono";
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
   letter-spacing: 1.5px;
 }
 .senior-hero h1 {
@@ -2005,7 +2057,9 @@ p {
 }
 .senior-id {
   color: var(--gold);
-  font: 700 11px "JetBrains Mono";
+  font:
+    700 11px "JetBrains Mono",
+    monospace;
 }
 .senior-card-icon {
   color: var(--gold);
@@ -2018,7 +2072,9 @@ p {
   margin: 16px 0;
 }
 .senior-category {
-  font: 10px "JetBrains Mono";
+  font:
+    10px "JetBrains Mono",
+    monospace;
   color: var(--gold);
   margin-bottom: 8px;
 }
@@ -2095,7 +2151,9 @@ p {
   color: var(--accent);
 }
 .progress-cards strong {
-  font: 700 39px "Space Grotesk";
+  font:
+    700 39px "Space Grotesk",
+    sans-serif;
 }
 .progress-cards strong small {
   font-size: 15px;
@@ -4151,9 +4209,8 @@ p {
 }
 
 .comparison-active-pill {
-  font-style: normal;
   font:
-    700 9px "JetBrains Mono",
+    normal 700 9px "JetBrains Mono",
     monospace;
   padding: 4px 7px;
   border-radius: 999px;
@@ -6282,4 +6339,221 @@ p {
   font-size: 12px;
   line-height: 1.45;
   color: var(--muted);
+}
+
+/* F6-09 Technical Glossary Modal & F7-01..F7-08 Connected Labs UI */
+.glossary-dialog {
+  width: min(980px, 100%);
+  max-height: 88vh;
+}
+
+.glossary-controls {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.glossary-search {
+  width: 100%;
+}
+
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .glossary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.glossary-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 13px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface2) 55%, var(--surface));
+}
+
+.glossary-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.glossary-card-head strong {
+  display: block;
+  font:
+    700 16px "Space Grotesk",
+    sans-serif;
+  color: var(--text);
+}
+
+.glossary-card-head small {
+  font:
+    600 10.5px "JetBrains Mono",
+    monospace;
+  color: var(--muted);
+}
+
+.glossary-card p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.glossary-arch-note {
+  color: var(--text);
+}
+
+.glossary-provider-box {
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.glossary-provider-box span {
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.unit-glossary-chip-btn {
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.unit-glossary-chip-btn:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.lab-metadata-card {
+  margin: 18px 0 14px;
+}
+
+.lab-metadata-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.lab-metadata-head strong {
+  display: block;
+  font-size: 15px;
+}
+
+.lab-metadata-head small {
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.lab-metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .lab-metadata-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lab-meta-item {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 6px;
+}
+
+.lab-meta-item strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--accent-text);
+}
+
+.lab-meta-item code {
+  font:
+    500 11px / 1.45 "JetBrains Mono",
+    monospace;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.lab-meta-item p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.lab-guide-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.lab-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Header responsive fit at 1024px-1440px so all 8 nav links + 4 actions remain 100% inside viewport */
+.header-inner {
+  gap: 14px;
+  padding: 0 22px;
+}
+
+.brand {
+  min-width: 0;
+  flex: none;
+}
+
+.top-nav {
+  min-width: 0;
+  gap: 2px;
+}
+
+.top-nav button {
+  padding: 9px 10px;
+  gap: 6px;
+  font-size: 11.5px;
+}
+
+.header-actions {
+  gap: 7px;
+  flex: none;
+}
+
+@media (max-width: 1140px) and (min-width: 971px) {
+  .brand-type small {
+    display: none;
+  }
+  .top-nav button {
+    padding: 8px 7px;
+    font-size: 11px;
+  }
 }

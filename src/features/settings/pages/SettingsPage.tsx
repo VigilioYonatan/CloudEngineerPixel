@@ -46,6 +46,7 @@ export function SettingsPage() {
             const is_selected = provider.value === cloud_id;
             return (
               <button
+                type="button"
                 key={cloud_id}
                 onClick={() => setProvider(cloud_id)}
                 class={is_selected ? 'setting-selected' : ''}
@@ -66,6 +67,7 @@ export function SettingsPage() {
         </div>
         <div class="action-row">
           <button
+            type="button"
             class={`btn ${theme.value === 'dark' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => {
               theme.value = 'dark';
@@ -74,6 +76,7 @@ export function SettingsPage() {
             <Moon size={17} /> Oscuro
           </button>
           <button
+            type="button"
             class={`btn ${theme.value === 'light' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => {
               theme.value = 'light';
@@ -125,7 +128,7 @@ export function SettingsPage() {
           almacenamiento de este navegador; no usamos un backend para recopilar tus respuestas. No
           introduzcas tokens, claves ni información personal sensible en tus notas.
         </p>
-        <button class="btn btn-secondary" onClick={() => navigate('progress')}>
+        <button type="button" class="btn btn-secondary" onClick={() => navigate('progress')}>
           Administrar datos de progreso <ArrowRight size={17} />
         </button>
       </section>

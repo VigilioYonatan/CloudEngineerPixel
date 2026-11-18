@@ -190,7 +190,7 @@ export function SimulatorControls(props: SimulatorControlsProps) {
         </>
       )}
 
-      <button class="btn btn-primary full-width" onClick={props.onRunSimulation}>
+      <button type="button" class="btn btn-primary full-width" onClick={props.onRunSimulation}>
         <Play size={17} /> Ejecutar simulación
       </button>
     </div>

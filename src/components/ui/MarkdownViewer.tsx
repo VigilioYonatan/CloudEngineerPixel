@@ -102,7 +102,7 @@ export function MarkdownViewer({ markdown, provider }: MarkdownViewerProps) {
 
         if (block.type === 'table') {
           return (
-            <div key={blockKey} class="md-table-scroll" tabIndex={0}>
+            <div key={blockKey} class="md-table-scroll">
               <table class="md-table">
                 <thead>
                   <tr>

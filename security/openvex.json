@@ -1,0 +1,24 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://cloud-engineering-academy.local/vex/2026-11-18-001",
+  "author": "Cloud Engineering Academy DevSecOps",
+  "timestamp": "2026-11-18T00:40:00Z",
+  "version": 1,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "GHSA-fc5q-39xc-vjpf",
+        "description": "picomatch <=4.0.7 ReDoS through single-branch repeated extglobs (build-time devDependency only; no >4.0.7 upstream release published on npm as of 2026-11-18)"
+      },
+      "products": [
+        {
+          "@id": "pkg:npm/picomatch@4.0.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "picomatch is strictly a build-time devDependency of Vite/@preact/preset-vite; it is absent from dist/ browser bundles (npm audit --omit=dev reports 0 vulnerabilities) and only evaluates static developer-authored glob patterns in repo scripts.",
+      "expiresAt": "2026-12-02T00:40:00Z"
+    }
+  ]
+}

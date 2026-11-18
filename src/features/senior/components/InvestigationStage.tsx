@@ -136,7 +136,11 @@ export function InvestigationStage({
                     </span>
                   )}
                 </div>
-                <button class="btn btn-secondary" onClick={() => onInspectExhibit(exhibit.id)}>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onClick={() => onInspectExhibit(exhibit.id)}
+                >
                   {is_inspected ? <CheckCircle2 size={16} /> : <Search size={16} />}{' '}
                   {is_inspected ? 'Examinado' : 'Examinar'}
                 </button>
@@ -153,7 +157,7 @@ export function InvestigationStage({
         })}
       </div>
 
-      <button class="btn btn-primary" onClick={onAdvanceToDiagnosis}>
+      <button type="button" class="btn btn-primary" onClick={onAdvanceToDiagnosis}>
         Formular diagnóstico <ArrowRight size={16} />
       </button>
     </>

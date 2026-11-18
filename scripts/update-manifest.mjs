@@ -21,6 +21,7 @@ export const MANIFEST_EXCLUDES = new Set([
   'playwright-report',
   'coverage',
   '.tools',
+  'sbom.cdx.json',
 ]);
 
 export const sha256Buffer = (buffer) => createHash('sha256').update(buffer).digest('hex');

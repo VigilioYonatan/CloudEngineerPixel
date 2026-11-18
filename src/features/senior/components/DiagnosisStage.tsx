@@ -53,6 +53,7 @@ export function DiagnosisStage({
       <div class="decision-options">
         {diagnostic.choices.map((item, index) => (
           <button
+            type="button"
             class={diagnosisChoice === index ? 'decision-selected' : ''}
             key={item}
             disabled={diagnosisLocked}
@@ -97,6 +98,7 @@ export function DiagnosisStage({
       </p>
       <div class="sr-report-actions">
         <button
+          type="button"
           class="btn btn-secondary"
           disabled={!inspectedPrimary || diagnosisChoice === null || diagnosisLocked}
           onClick={onConfirmDiagnosis}
@@ -104,11 +106,16 @@ export function DiagnosisStage({
           Confirmar hipótesis
         </button>
         {diagnosisLocked && !diagnosisCorrect && (
-          <button class="btn btn-secondary" onClick={onResetDiagnosis}>
+          <button type="button" class="btn btn-secondary" onClick={onResetDiagnosis}>
             Intentar otra hipótesis
           </button>
         )}
-        <button class="btn btn-primary" disabled={!diagnosisReady} onClick={onAdvanceToDecision}>
+        <button
+          type="button"
+          class="btn btn-primary"
+          disabled={!diagnosisReady}
+          onClick={onAdvanceToDecision}
+        >
           Definir contención <ArrowRight size={16} />
         </button>
       </div>

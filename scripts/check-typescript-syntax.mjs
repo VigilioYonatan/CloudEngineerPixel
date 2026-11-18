@@ -2,7 +2,7 @@
 import {createRequire} from 'node:module';
 import {execFileSync} from 'node:child_process';
 import {readFileSync,readdirSync} from 'node:fs';
-import {join,extname,resolve} from 'node:path';
+import {join,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const require=createRequire(import.meta.url);
 const root=fileURLToPath(new URL('..',import.meta.url));

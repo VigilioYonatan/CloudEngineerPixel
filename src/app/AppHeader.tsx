@@ -1,5 +1,6 @@
-import { CloudCog, Info, Menu, Moon, Settings, Sun, X } from 'lucide-preact';
+import { BookOpen, CloudCog, Info, Menu, Moon, Settings, Sun, X } from 'lucide-preact';
 import { useEffect, useRef } from 'preact/hooks';
+import { openGlossary } from '../lib/glossaryState';
 import { mobileMenu, navigate, theme, view } from '../lib/state';
 import {
   PixelBookIcon,
@@ -46,7 +47,12 @@ export function AppHeader() {
   return (
     <header class="header">
       <div class="header-inner">
-        <button class="brand" onClick={() => navigate('home')} aria-label="Ir al inicio">
+        <button
+          type="button"
+          class="brand"
+          onClick={() => navigate('home')}
+          aria-label="Ir al inicio"
+        >
           <span class="brand-icon">
             <CloudCog size={25} />
           </span>
@@ -64,17 +70,23 @@ export function AppHeader() {
           aria-label="Navegación principal"
         >
           <button
+            type="button"
             class={view.value === 'home' ? 'nav-current' : ''}
             onClick={() => navigate('home')}
           >
             <PixelHomeIcon size={16} />
             Inicio
           </button>
-          <button class={view.value === 'map' ? 'nav-current' : ''} onClick={() => navigate('map')}>
+          <button
+            type="button"
+            class={view.value === 'map' ? 'nav-current' : ''}
+            onClick={() => navigate('map')}
+          >
             <PixelMapIcon size={16} />
             Mapa
           </button>
           <button
+            type="button"
             class={['learn', 'lesson'].includes(view.value) ? 'nav-current' : ''}
             onClick={() => navigate('learn')}
           >
@@ -82,6 +94,7 @@ export function AppHeader() {
             Aprender
           </button>
           <button
+            type="button"
             class={['labs', 'lab'].includes(view.value) ? 'nav-current' : ''}
             onClick={() => navigate('labs')}
           >
@@ -89,6 +102,7 @@ export function AppHeader() {
             Laboratorios
           </button>
           <button
+            type="button"
             class={view.value === 'projects' ? 'nav-current' : ''}
             onClick={() => navigate('projects')}
           >
@@ -96,6 +110,7 @@ export function AppHeader() {
             Proyectos
           </button>
           <button
+            type="button"
             class={view.value === 'simulator' ? 'nav-current' : ''}
             onClick={() => navigate('simulator')}
           >
@@ -103,6 +118,7 @@ export function AppHeader() {
             Simuladores
           </button>
           <button
+            type="button"
             class={view.value === 'senior' ? 'nav-current' : ''}
             onClick={() => navigate('senior')}
           >
@@ -110,6 +126,7 @@ export function AppHeader() {
             Senior Mode <span class="senior-dot" />
           </button>
           <button
+            type="button"
             class={view.value === 'progress' ? 'nav-current' : ''}
             onClick={() => navigate('progress')}
           >
@@ -137,6 +154,16 @@ export function AppHeader() {
             </button>
             <button
               type="button"
+              onClick={() => {
+                mobileMenu.value = false;
+                openGlossary();
+              }}
+            >
+              <BookOpen size={16} />
+              Glosario técnico
+            </button>
+            <button
+              type="button"
               class={view.value === 'about' ? 'nav-current' : ''}
               onClick={() => navigate('about')}
             >
@@ -149,6 +176,16 @@ export function AppHeader() {
         <div class="header-actions">
           <CloudProviderSwitcher />
           <button
+            type="button"
+            class="icon-button hide-mobile"
+            aria-label="Abrir glosario técnico"
+            title="Glosario técnico y siglas"
+            onClick={() => openGlossary()}
+          >
+            <BookOpen size={18} />
+          </button>
+          <button
+            type="button"
             class="icon-button hide-mobile"
             aria-label="Cambiar tema"
             title="Cambiar tema"
@@ -159,6 +196,7 @@ export function AppHeader() {
             {theme.value === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           <button
+            type="button"
             class="icon-button hide-mobile"
             aria-label="Configuración"
             onClick={() => navigate('settings')}
@@ -166,6 +204,7 @@ export function AppHeader() {
             <Settings size={18} />
           </button>
           <button
+            type="button"
             ref={toggleBtnRef}
             class="icon-button mobile-toggle"
             aria-expanded={isMenuOpen}

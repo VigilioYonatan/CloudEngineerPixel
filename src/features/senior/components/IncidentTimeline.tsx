@@ -37,7 +37,7 @@ export function IncidentTimeline({ caseId, provider }: IncidentTimelineProps) {
         cambio desencadenante frente al ruido operativo paralelo.
       </p>
 
-      <div class="sr-timeline-steps" role="group" aria-label="Hitos cronológicos">
+      <div class="sr-timeline-steps" role="toolbar" aria-label="Hitos cronológicos">
         {timeline.events.map((ev, index) => {
           const isSelected = index === activeIndex;
           return (

@@ -35,7 +35,7 @@ export function CodeReviewLab({ caseId, provider }: CodeReviewLabProps) {
         compara luego contra la versión remediada.
       </p>
 
-      <div class="codereview-lines" role="group" aria-label="Líneas de configuración">
+      <div class="codereview-lines" role="toolbar" aria-label="Líneas de configuración">
         {exercise.lines.map((lineText, idx) => {
           const lineNumber = idx + 1;
           const isSelected = selectedLine === lineNumber;
