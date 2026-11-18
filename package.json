@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@preact/signals": "^2.2.1",
-    "lucide-preact": "^0.468.0",
+    "lucide-preact": "^1.73.0",
     "preact": "^10.27.0",
     "three": "^0.187.0"
   },
