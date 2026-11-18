@@ -17,7 +17,7 @@ test('F9-01..F9-07 · Biome strict config, SHA-40 workflows, CSP/HSTS headers, C
   assert.equal(biome.linter.rules.correctness.noUnusedVariables, 'error');
 
   // F9-02: SHA-40 pinned GitHub Actions + persist-credentials: false + npm ci + zero continue-on-error
-  for (const wfName of ['quality.yml', 'devsecops.yml', 'codeql.yml']) {
+  for (const wfName of ['quality.yml', 'devsecops.yml', 'codeql.yml', 'pages.yml']) {
     const wf = fs.readFileSync(path.join(ROOT, '.github/workflows', wfName), 'utf8');
     assert.ok(!wf.includes('continue-on-error: true'), `${wfName} must not allow continue-on-error`);
     assert.ok(wf.includes('persist-credentials: false'), `${wfName} must disable persist-credentials`);

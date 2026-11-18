@@ -2,6 +2,7 @@ import { X } from 'lucide-preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { MarkdownViewer } from '../../../components/ui/MarkdownViewer';
 import type { Provider } from '../../../data/course';
+import { resolvePublicUrl } from '../../../lib/publicAssetUrl';
 
 type WorkbookModalProps = {
   open: boolean;
@@ -20,7 +21,7 @@ export function WorkbookModal({ open, cloudId, caseId, onClose }: WorkbookModalP
     let cancelled = false;
     setMarkdown('');
     setError('');
-    fetch(`/senior-guides/${cloudId}/${caseId}.md`)
+    fetch(resolvePublicUrl(`/senior-guides/${cloudId}/${caseId}.md`))
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();

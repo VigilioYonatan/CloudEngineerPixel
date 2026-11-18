@@ -1,5 +1,6 @@
 import type { Provider } from '../../data/course';
 import { getProviderMeta } from '../../domain/providers';
+import { resolvePublicUrl } from '../../lib/publicAssetUrl';
 import {
   CLOUD_MENTOR_DIMENSIONS,
   getMentorPoseMeta,
@@ -45,7 +46,7 @@ export function CloudMentor({
           class="cloud-mentor-sprite"
           aria-hidden="true"
           style={{
-            backgroundImage: `url(${providerMeta.mascot.transparentPoses})`,
+            backgroundImage: `url(${resolvePublicUrl(providerMeta.mascot.transparentPoses)})`,
             backgroundPosition: poseMeta.bgPosition,
           }}
         />
@@ -53,10 +54,11 @@ export function CloudMentor({
     );
   }
 
-  const imgSrc =
+  const imgSrc = resolvePublicUrl(
     variant === 'senior-artwork'
       ? providerMeta.mascot.transparentSenior
-      : providerMeta.mascot.transparentDefault;
+      : providerMeta.mascot.transparentDefault,
+  );
   const imgAlt =
     alt || (variant === 'senior-artwork' ? providerMeta.mascot.seniorAlt : providerMeta.mascot.alt);
 

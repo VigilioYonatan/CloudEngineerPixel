@@ -8,6 +8,7 @@ import type { SeniorPlaybook } from '../../../data/seniorPlaybooks';
 import { seniorPractices } from '../../../data/seniorPractices';
 import { seniorRubric } from '../../../data/seniorRubric';
 import { getProviderMeta } from '../../../domain/providers';
+import { resolvePublicUrl } from '../../../lib/publicAssetUrl';
 import type { SeniorReport } from '../../../lib/seniorSession.mjs';
 import { downloadRubricTemplate } from '../libs/downloadJsonFile';
 import { WorkbookModal } from './WorkbookModal';
@@ -215,7 +216,7 @@ export function SeniorSidebar({
             </button>
             <a
               class="official-link"
-              href={`/senior-guides/${p}/${current.id}.md`}
+              href={resolvePublicUrl(`/senior-guides/${p}/${current.id}.md`)}
               download={`${current.id}-${p}-cuaderno.md`}
             >
               Descargar cuaderno del caso <Download size={15} />

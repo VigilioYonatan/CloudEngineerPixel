@@ -1,4 +1,5 @@
 import type { CloudProviderId } from '../../domain/providers';
+import { resolvePublicUrl } from '../../lib/publicAssetUrl';
 
 type CloudProviderLogoProps = {
   providerId: CloudProviderId;
@@ -20,7 +21,7 @@ export function CloudProviderLogo({
   return (
     <span class={`cloud-logo-chip cloud-logo-${providerId}`} aria-hidden={decorative}>
       <img
-        src={`/logos/${providerId}.svg`}
+        src={resolvePublicUrl(`/logos/${providerId}.svg`)}
         alt={decorative ? '' : LOGO_ALT[providerId]}
         width={size}
         height={size}
